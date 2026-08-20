@@ -1,54 +1,72 @@
 import { useState } from "react";
-import { LOCATIONS, type Location } from "./data/lessons";
+import { TOTAL_DAYS, XP, getDayInfo, weekStampDay } from "./lib/engine";
 import { useProgress } from "./hooks/useProgress";
 import { ToastProvider, useToast } from "./components/Toasts";
-import { Header } from "./components/Header";
-import { Sidebar } from "./components/Sidebar";
-import { MapView } from "./components/MapView";
-import { LessonModal } from "./components/LessonModal";
-import { Passport } from "./components/Passport";
+import { LangGate } from "./components/LangGate";
+import { Header, type AppView } from "./components/Header";
+import { PlanView } from "./components/PlanView";
+import { FranceMap } from "./components/FranceMap";
+import { PassportView } from "./components/PassportView";
+import { SessionModal } from "./components/SessionModal";
 
 function Shell() {
   const prog = useProgress();
   const toast = useToast();
-  const [view, setView] = useState<"map" | "passport">("map");
-  const [lessonId, setLessonId] = useState<string | null>(null);
+  const [view, setView] = useState<AppView>("plan");
+  const [sessionDay, setSessionDay] = useState<number | null>(null);
 
-  const lessonLoc: Location | undefined = LOCATIONS.find((l) => l.id === lessonId);
-  const lessonIdx = lessonLoc ? LOCATIONS.findIndex((l) => l.id === lessonLoc.id) : -1;
-  const nextLoc = lessonIdx >= 0 ? LOCATIONS[lessonIdx + 1] : undefined;
+  /* ---------- sem idioma ativo: portão de embarque ---------- */
+  if (!prog.lang) {
+    return (
+      <LangGate
+        onPick={(code) => {
+          prog.chooseLanguage(code);
+          toast("Bienvenue à bord! Sua rota de 90 dias começa no Dia 1.", "success");
+        }}
+      />
+    );
+  }
 
-  const openLesson = (id: string) => {
-    if (prog.isUnlocked(id)) {
-      setLessonId(id);
+  /* ---------- ações ---------- */
+  const openDay = (d: number) => {
+    if (!prog.unlockedDay(d)) {
+      const cur = Math.min(prog.currentDay, TOTAL_DAYS);
+      const need = getDayInfo(cur);
+      toast(
+        `Dia bloqueado — conclua antes o Dia ${cur} (${need.type === "exam" ? "exame final" : getDayInfo(cur).week <= 12 ? getDayInfo(cur).weekData?.theme ?? "sessão" : "revisão"}).`,
+        "lock",
+      );
       return;
     }
-    const loc = LOCATIONS.find((l) => l.id === id);
-    const blocker = prog.currentId ? LOCATIONS.find((l) => l.id === prog.currentId) : null;
-    toast(
-      blocker && loc && loc.num > blocker.num
-        ? `Rota em ordem: conclua "${blocker.namePt}" antes.`
-        : `Esta parada ainda está fechada.`,
-      "lock",
-    );
+    setSessionDay(d);
   };
 
-  const finishLesson = (score: number): number => {
-    if (!lessonLoc) return 0;
-    const gained = prog.complete(lessonLoc.id, score);
+  const finishSession = (day: number, xp: number, score?: number, total?: number): number => {
+    const gained = prog.completeDay(day, {
+      xp,
+      score,
+      total,
+      date: new Date().toISOString().slice(0, 10),
+    });
+
     if (gained > 0) {
-      toast(
-        score === 3
-          ? `+${gained} XP · Selo de ouro em ${lessonLoc.nameEn}!`
-          : `+${gained} XP · Carimbo de ${lessonLoc.nameEn} conquistado!`,
-        "xp",
-      );
-      if (nextLoc) {
-        window.setTimeout(() => toast(`Nova parada liberada: ${nextLoc.namePt}`, "success"), 900);
+      // avisos de marco
+      const wasStampDay = weekStampDay(getDayInfo(day).week) === day;
+      if (wasStampDay) {
+        const wk = getDayInfo(day).weekData;
+        window.setTimeout(
+          () => toast(`Nova parada no mapa liberada: ${wk ? wk.place : "semana seguinte"}!`, "success"),
+          1100,
+        );
+      }
+      if (day + 1 > TOTAL_DAYS) {
+        window.setTimeout(() => toast("Programa completo! Seu diplôme espera no Passaporte.", "xp"), 1100);
       }
     }
     return gained;
   };
+
+  const activeRecord = sessionDay !== null ? prog.progress.days[sessionDay] : undefined;
 
   return (
     <div className="relative min-h-screen">
@@ -58,7 +76,7 @@ function Shell() {
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(640px 420px at 88% -6%, rgba(215,38,61,0.06), transparent 65%), radial-gradient(720px 480px at -8% 96%, rgba(14,143,139,0.07), transparent 65%), radial-gradient(520px 380px at 55% 118%, rgba(232,147,12,0.06), transparent 70%)",
+              "radial-gradient(640px 420px at 90% -6%, rgba(36,69,124,0.07), transparent 65%), radial-gradient(720px 480px at -8% 100%, rgba(215,38,61,0.06), transparent 65%), radial-gradient(520px 380px at 55% 118%, rgba(232,147,12,0.05), transparent 70%)",
           }}
         />
         <div className="spin-slower absolute -top-44 -right-44 h-[520px] w-[520px] rounded-full border-2 border-dashed border-ink/10" />
@@ -66,29 +84,32 @@ function Shell() {
       </div>
 
       <div className="relative z-10">
-        <Header view={view} onView={setView} xp={prog.progress.xp} streak={prog.progress.streak} level={prog.level} />
+        <Header
+          view={view}
+          onView={setView}
+          xp={prog.progress.xp}
+          streak={prog.progress.streak}
+          day={prog.currentDay}
+          onLanguages={() => prog.backToGate()}
+        />
 
         <main className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 sm:py-6">
-          {view === "map" ? (
-            <div className="grid items-start gap-6 lg:grid-cols-[330px_1fr]">
-              <div className="order-2 lg:order-1 lg:sticky lg:top-[76px]">
-                <Sidebar prog={prog} onOpen={openLesson} />
-              </div>
-              <div className="order-1 lg:order-2">
-                <MapView
-                  prog={prog}
-                  onSelect={openLesson}
-                  onLocked={(loc) => openLesson(loc.id)}
-                  onGoCurrent={() => prog.currentId && openLesson(prog.currentId)}
-                />
-              </div>
-            </div>
-          ) : (
-            <Passport
+          {view === "plan" && (
+            <PlanView prog={prog} onOpenDay={openDay} onPassport={() => setView("passport")} />
+          )}
+          {view === "map" && (
+            <FranceMap
+              prog={prog}
+              onSelectWeek={(w) => openDay((w - 1) * 7 + 1)}
+              onGoPlan={() => setView("plan")}
+            />
+          )}
+          {view === "passport" && (
+            <PassportView
               prog={prog}
               onReset={() => {
-                prog.reset();
-                toast("Progresso apagado. Boa nova viagem!", "info");
+                prog.resetActive();
+                toast("Progresso apagado. Bonne route na próxima tentativa!", "info");
               }}
             />
           )}
@@ -96,24 +117,26 @@ function Shell() {
 
         <footer className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-2 border-t-2 border-ink/10 px-4 py-5 font-mono text-[11px] text-ink/45 sm:px-6">
           <p>
-            <span className="font-semibold text-ink">RUMO</span> · aprendizado em movimento — lição a lição, parada a parada.
+            <span className="font-semibold text-ink">RUMO</span> · aprendizado em movimento — um idioma por viagem, um
+            dia por passo.
           </p>
-          <p className="tracking-[0.14em] uppercase">51.5072° N · 0.1276° W — Londres</p>
+          <p className="tracking-[0.14em] uppercase">48°51′N · 2°21′E — Paris, ponto de partida</p>
         </footer>
       </div>
 
-      {lessonLoc && (
-        <LessonModal
-          key={lessonLoc.id}
-          loc={lessonLoc}
-          review={prog.isCompleted(lessonLoc.id)}
-          onClose={() => setLessonId(null)}
-          onFinish={finishLesson}
-          hasNext={Boolean(nextLoc)}
-          nextName={nextLoc?.namePt}
-          onNext={() => nextLoc && setLessonId(nextLoc.id)}
-          onPassport={() => {
-            setLessonId(null);
+      {sessionDay !== null && (
+        <SessionModal
+          key={`${sessionDay}`}
+          day={sessionDay}
+          dayDone={Boolean(activeRecord)}
+          totalXp={prog.progress.xp}
+          onClose={() => setSessionDay(null)}
+          onFinish={finishSession}
+          onExamFail={() =>
+            toast(`Quase! O exame exige ${XP.examPassScore}+ acertos — revise as semanas e tente de novo.`, "lock")
+          }
+          onCertificate={() => {
+            setSessionDay(null);
             setView("passport");
           }}
         />
