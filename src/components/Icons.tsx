@@ -37,7 +37,8 @@ export type IconName =
   | "sparkle"
   | "cap"
   | "calendar"
-  | "flag";
+  | "flag"
+  | "users";
 
 /** Glifos puros (viewBox 24×24, stroke=currentColor) — reutilizáveis dentro de <svg> maior. */
 export function IconGlyph({ name }: { name: IconName }): JSX.Element {
@@ -272,6 +273,14 @@ export function IconGlyph({ name }: { name: IconName }): JSX.Element {
         <>
           <path d="M5 21V4" />
           <path d="M5 4h13l-2.5 3.5L18 11H5" />
+        </>
+      );
+    case "users":
+      return (
+        <>
+          <circle cx="9" cy="8" r="3.5" />
+          <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+          <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 14.4c2.4.7 4 2.5 4 5.1" />
         </>
       );
     default:

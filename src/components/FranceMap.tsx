@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { WEEKS, type Week } from "../data/curriculum";
+import { castFirstNames } from "../data/cast";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { getDayInfo, SESSION_META } from "../lib/engine";
 import { Icon, IconGlyph } from "./Icons";
@@ -279,7 +280,9 @@ export function FranceMap({
               <p className="font-display text-[13px] leading-tight font-bold">
                 S{String(hoverWeek.num).padStart(2, "0")} · {hoverWeek.place}
               </p>
-              <p className="mt-0.5 text-[11px] text-paper/75">{hoverWeek.theme}</p>
+              <p className="mt-0.5 text-[11px] text-paper/75">
+                {hoverWeek.theme} · com {castFirstNames(hoverWeek.num)}
+              </p>
               <p className="mt-1 font-mono text-[9px] tracking-[0.18em] uppercase" style={{ color: hoverWeek.color === "#24457c" ? "#9db4e0" : hoverWeek.color }}>
                 {prog.weekStamps.includes(hoverWeek.num)
                   ? "✓ carimbada"

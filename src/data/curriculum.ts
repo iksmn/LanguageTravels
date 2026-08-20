@@ -1,7 +1,7 @@
 import type { IconName } from "../components/Icons";
 
 export type Vocab = { fr: string; pt: string; ipa: string };
-export type DialogueLine = { who: "local" | "you"; fr: string; pt: string };
+export type DialogueLine = { who: "local" | "you"; fr: string; pt: string; speaker?: string };
 export type QuizQ = { q: string; options: string[]; a: number; why: string };
 
 export type Week = {
@@ -15,6 +15,12 @@ export type Week = {
   desc: string;
   tip: string;
   culture: string;
+  /** Narrativa da semana com os companheiros de viagem (PT, com falas em FR). */
+  story: string;
+  /** Ids dos personagens do grupo Francophonia que aparecem na semana. */
+  cast: string[];
+  /** Temas centrais integrados (FR/PT). */
+  themes: { fr: string; pt: string }[];
   x: number;
   y: number;
   color: string;
@@ -46,15 +52,22 @@ export const WEEKS: Week[] = [
     city: "Paris",
     region: "Île-de-France",
     theme: "Cumprimentos",
-    desc: "O avião pousou em Paris. Suas primeiras palavras em francês dão o tom de toda a viagem.",
+    desc: "O avião pousou em Paris — e Julien, um engenheiro de IA, está na fila do café para te dar as boas-vindas.",
     tip: "Na França, dizer «bonjour» ao entrar em qualquer loja não é opcional — é a regra de ouro.",
     culture: "A Torre Eiffel cresce até 15 cm no verão: o calor dilata o ferro da estrutura.",
+    story:
+      "O avião pousa em Paris e, na fila do café, você conhece Julien, um engenheiro que trabalha com IA. «Bienvenue !» — a viagem de 90 dias começa com um aperto de mão e uma promessa: «On explore la France ensemble, sans limites.»",
+    cast: ["julien"],
+    themes: [
+      { fr: "Le voyage", pt: "A viagem" },
+      { fr: "Jules Verne", pt: "Jules Verne" },
+    ],
     x: 314,
     y: 152,
     color: "#d7263d",
     icon: "plane",
-    localName: "Agente Moreau",
-    localRole: "Imigração",
+    localName: "Julien Dubois",
+    localRole: "Engenheiro de software · Paris",
     vocab: [
       { fr: "Bonjour", pt: "Olá / Bom dia", ipa: "/bɔ̃ʒuʁ/" },
       { fr: "Merci", pt: "Obrigado(a)", ipa: "/mɛʁsi/" },
@@ -63,10 +76,10 @@ export const WEEKS: Week[] = [
       { fr: "Au revoir", pt: "Até logo", ipa: "/o ʁəvwaʁ/" },
     ],
     dialogue: [
-      { who: "local", fr: "Bonjour ! Bienvenue à Paris.", pt: "Olá! Bem-vindo(a) a Paris." },
-      { who: "you", fr: "Bonjour ! Merci beaucoup.", pt: "Olá! Muito obrigado(a)." },
-      { who: "local", fr: "Votre passeport, s'il vous plaît.", pt: "Seu passaporte, por favor." },
-      { who: "you", fr: "Oui, bien sûr. Au revoir !", pt: "Sim, claro. Até logo!" },
+      { who: "local", speaker: "Julien", fr: "Bonjour ! Bienvenue à Paris. Je m'appelle Julien.", pt: "Olá! Bem-vindo(a) a Paris. Meu nome é Julien." },
+      { who: "you", fr: "Bonjour Julien ! Merci beaucoup. Enchanté !", pt: "Olá, Julien! Muito obrigado(a). Prazer!" },
+      { who: "local", speaker: "Julien", fr: "Je suis ingénieur, je travaille avec l'intelligence artificielle. Et vous ?", pt: "Sou engenheiro, trabalho com inteligência artificial. E você?" },
+      { who: "you", fr: "Moi, j'apprends le français ! Au revoir… à bientôt !", pt: "Eu estou aprendendo francês! Tchau… até logo!" },
     ],
     quiz: [
       {
@@ -97,15 +110,22 @@ export const WEEKS: Week[] = [
     city: "Paris",
     region: "Île-de-France",
     theme: "No café",
-    desc: "Mesas na calçada, aroma de croissant. Hora de fazer seu primeiro pedido em francês.",
+    desc: "Mesas na calçada, um croissant e Camille, historiadora da arte, lendo Proust na mesa ao lado.",
     tip: "Peça «un café» e receberá um espresso. Para café com leite, diga «un café crème».",
     culture: "O croissant não nasceu na França, mas em Viena — vem do «kipferl» austríaco.",
+    story:
+      "No Café de Saint-Germain, Camille desenha num caderno enquanto espera você. Historiadora da arte, ela pede um croissant e sorri: «Proust avait sa madeleine, moi j'ai mon croissant.» A lição do dia chega junto com a conta.",
+    cast: ["camille"],
+    themes: [
+      { fr: "Gastronomie", pt: "Gastronomia" },
+      { fr: "Proust", pt: "Marcel Proust" },
+    ],
     x: 282,
     y: 180,
     color: "#e4572e",
     icon: "coffee",
-    localName: "Camille",
-    localRole: "Garçon",
+    localName: "Camille Rousseau",
+    localRole: "Historiadora da arte · Le Marais",
     vocab: [
       { fr: "Un café", pt: "Um café", ipa: "/œ̃ kafe/" },
       { fr: "Un croissant", pt: "Um croissant", ipa: "/œ̃ kʁwasɑ̃/" },
@@ -114,10 +134,10 @@ export const WEEKS: Week[] = [
       { fr: "Délicieux", pt: "Delicioso", ipa: "/delisjø/" },
     ],
     dialogue: [
-      { who: "local", fr: "Bonjour ! Vous désirez ?", pt: "Olá! O que deseja?" },
-      { who: "you", fr: "Un café et un croissant, s'il vous plaît.", pt: "Um café e um croissant, por favor." },
-      { who: "local", fr: "Voilà. Ça fait six euros.", pt: "Aqui está. São seis euros." },
-      { who: "you", fr: "Merci, c'est délicieux ! L'addition, s'il vous plaît.", pt: "Obrigado, está delicioso! A conta, por favor." },
+      { who: "local", speaker: "Camille", fr: "Salut ! Pour commander, on dit : « Un café et un croissant, s'il vous plaît. »", pt: "Oi! Para pedir, dizemos: «Um café e um croissant, por favor.»" },
+      { who: "you", fr: "Un café et un croissant, s'il vous plaît !", pt: "Um café e um croissant, por favor!" },
+      { who: "local", speaker: "Camille", fr: "Très bien ! Ça fait six euros. Le croissant est délicieux ici.", pt: "Muito bem! São seis euros. O croissant daqui é delicioso." },
+      { who: "you", fr: "Merci ! L'addition, s'il vous plaît.", pt: "Obrigado(a)! A conta, por favor." },
     ],
     quiz: [
       {
@@ -148,15 +168,22 @@ export const WEEKS: Week[] = [
     city: "Paris",
     region: "Île-de-France",
     theme: "Cultura e museu",
-    desc: "A pirâmide de vidro guarda séculos de arte. Vocabulário novo para olhos curiosos.",
+    desc: "A pirâmide de vidro guarda séculos de arte — e Thomas, de Strasbourg, enxerga constelações nos tetos pintados.",
     tip: "Dica de local: às quartas e sextas, o Louvre fica aberto até mais tarde, com filas menores.",
     culture: "O Louvre é o museu mais visitado do mundo — ver tudo levaria uns 200 dias!",
+    story:
+      "Thomas chegou de Strasbourg só para ver o Louvre. Doutorando em astronomia, ele aponta para um teto pintado: «Regarde — on dirait une constellation !» Entre arte e estrelas, a bilheteria vira sala de aula.",
+    cast: ["thomas"],
+    themes: [
+      { fr: "Art", pt: "Arte" },
+      { fr: "Histoire", pt: "História" },
+    ],
     x: 306,
     y: 190,
     color: "#0e8f8b",
     icon: "museum",
-    localName: "M. Lefèvre",
-    localRole: "Bilheteiro",
+    localName: "Thomas Moreau",
+    localRole: "Doutorando em Astronomia · Strasbourg",
     vocab: [
       { fr: "Le musée", pt: "O museu", ipa: "/lə myze/" },
       { fr: "L'art", pt: "A arte", ipa: "/laʁ/" },
@@ -165,10 +192,10 @@ export const WEEKS: Week[] = [
       { fr: "L'histoire", pt: "A história", ipa: "/listwaʁ/" },
     ],
     dialogue: [
-      { who: "you", fr: "Bonjour, un billet pour le musée, s'il vous plaît.", pt: "Olá, um bilhete para o museu, por favor." },
-      { who: "local", fr: "Bien sûr. Dix-sept euros.", pt: "Claro. Dezessete euros." },
-      { who: "you", fr: "Magnifique ! J'adore l'art français.", pt: "Magnífico! Adoro a arte francesa." },
-      { who: "local", fr: "Bonne visite ! L'histoire vous attend.", pt: "Boa visita! A história o espera." },
+      { who: "local", speaker: "Thomas", fr: "Bonjour ! Un billet pour le musée ? Bonne idée. J'adore l'art… et les étoiles !", pt: "Olá! Um bilhete para o museu? Boa ideia. Eu adoro arte… e as estrelas!" },
+      { who: "you", fr: "Un billet, s'il vous plaît. Magnifique, ce musée !", pt: "Um bilhete, por favor. Magnífico, este museu!" },
+      { who: "local", speaker: "Thomas", fr: "Oui ! Regarde ce plafond : on dirait une constellation.", pt: "Sim! Olhe este teto: parece uma constelação." },
+      { who: "you", fr: "C'est vrai ! L'art et l'histoire, c'est magnifique.", pt: "É verdade! A arte e a história são magníficas." },
     ],
     quiz: [
       {
@@ -199,15 +226,22 @@ export const WEEKS: Week[] = [
     city: "Mont-Saint-Michel",
     region: "Normandie",
     theme: "Direções",
-    desc: "Uma abadia sobre a maré. Para chegar lá, só perguntando o caminho em francês.",
+    desc: "Uma abadia sobre a maré — e Sophie, jornalista em reportagem, perdida com o mapa na mão. Vocês se ajudam.",
     tip: "«Excusez-moi» antes de qualquer pergunta abre portas — e sorrisos — na França inteira.",
     culture: "A maré ao redor do Mont-Saint-Michel sobe “na velocidade de um cavalo a galope”.",
+    story:
+      "Sophie, jornalista em reportagem sobre o Mont-Saint-Michel, está perdida com o mapa na mão. Vocês decifram o caminho juntos — «tout droit, puis à gauche» — e ela anota tudo: «Quelle belle histoire pour mon article !»",
+    cast: ["sophie"],
+    themes: [
+      { fr: "Histoire", pt: "História" },
+      { fr: "Architecture", pt: "Arquitetura" },
+    ],
     x: 162,
     y: 196,
     color: "#2b6cb0",
     icon: "compass",
-    localName: "Mme Aubert",
-    localRole: "Moradora local",
+    localName: "Sophie Garnier",
+    localRole: "Jornalista cultural · Lyon",
     vocab: [
       { fr: "Où est… ?", pt: "Onde fica…?", ipa: "/u ɛ/" },
       { fr: "À gauche", pt: "À esquerda", ipa: "/a ɡoʃ/" },
@@ -216,10 +250,10 @@ export const WEEKS: Week[] = [
       { fr: "La rue", pt: "A rua", ipa: "/la ʁy/" },
     ],
     dialogue: [
-      { who: "you", fr: "Excusez-moi, où est l'abbaye ?", pt: "Com licença, onde fica a abadia?" },
-      { who: "local", fr: "Tout droit, puis à gauche.", pt: "Em frente, depois à esquerda." },
-      { who: "you", fr: "C'est loin ?", pt: "É longe?" },
-      { who: "local", fr: "Non, la première rue à droite.", pt: "Não, é a primeira rua à direita." },
+      { who: "local", speaker: "Sophie", fr: "Salut ! Je suis journaliste. Je cherche l'abbaye… et je suis perdue !", pt: "Oi! Sou jornalista. Estou procurando a abadia… e estou perdida!" },
+      { who: "you", fr: "Attends… le plan dit : tout droit, puis à gauche.", pt: "Espera… o mapa diz: em frente, depois à esquerda." },
+      { who: "local", speaker: "Sophie", fr: "C'est loin ? La première rue à droite ?", pt: "É longe? A primeira rua à direita?" },
+      { who: "you", fr: "Non, c'est là ! Allons-y, Sophie !", pt: "Não, é ali! Vamos, Sophie!" },
     ],
     quiz: [
       {
@@ -250,15 +284,22 @@ export const WEEKS: Week[] = [
     city: "Avignon",
     region: "Provence",
     theme: "Comida e feira",
-    desc: "Barracas de queijo, pão quente e frutas da Provence. Prove, pergunte e negocie.",
+    desc: "Barracas de queijo, pão quente e frutas do sul. Marc, chef de Marseille, escolhe cada palavra como um ingrediente.",
     tip: "Na feira, cumprimente o feirante antes de pedir: «Bonjour, je voudrais…» (eu gostaria…).",
     culture: "Existem mais de 1.200 tipos de queijo francês — um por dia durante três anos!",
+    story:
+      "Marc, chef de um bistrô no Vieux-Port de Marseille, escolhe queijos como quem escolhe palavras: com calma e paixão. «La table est le meilleur endroit pour se rencontrer», diz ele — e a feira vira a mesa mais comprida da Provence.",
+    cast: ["marc"],
+    themes: [
+      { fr: "Gastronomie", pt: "Gastronomia" },
+      { fr: "Terroir", pt: "Terra e tradição" },
+    ],
     x: 398,
     y: 436,
     color: "#e8930c",
     icon: "market",
-    localName: "Henri",
-    localRole: "Feirante",
+    localName: "Marc Lefèvre",
+    localRole: "Chef de cuisine · Marseille",
     vocab: [
       { fr: "Le pain", pt: "O pão", ipa: "/lə pɛ̃/" },
       { fr: "Le fromage", pt: "O queijo", ipa: "/lə fʁɔmaʒ/" },
@@ -267,10 +308,10 @@ export const WEEKS: Week[] = [
       { fr: "Frais", pt: "Fresco", ipa: "/fʁɛ/" },
     ],
     dialogue: [
-      { who: "local", fr: "Bonjour ! Goûtez ce fromage, il est très frais.", pt: "Olá! Prove este queijo, é muito fresco." },
-      { who: "you", fr: "Mmm, délicieux ! Combien pour le pain ?", pt: "Mmm, delicioso! Quanto pelo pão?" },
-      { who: "local", fr: "Deux euros. Et les fruits sont en promotion.", pt: "Dois euros. E as frutas estão em promoção." },
-      { who: "you", fr: "Parfait ! Un peu de vin aussi, s'il vous plaît.", pt: "Perfeito! Um pouco de vinho também, por favor." },
+      { who: "local", speaker: "Marc", fr: "Bonjour ! Goûtez ce fromage de Provence. Il est très frais !", pt: "Olá! Prove este queijo da Provence. É muito fresco!" },
+      { who: "you", fr: "Mmm, délicieux ! Combien pour le pain, s'il vous plaît ?", pt: "Mmm, delicioso! Quanto pelo pão, por favor?" },
+      { who: "local", speaker: "Marc", fr: "Deux euros. Et les fruits ? Une belle histoire, ces fruits du sud !", pt: "Dois euros. E as frutas? Uma bela história, essas frutas do sul!" },
+      { who: "you", fr: "Du pain, des fruits… et un peu de vin aussi !", pt: "Pão, frutas… e um pouco de vinho também!" },
     ],
     quiz: [
       {
@@ -301,15 +342,22 @@ export const WEEKS: Week[] = [
     city: "Nice",
     region: "Côte d'Azur",
     theme: "Clima e tempo",
-    desc: "Sol, mar azul e conversa fiada à beira da Côte d'Azur — o assunto favorito dos franceses.",
+    desc: "Sol, mar azul e Léa montando o telescópio na orla: «Ce soir, on regarde les étoiles.»",
     tip: "O clima se diz com «il fait»: il fait beau, il fait chaud, il fait froid. Simples assim.",
     culture: "A Promenade des Anglais tem 7 km à beira-mar e existe desde 1822.",
+    story:
+      "Léa montou o telescópio na Promenade des Anglais. Pesquisadora de astronomia em Strasbourg, ela confere o céu duas vezes por dia: uma pelo clima, outra pelas estrelas. «Le ciel n'a pas de limites, nous non plus.»",
+    cast: ["lea"],
+    themes: [
+      { fr: "Astronomie", pt: "Astronomia" },
+      { fr: "Le voyage", pt: "A viagem" },
+    ],
     x: 498,
     y: 424,
     color: "#3a7ca5",
     icon: "sun",
-    localName: "Élodie",
-    localRole: "Vizinha de banco",
+    localName: "Léa Martin",
+    localRole: "Pesquisadora em Astronomia · Strasbourg",
     vocab: [
       { fr: "Il fait beau", pt: "Está um tempo bonito", ipa: "/il fɛ bo/" },
       { fr: "Le soleil", pt: "O sol", ipa: "/lə sɔlɛj/" },
@@ -318,9 +366,9 @@ export const WEEKS: Week[] = [
       { fr: "Chaud", pt: "Quente", ipa: "/ʃo/" },
     ],
     dialogue: [
-      { who: "local", fr: "Il fait beau aujourd'hui !", pt: "Está um dia lindo hoje!" },
-      { who: "you", fr: "Oui ! Le soleil et la mer, c'est parfait.", pt: "Sim! Sol e mar, é perfeito." },
-      { who: "local", fr: "Demain, il pleut peut-être…", pt: "Amanhã talvez chova…" },
+      { who: "local", speaker: "Léa", fr: "Il fait beau aujourd'hui ! Parfait pour les étoiles ce soir.", pt: "Está um dia lindo hoje! Perfeito para as estrelas hoje à noite." },
+      { who: "you", fr: "Oui ! Le soleil, la mer… c'est parfait !", pt: "Sim! O sol, o mar… é perfeito!" },
+      { who: "local", speaker: "Léa", fr: "Mais demain, il pleut peut-être. Le ciel change vite !", pt: "Mas amanhã talvez chova. O céu muda rápido!" },
       { who: "you", fr: "Oh non ! Il fait trop chaud pour rester à l'intérieur.", pt: "Ah não! Está quente demais para ficar dentro de casa." },
     ],
     quiz: [
@@ -352,15 +400,22 @@ export const WEEKS: Week[] = [
     city: "Lyon",
     region: "Auvergne-Rhône-Alpes",
     theme: "Números 1–20",
-    desc: "Num restaurante típico de Lyon, o menu é a lição: números, preços e uma mesa para três.",
+    desc: "Marc reaparece em Lyon — a capital da gastronomia — e apresenta você à mesa, ao menu e ao time do coração.",
     tip: "Números de 1 a 20 são a base de tudo: preços, idades, horas. Conte escadas para treinar!",
     culture: "Lyon é considerada a capital mundial da gastronomia — berço do «bouchon», restaurante típico.",
+    story:
+      "No bouchon de Lyon, Marc apresenta você ao garçom como «un ami». Entre uma mesa para três e um menu a vinte euros, ele confessa a outra paixão: «Et vive l'OM !» — o Olympique de Marseille, claro.",
+    cast: ["marc"],
+    themes: [
+      { fr: "Gastronomie", pt: "Gastronomia" },
+      { fr: "Football", pt: "Futebol" },
+    ],
     x: 412,
     y: 330,
     color: "#9e2b25",
     icon: "utensils",
-    localName: "M. Blanchard",
-    localRole: "Dono do bouchon",
+    localName: "Marc Lefèvre",
+    localRole: "Chef de cuisine · Marseille",
     vocab: [
       { fr: "Un", pt: "Um", ipa: "/œ̃/" },
       { fr: "Deux", pt: "Dois", ipa: "/dø/" },
@@ -369,10 +424,10 @@ export const WEEKS: Week[] = [
       { fr: "Vingt", pt: "Vinte", ipa: "/vɛ̃/" },
     ],
     dialogue: [
-      { who: "local", fr: "Bienvenue au bouchon ! Une table pour deux ?", pt: "Bem-vindo ao bouchon! Mesa para dois?" },
-      { who: "you", fr: "Oui, pour trois personnes, s'il vous plaît.", pt: "Sim, para três pessoas, por favor." },
-      { who: "local", fr: "Le menu est à vingt euros, dessert compris.", pt: "O menu custa vinte euros, sobremesa incluída." },
-      { who: "you", fr: "Parfait ! Dix sur dix pour la cuisine lyonnaise.", pt: "Perfeito! Nota dez para a cozinha lionesa." },
+      { who: "local", speaker: "Marc", fr: "Bienvenue à Lyon ! Une table pour deux ? Ah, et vive l'OM !", pt: "Bem-vindo a Lyon! Mesa para dois? Ah, e viva o OM!" },
+      { who: "you", fr: "Non, une table pour trois personnes, s'il vous plaît.", pt: "Não, uma mesa para três pessoas, por favor." },
+      { who: "local", speaker: "Marc", fr: "Le menu est à vingt euros. Un, deux, trois… parfait !", pt: "O menu custa vinte euros. Um, dois, três… perfeito!" },
+      { who: "you", fr: "Dix sur dix pour la cuisine lyonnaise !", pt: "Nota dez para a cozinha lionesa!" },
     ],
     quiz: [
       {
@@ -403,15 +458,22 @@ export const WEEKS: Week[] = [
     city: "Bordeaux",
     region: "Nouvelle-Aquitaine",
     theme: "Família",
-    desc: "Entre vinhedos, você conhece a família do seu anfitrião — e aprende a apresentar a sua.",
+    desc: "Sophie escreve uma matéria sobre os vinhos de Bordeaux e leva você para conhecer a família do vinhedo.",
     tip: "«Mon/ma» = meu/minha: mon père, ma mère. O possessivo concorda com a palavra, não com você.",
     culture: "Bordeaux tem mais de 120 mil hectares de vinhedos — a maior região de vinhos finos do mundo.",
+    story:
+      "Sophie escreve uma matéria sobre os vinhos de Bordeaux e leva você à vinícola da família que virou sua «famille d'adoption». Entre uvas e histórias, o vocabulário de família se mistura ao futuro que se conjuga em francês.",
+    cast: ["sophie"],
+    themes: [
+      { fr: "Culture", pt: "Cultura" },
+      { fr: "Gastronomie", pt: "Gastronomia" },
+    ],
     x: 228,
     y: 428,
     color: "#7b2d43",
     icon: "tree",
-    localName: "Claire",
-    localRole: "Anfitriã",
+    localName: "Sophie Garnier",
+    localRole: "Jornalista cultural · Lyon",
     vocab: [
       { fr: "La mère", pt: "A mãe", ipa: "/la mɛʁ/" },
       { fr: "Le père", pt: "O pai", ipa: "/lə pɛʁ/" },
@@ -420,9 +482,9 @@ export const WEEKS: Week[] = [
       { fr: "Les grands-parents", pt: "Os avós", ipa: "/le ɡʁɑ̃paʁɑ̃/" },
     ],
     dialogue: [
-      { who: "local", fr: "Voici ma famille : mon père, ma mère et ma sœur.", pt: "Esta é minha família: meu pai, minha mãe e minha irmã." },
-      { who: "you", fr: "Enchanté ! Et votre frère ?", pt: "Prazer! E seu irmão?" },
-      { who: "local", fr: "Il est avec mes grands-parents, dans les vignes.", pt: "Está com meus avós, nas vinhas." },
+      { who: "local", speaker: "Sophie", fr: "Voici ma famille d'adoption : le père, la mère et la sœur du vigneron.", pt: "Esta é minha família do coração: o pai, a mãe e a irmã do vinicultor." },
+      { who: "you", fr: "Enchanté ! Et le frère, il est où ?", pt: "Prazer! E o irmão, onde está?" },
+      { who: "local", speaker: "Sophie", fr: "Il est avec les grands-parents, dans les vignes. Magnifique pour mon article !", pt: "Está com os avós, nas vinhas. Magnífico para a minha matéria!" },
       { who: "you", fr: "Quelle belle famille !", pt: "Que família linda!" },
     ],
     quiz: [
@@ -454,15 +516,22 @@ export const WEEKS: Week[] = [
     city: "Chamonix",
     region: "Alpes",
     theme: "Rotina e tempo",
-    desc: "Esqui de manhã, fondue à noite. A rotina alpina ensina a falar do dia a dia.",
+    desc: "Julien trocou o código pela rocha: escalada de manhã, trilha à tarde — e a rotina alpina vira vocabulário.",
     tip: "«Toujours» (sempre) e «jamais» (nunca) moram no meio da frase: «je dis jamais non».",
     culture: "O Mont Blanc, vizinho de Chamonix, tem 4.808 m — o teto da Europa Ocidental.",
+    story:
+      "Julien trocou o código pela rocha: fim de semana de escalada em Chamonix. «Le matin, je grimpe ; le soir, je code.» Entre uma trilha e outra, ele mostra o app que treinou com machine learning para prever o tempo na montanha.",
+    cast: ["julien"],
+    themes: [
+      { fr: "Sport", pt: "Esporte" },
+      { fr: "Technologie", pt: "Tecnologia" },
+    ],
     x: 500,
     y: 312,
     color: "#3f6f5f",
     icon: "mountain",
-    localName: "Julien",
-    localRole: "Guia de montanha",
+    localName: "Julien Dubois",
+    localRole: "Engenheiro de software · Paris",
     vocab: [
       { fr: "Le matin", pt: "De manhã", ipa: "/lə matɛ̃/" },
       { fr: "Le soir", pt: "À noite / de tarde", ipa: "/lə swaʁ/" },
@@ -471,10 +540,10 @@ export const WEEKS: Week[] = [
       { fr: "Jamais", pt: "Nunca", ipa: "/ʒamɛ/" },
     ],
     dialogue: [
-      { who: "local", fr: "Le matin, je skie. Le soir, je me repose.", pt: "De manhã eu esquio. À noite descanso." },
-      { who: "you", fr: "Et aujourd'hui, que faites-vous ?", pt: "E hoje, o que você faz?" },
-      { who: "local", fr: "Toujours la même chose : la montagne !", pt: "Sempre a mesma coisa: a montanha!" },
-      { who: "you", fr: "Moi, je ne dis jamais non à une randonnée.", pt: "Eu nunca digo não a uma trilha." },
+      { who: "local", speaker: "Julien", fr: "Le matin, je fais de l'escalade. Le soir, je code. Et aujourd'hui ? La montagne !", pt: "De manhã eu escalo. À noite, programo. E hoje? A montanha!" },
+      { who: "you", fr: "Et demain, que faites-vous ?", pt: "E amanhã, o que você faz?" },
+      { who: "local", speaker: "Julien", fr: "Toujours la même chose : la montagne ! Jamais de repos.", pt: "Sempre a mesma coisa: a montanha! Nunca descanso." },
+      { who: "you", fr: "Moi, je ne dis jamais non à une randonnée !", pt: "Eu nunca digo não a uma trilha!" },
     ],
     quiz: [
       {
@@ -505,15 +574,22 @@ export const WEEKS: Week[] = [
     city: "Strasbourg",
     region: "Grand Est",
     theme: "Passado (passé composé)",
-    desc: "Numa cidade com mil anos de histórias, você aprende a contar o que fez ontem.",
+    desc: "Thomas e Léa se revezam entre o observatório e a catedral — e o passado se conjuga entre amigos.",
     tip: "Passé composé: «avoir» + particípio. J'ai mangé, j'ai visité… e voilà, o passado!",
     culture: "O relógio astronômico de Strasbourg, de 1842, ainda funciona — e tem um galo que canta ao meio-dia.",
+    story:
+      "Em Strasbourg, Thomas e Léa trabalham no observatório e se revezam para te mostrar a catedral. Ontem, hoje, amanhã — o tempo se conjuga entre amigos. «Nous rêvons d'un futur sans limites», diz Léa, apontando o telescópio para o alto.",
+    cast: ["thomas", "lea"],
+    themes: [
+      { fr: "Astronomie", pt: "Astronomia" },
+      { fr: "Histoire", pt: "História" },
+    ],
     x: 482,
     y: 100,
     color: "#5d5ea6",
     icon: "globe",
-    localName: "Anne-Sophie",
-    localRole: "Guia turística",
+    localName: "Thomas & Léa",
+    localRole: "Pesquisadores · Strasbourg",
     vocab: [
       { fr: "Hier", pt: "Ontem", ipa: "/jɛʁ/" },
       { fr: "J'ai mangé", pt: "Eu comi", ipa: "/ʒe mɑ̃ʒe/" },
@@ -522,10 +598,10 @@ export const WEEKS: Week[] = [
       { fr: "La semaine dernière", pt: "A semana passada", ipa: "/la səmɛn dɛʁnjɛʁ/" },
     ],
     dialogue: [
-      { who: "you", fr: "Hier, j'ai visité la cathédrale. C'était magnifique !", pt: "Ontem visitei a catedral. Foi magnífico!" },
-      { who: "local", fr: "Et la semaine dernière, vous avez fait quoi ?", pt: "E na semana passada, o que você fez?" },
-      { who: "you", fr: "J'ai mangé une choucroute délicieuse.", pt: "Comi um chucrute delicioso." },
-      { who: "local", fr: "Ah, c'était le meilleur choix !", pt: "Ah, foi a melhor escolha!" },
+      { who: "local", speaker: "Thomas", fr: "Hier, j'ai visité la cathédrale avec Léa. C'était magnifique !", pt: "Ontem visitei a catedral com a Léa. Foi magnífico!" },
+      { who: "local", speaker: "Léa", fr: "Et moi, j'ai observé une supernova. Quelle semaine !", pt: "E eu observei uma supernova. Que semana!" },
+      { who: "you", fr: "La semaine dernière, j'ai mangé une choucroute délicieuse.", pt: "Semana passada, comi um chucrute delicioso." },
+      { who: "local", speaker: "Thomas", fr: "Ah, c'était le meilleur choix ! Strasbourg, c'est l'histoire et les étoiles.", pt: "Ah, foi a melhor escolha! Strasbourg é história e estrelas." },
     ],
     quiz: [
       {
@@ -556,15 +632,22 @@ export const WEEKS: Week[] = [
     city: "Versailles",
     region: "Île-de-France",
     theme: "Futuro e planos",
-    desc: "Nos jardins do Rei Sol, você planeja os próximos passos — e conta tudo em francês.",
+    desc: "Camille pinta nos jardins do Rei Sol e te ensina a conjugar o futuro — «demain, je vais…»",
     tip: "Futuro próximo: verbo «aller» + infinitivo. Je vais manger, tu vas dormir — simples assim.",
     culture: "Versalhes tem 2.300 salas e serviu de modelo para palácios em toda a Europa.",
+    story:
+      "Camille finalmente tira você de Paris: Versalhes. Ela monta o cavalete nos jardins e fala de arte como quem fala do futuro — com leveza. «La semaine prochaine, je pars à Rome.» O adeus já está conjugado, mas ninguém pressiona ninguém.",
+    cast: ["camille"],
+    themes: [
+      { fr: "Art", pt: "Arte" },
+      { fr: "Histoire", pt: "História" },
+    ],
     x: 268,
     y: 210,
     color: "#946b2d",
     icon: "star",
-    localName: "Théo",
-    localRole: "Estudante de história",
+    localName: "Camille Rousseau",
+    localRole: "Historiadora da arte · Le Marais",
     vocab: [
       { fr: "Demain", pt: "Amanhã", ipa: "/dəmɛ̃/" },
       { fr: "Je vais", pt: "Eu vou", ipa: "/ʒə vɛ/" },
@@ -573,10 +656,10 @@ export const WEEKS: Week[] = [
       { fr: "Peut-être", pt: "Talvez", ipa: "/pøtɛtʁ/" },
     ],
     dialogue: [
-      { who: "you", fr: "Demain, je vais visiter le château de Versailles.", pt: "Amanhã vou visitar o Palácio de Versalhes." },
-      { who: "local", fr: "Magnifique ! Et après, quels sont vos plans ?", pt: "Magnífico! E depois, quais são seus planos?" },
-      { who: "you", fr: "Peut-être les jardins. La semaine prochaine, je pars.", pt: "Talvez os jardins. Na semana que vem eu parto." },
-      { who: "local", fr: "Alors, à bientôt ! Revenez vite.", pt: "Então, até breve! Volte logo." },
+      { who: "local", speaker: "Camille", fr: "Demain, je vais peindre dans les jardins de Versailles. Tu viens ?", pt: "Amanhã vou pintar nos jardins de Versalhes. Você vem?" },
+      { who: "you", fr: "Oui ! Demain, je vais visiter le château. Peut-être les jardins aussi.", pt: "Sim! Amanhã vou visitar o palácio. Talvez os jardins também." },
+      { who: "local", speaker: "Camille", fr: "La semaine prochaine, je pars à Rome. Mais l'art, bientôt !", pt: "Semana que vem parto para Roma. Mas a arte, em breve!" },
+      { who: "you", fr: "Alors, à bientôt ! Revenez vite !", pt: "Então, até breve! Volte logo!" },
     ],
     quiz: [
       {
@@ -607,15 +690,22 @@ export const WEEKS: Week[] = [
     city: "Ajaccio",
     region: "Corse",
     theme: "Despedida",
-    desc: "Última parada: a ilha de Napoleão. Hora de agradecer, abraçar e dizer «à bientôt».",
+    desc: "No porto de Ajaccio, os seis esperam você para o último café. «Pas de jalousie, juste la liberté d'être ensemble.»",
     tip: "«Bonne journée» se diz na despedida; «bonjour», na chegada. Papéis trocados, mesmo «jour».",
     culture: "Napoleão Bonaparte nasceu em Ajaccio em 1769 — a casa dele hoje é museu.",
+    story:
+      "No porto de Ajaccio, os seis esperam você para o último café: Julien, Camille, Thomas, Léa, Marc e Sophie. Ninguém dramatiza a despedida — «pas de jalousie, juste la liberté d'être ensemble». Até a próxima rota.",
+    cast: ["julien", "camille", "thomas", "lea", "marc", "sophie"],
+    themes: [
+      { fr: "Amitié", pt: "Amizade" },
+      { fr: "Le voyage", pt: "A viagem" },
+    ],
     x: 556,
     y: 552,
     color: "#2f8f6b",
     icon: "wave",
-    localName: "Lisandru",
-    localRole: "Pescador",
+    localName: "Les six amis",
+    localRole: "Seus companheiros de viagem",
     vocab: [
       { fr: "À bientôt", pt: "Até breve", ipa: "/a bjɛ̃to/" },
       { fr: "Bonne journée", pt: "Tenha um bom dia", ipa: "/bɔn ʒuʁne/" },
@@ -624,10 +714,10 @@ export const WEEKS: Week[] = [
       { fr: "À la prochaine", pt: "Até a próxima", ipa: "/a la pʁɔʃɛn/" },
     ],
     dialogue: [
-      { who: "local", fr: "Déjà ? Vous partez demain ?", pt: "Já? Você parte amanhã?" },
-      { who: "you", fr: "Oui… merci pour tout. La France me manquera.", pt: "Sim… obrigado por tudo. Vou sentir falta da França." },
-      { who: "local", fr: "Bonne journée, et à la prochaine !", pt: "Tenha um bom dia, e até a próxima!" },
-      { who: "you", fr: "À bientôt, mes amis. Au revoir, la Corse !", pt: "Até breve, meus amigos. Adeus, Córsega!" },
+      { who: "local", speaker: "Julien", fr: "Déjà ? Tu pars demain ?", pt: "Já? Você parte amanhã?" },
+      { who: "local", speaker: "Léa", fr: "Merci pour tout ! Regarde les étoiles, pense à nous.", pt: "Obrigada por tudo! Olhe as estrelas, pense na gente." },
+      { who: "you", fr: "Merci pour tout, mes amis. La France me manquera !", pt: "Obrigado(a) por tudo, meus amigos. Vou sentir falta da França!" },
+      { who: "local", speaker: "Tous", fr: "Bonne journée, et à la prochaine ! Pas de jalousie, juste la liberté d'être ensemble !", pt: "Tenha um bom dia, e até a próxima! Sem ciúmes, só a liberdade de estar junto!" },
     ],
     quiz: [
       {
