@@ -1,124 +1,154 @@
-import { useEffect, useRef, useState } from "react";
-import { LOCATIONS, PERFECT_BONUS, XP_PER_QUESTION, levelFromXp, xpIntoLevel, XP_PER_LEVEL } from "../data/lessons";
+import { useCallback, useEffect, useState } from "react";
+import { TOTAL_DAYS, levelFromXp, weekStampDay } from "../lib/engine";
+import type { LangCode } from "../data/curriculum";
 
-export type Stamp = { date: string; score: string; perfect: boolean };
-
-export type Progress = {
-  completed: string[];
+export interface DayRecord {
+  score?: number;
+  total?: number;
   xp: number;
-  stamps: Record<string, Stamp>;
-  streak: number;
-  lastActive: string;
-};
-
-const KEY = "rumo-progress-v1";
-
-const todayISO = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
-const shiftISO = (days: number) => {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
-
-function load(): Progress {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      const p = JSON.parse(raw) as Progress;
-      if (p && Array.isArray(p.completed) && typeof p.xp === "number") {
-        return {
-          completed: p.completed,
-          xp: p.xp,
-          stamps: p.stamps ?? {},
-          streak: typeof p.streak === "number" ? p.streak : 1,
-          lastActive: typeof p.lastActive === "string" ? p.lastActive : todayISO(),
-        };
-      }
-    }
-  } catch {
-    /* estado corrompido → recomeça */
-  }
-  return { completed: [], xp: 0, stamps: {}, streak: 1, lastActive: todayISO() };
+  date: string; // yyyy-mm-dd
 }
 
-export function useProgress() {
-  const [progress, setProgress] = useState<Progress>(load);
-  const hydrated = useRef(false);
+export interface LangProgress {
+  xp: number;
+  streak: number;
+  lastActive: string | null;
+  days: Record<number, DayRecord>;
+}
+
+export interface Store {
+  active: string | null;
+  langs: Record<string, LangProgress>;
+}
+
+const STORE_KEY = "rumo:store:v2";
+
+function freshLang(): LangProgress {
+  return { xp: 0, streak: 0, lastActive: null, days: {} };
+}
+
+function load(): Store {
+  try {
+    const raw = localStorage.getItem(STORE_KEY);
+    if (!raw) return { active: null, langs: {} };
+    const parsed = JSON.parse(raw) as Partial<Store>;
+    return {
+      active: typeof parsed.active === "string" ? parsed.active : null,
+      langs: parsed.langs && typeof parsed.langs === "object" ? (parsed.langs as Record<string, LangProgress>) : {},
+    };
+  } catch {
+    return { active: null, langs: {} };
+  }
+}
+
+function save(s: Store) {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(s));
+  } catch {
+    /* armazenamento indisponível — segue em memória */
+  }
+}
+
+const todayStr = () => new Date().toISOString().slice(0, 10);
+const yesterdayStr = () => new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+export interface UseProgressReturn {
+  store: Store;
+  lang: LangCode | null;
+  progress: LangProgress;
+  currentDay: number; // primeiro dia não concluído (91 = programa concluído)
+  isDayDone: (d: number) => boolean;
+  unlockedDay: (d: number) => boolean;
+  weekStamps: number[]; // semanas com carimbo conquistado
+  certificateEarned: boolean;
+  completeDay: (day: number, rec: DayRecord) => number; // retorna XP ganho (0 se o dia já estava feito)
+  chooseLanguage: (code: string) => void;
+  backToGate: () => void; // volta à escolha de idiomas (progresso preservado)
+  resetActive: () => void;
+  level: number;
+}
+
+export function useProgress(): UseProgressReturn {
+  const [store, setStore] = useState<Store>(load);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(progress));
-    } catch {
-      /* sem storage disponível */
-    }
-  }, [progress]);
+    save(store);
+  }, [store]);
 
-  /* Sequência de dias: atualiza uma vez ao abrir o app */
-  useEffect(() => {
-    if (hydrated.current) return;
-    hydrated.current = true;
-    setProgress((p) => {
-      const today = todayISO();
-      if (p.lastActive === today) return p;
-      const streak = p.lastActive === shiftISO(-1) ? p.streak + 1 : 1;
-      return { ...p, streak, lastActive: today };
+  const lang = (store.active as LangCode | null) ?? null;
+  const progress: LangProgress = lang ? store.langs[lang] ?? freshLang() : freshLang();
+
+  const currentDay = (() => {
+    for (let d = 1; d <= TOTAL_DAYS; d++) if (!progress.days[d]) return d;
+    return TOTAL_DAYS + 1;
+  })();
+
+  const isDayDone = useCallback((d: number) => Boolean(progress.days[d]), [progress]);
+  const unlockedDay = useCallback((d: number) => d <= currentDay, [currentDay]);
+
+  const weekStamps: number[] = [];
+  for (let w = 1; w <= 12; w++) {
+    const sd = weekStampDay(w);
+    if (sd && progress.days[sd]) weekStamps.push(w);
+  }
+  const certificateEarned = Boolean(progress.days[TOTAL_DAYS]);
+
+  const completeDay = useCallback(
+    (day: number, rec: DayRecord): number => {
+      if (!lang) return 0;
+      let gained = 0;
+      setStore((prev) => {
+        const p = prev.langs[lang] ?? freshLang();
+        if (p.days[day]) return prev; // dia já concluído — sem XP extra
+        gained = rec.xp;
+        const today = todayStr();
+        const streak = p.lastActive === today ? Math.max(p.streak, 1) : p.lastActive === yesterdayStr() ? p.streak + 1 : 1;
+        const next: LangProgress = {
+          ...p,
+          xp: p.xp + rec.xp,
+          streak,
+          lastActive: today,
+          days: { ...p.days, [day]: rec },
+        };
+        return { ...prev, langs: { ...prev.langs, [lang]: next } };
+      });
+      return gained;
+    },
+    [lang],
+  );
+
+  const chooseLanguage = useCallback((code: string) => {
+    setStore((prev) => ({
+      ...prev,
+      active: code,
+      langs: { ...prev.langs, [code]: prev.langs[code] ?? freshLang() },
+    }));
+  }, []);
+
+  const backToGate = useCallback(() => {
+    setStore((prev) => ({ ...prev, active: null }));
+  }, []);
+
+  const resetActive = useCallback(() => {
+    setStore((prev) => {
+      if (!prev.active) return prev;
+      return { ...prev, langs: { ...prev.langs, [prev.active]: freshLang() } };
     });
   }, []);
 
-  const isCompleted = (id: string) => progress.completed.includes(id);
-
-  const unlockedIndex = Math.min(progress.completed.length, LOCATIONS.length - 1);
-  const currentId =
-    progress.completed.length >= LOCATIONS.length
-      ? null
-      : LOCATIONS[unlockedIndex].id;
-
-  const isUnlocked = (id: string) => {
-    const idx = LOCATIONS.findIndex((l) => l.id === id);
-    if (idx === -1) return false;
-    return progress.completed.includes(id) || idx <= unlockedIndex;
-  };
-
-  /** Registra conclusão. Retorna o XP ganho (0 em modo revisão). */
-  const complete = (id: string, score: number): number => {
-    if (progress.completed.includes(id)) return 0;
-    const gained = score * XP_PER_QUESTION + (score === 3 ? PERFECT_BONUS : 0);
-    const date = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
-    setProgress((p) =>
-      p.completed.includes(id)
-        ? p
-        : {
-            ...p,
-            xp: p.xp + gained,
-            completed: [...p.completed, id],
-            stamps: {
-              ...p.stamps,
-              [id]: { date, score: `${score}/3`, perfect: score === 3 },
-            },
-          },
-    );
-    return gained;
-  };
-
-  const reset = () => {
-    setProgress({ completed: [], xp: 0, stamps: {}, streak: progress.streak, lastActive: todayISO() });
-  };
-
   return {
+    store,
+    lang,
     progress,
-    complete,
-    reset,
-    isCompleted,
-    isUnlocked,
-    currentId,
+    currentDay,
+    isDayDone,
+    unlockedDay,
+    weekStamps,
+    certificateEarned,
+    completeDay,
+    chooseLanguage,
+    backToGate,
+    resetActive,
     level: levelFromXp(progress.xp),
-    levelXp: xpIntoLevel(progress.xp),
-    xpPerLevel: XP_PER_LEVEL,
-    routeDone: progress.completed.length >= LOCATIONS.length,
   };
 }
-
-export type UseProgressReturn = ReturnType<typeof useProgress>;
