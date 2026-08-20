@@ -50,7 +50,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Science-fiction", pt: "Ficção científica" },
     ],
     complices: ["Léa", "Julien"],
-    weeks: [3, 10],
+    weeks: [3, 4, 10, 12],
     color: "#2b6cb0",
     quote: {
       fr: "Regarde les étoiles : chacune est une histoire.",
@@ -76,7 +76,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Victor Hugo", pt: "Victor Hugo" },
     ],
     complices: ["Camille", "Thomas"],
-    weeks: [1, 9],
+    weeks: [2, 5, 11, 12],
     color: "#e4572e",
     quote: {
       fr: "Chaque problème est une aventure à résoudre.",
@@ -102,7 +102,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Football (OM)", pt: "Futebol (OM)" },
     ],
     complices: ["Sophie", "Camille"],
-    weeks: [5, 7],
+    weeks: [3, 6, 7, 9, 12],
     color: "#e8930c",
     quote: {
       fr: "La table est le meilleur endroit pour se rencontrer.",
@@ -128,7 +128,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Jules Verne", pt: "Jules Verne" },
     ],
     complices: ["Thomas", "Sophie"],
-    weeks: [6, 10],
+    weeks: [3, 4, 10, 12],
     color: "#8d4fa0",
     quote: {
       fr: "Le ciel n'a pas de limites, nous non plus.",
@@ -154,7 +154,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Cinéma classique", pt: "Cinema clássico" },
     ],
     complices: ["Julien", "Sophie"],
-    weeks: [2, 11],
+    weeks: [1, 2, 5, 8, 11, 12],
     color: "#0e8f8b",
     quote: {
       fr: "L'art nous apprend à voir la beauté partout.",
@@ -180,7 +180,7 @@ export const CHARACTERS: Character[] = [
       { fr: "Albert Camus", pt: "Albert Camus" },
     ],
     complices: ["Marc", "Léa"],
-    weeks: [4, 8],
+    weeks: [2, 3, 6, 7, 8, 12],
     color: "#4a9c2f",
     quote: {
       fr: "Nous sommes libres, et c'est ce qui nous unit.",

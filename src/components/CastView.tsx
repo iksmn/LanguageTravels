@@ -99,12 +99,12 @@ export function CastView({ onOpenWeek }: { onOpenWeek: (week: number) => void })
               Les compagnons de voyage
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
-              Seis amigos, uma rota, <span className="text-mustard">liberdade para aprender junto</span>
+              Seis amigos, quatro países, <span className="text-mustard">liberdade para aprender junto</span>
             </h1>
             <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-paper/80">
-              Eles se cruzam entre observatórios, bistrôs e ateliês — e cada semana da rota francesa acontece na
-              companhia de um (ou dois) deles. Sem ciúmes, sem rivalidade: amizade profunda, apoio mútuo e conexões
-              que fluem no tempo certo.
+              Eles se cruzam entre observatórios, bistrôs, chalés alpinos e terraços — do Marais aos Alpes suíços, de
+              Bruxelas a Luxemburgo. Nos dias 10–19, o <strong className="text-paper">intermédio romântico</strong>: uma
+              festa em Paris e um chalé em Verbier. Sem ciúmes, sem rivalidade — amizade profunda e conexões que fluem.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {GROUP_PRINCIPLES.map((p) => (

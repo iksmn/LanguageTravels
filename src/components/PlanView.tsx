@@ -236,7 +236,7 @@ export function PlanView({
                   90 dias. 12 carimbos. <span className="text-bus">Un diplôme.</span>
                 </h2>
                 <p className="mt-1 max-w-xl text-[14px] text-ink-soft">
-                  Você completou a rota francesa inteira, de Charles de Gaulle à Corse. Seu certificado A1 está no passaporte.
+                  Você completou o Grand Tour pela Francofonia — de Paris aos Alpes suíços, de Bruxelas a Luxemburgo. Seu certificado A1 está no passaporte.
                 </p>
               </>
             ) : (
@@ -299,7 +299,7 @@ export function PlanView({
           ))}
         </div>
         <p className="px-1 pt-1 text-[12px] text-ink-soft italic">
-          Cada semana é uma parada na França: vocabulário, diálogo, quiz (carimbo!), revisão, escuta, desafio e um dia de cultura.
+          Cada semana é uma parada na Francofonia: vocabulário, diálogo, quiz (carimbo!), revisão, escuta, desafio e um dia de cultura.
         </p>
       </section>
     </div>

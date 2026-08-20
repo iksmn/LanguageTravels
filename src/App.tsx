@@ -4,7 +4,7 @@ import { ToastProvider, useToast } from "./components/Toasts";
 import { Header, type AppView } from "./components/Header";
 import { LangGate } from "./components/LangGate";
 import { PlanView } from "./components/PlanView";
-import { FranceMap } from "./components/FranceMap";
+import { GrandTourMap } from "./components/GrandTourMap";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
 import { SessionModal } from "./components/SessionModal";
@@ -90,7 +90,7 @@ function Shell() {
             <PlanView prog={prog} onOpenDay={openDay} onPassport={() => setView("passport")} />
           )}
           {view === "map" && (
-            <FranceMap
+            <GrandTourMap
               prog={prog}
               onSelectWeek={(week) => {
                 const firstDay = (week - 1) * 7 + 1;
