@@ -1,0 +1,217 @@
+import type { JSX } from "react";
+
+export type IconName =
+  | "plane"
+  | "train"
+  | "coffee"
+  | "museum"
+  | "tree"
+  | "market"
+  | "theater"
+  | "bridge"
+  | "compass"
+  | "flame"
+  | "star"
+  | "lock"
+  | "check"
+  | "volume"
+  | "x"
+  | "arrowRight"
+  | "pin"
+  | "passport"
+  | "reset"
+  | "play"
+  | "stop"
+  | "globe";
+
+/** Glifos puros (viewBox 24×24, stroke=currentColor) — reutilizáveis dentro de <svg> maior. */
+export function IconGlyph({ name }: { name: IconName }): JSX.Element {
+  switch (name) {
+    case "plane":
+      return (
+        <>
+          <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2Z" />
+        </>
+      );
+    case "train":
+      return (
+        <>
+          <rect x="5" y="3" width="14" height="13" rx="2.5" />
+          <path d="M5 10h14" />
+          <path d="M9 13.5h.01M15 13.5h.01" strokeWidth={2.4} />
+          <path d="m8.5 16-2 4M15.5 16l2 4M6.5 20h11" />
+        </>
+      );
+    case "coffee":
+      return (
+        <>
+          <path d="M17 9h1.5a2.5 2.5 0 0 1 0 5H17" />
+          <path d="M4 9h13v5a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z" />
+          <path d="M8 2.5v2.5M12 2.5v2.5" />
+        </>
+      );
+    case "museum":
+      return (
+        <>
+          <path d="M3 10 12 4l9 6" />
+          <path d="M5.5 10v7M10 10v7M14 10v7M18.5 10v7" />
+          <path d="M3.5 21h17M4 17.5h16" />
+        </>
+      );
+    case "tree":
+      return (
+        <>
+          <path d="M12 22v-4" />
+          <path d="M12 18c-3.9 0-6.3-2.5-6.3-5.8 0-1.9 1-3.5 2.3-4.4C8.4 5.2 10 3 12 3s3.6 2.2 4 4.8c1.3.9 2.3 2.5 2.3 4.4 0 3.3-2.4 5.8-6.3 5.8Z" />
+        </>
+      );
+    case "market":
+      return (
+        <>
+          <path d="m5.2 9 2.3-4.5M18.8 9l-2.3-4.5" />
+          <path d="M3 9h18l-1.7 9.3a2 2 0 0 1-2 1.7H6.7a2 2 0 0 1-2-1.7Z" />
+          <path d="M8.2 12.5v3M12 12.5v3M15.8 12.5v3" />
+        </>
+      );
+    case "theater":
+      return (
+        <>
+          <path d="M4 4h16v8a8 8 0 0 1-16 0Z" />
+          <path d="M8.5 9.5h.01M15.5 9.5h.01" strokeWidth={2.4} />
+          <path d="M8.5 13.2c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8" />
+        </>
+      );
+    case "bridge":
+      return (
+        <>
+          <path d="M2.5 19h19" />
+          <path d="M6 19V9.5L8 6.5l2 3V19M14 19v-9.5l2-3 2 3V19" />
+          <path d="M10 11h4M10 14.5h4" />
+          <path d="M2.5 13H6M18 13h3.5" />
+        </>
+      );
+    case "compass":
+      return (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="m15.5 8.5-2 5-5 2 2-5Z" />
+        </>
+      );
+    case "flame":
+      return (
+        <>
+          <path d="M12 22c4.2 0 7-2.8 7-6.6 0-2.9-1.7-4.9-3.1-6.5C14.4 7.2 13 5.4 13 2.2c-3.4 2-5 4.9-4.4 7.5-.9-.3-1.6-1-2-2C5 9.4 4 11.7 4 14.2 4 18.6 7.6 22 12 22Z" />
+        </>
+      );
+    case "star":
+      return (
+        <>
+          <path d="m12 2.5 2.3 6.4 6.7 2.3-6.7 2.3L12 20l-2.3-6.5L3 11.2l6.7-2.3Z" />
+        </>
+      );
+    case "lock":
+      return (
+        <>
+          <rect x="5" y="11" width="14" height="9" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+        </>
+      );
+    case "check":
+      return (
+        <>
+          <path d="m4.5 12.5 5 5 10-11" />
+        </>
+      );
+    case "volume":
+      return (
+        <>
+          <path d="M11 5 6 9H3v6h3l5 4Z" />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" />
+        </>
+      );
+    case "x":
+      return (
+        <>
+          <path d="M6 6l12 12M18 6 6 18" />
+        </>
+      );
+    case "arrowRight":
+      return (
+        <>
+          <path d="M4 12h16M13 5l7 7-7 7" />
+        </>
+      );
+    case "pin":
+      return (
+        <>
+          <path d="M12 21s-7-5.3-7-11a7 7 0 0 1 14 0c0 5.7-7 11-7 11Z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </>
+      );
+    case "passport":
+      return (
+        <>
+          <rect x="4" y="3" width="16" height="18" rx="2" />
+          <circle cx="12" cy="10" r="3" />
+          <path d="M8 16.5h8" />
+        </>
+      );
+    case "reset":
+      return (
+        <>
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 4v5h5" />
+        </>
+      );
+    case "play":
+      return (
+        <>
+          <path d="M8 5.5v13l11-6.5Z" />
+        </>
+      );
+    case "stop":
+      return (
+        <>
+          <rect x="7" y="7" width="10" height="10" rx="1.5" />
+        </>
+      );
+    case "globe":
+      return (
+        <>
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z" />
+        </>
+      );
+    default:
+      return <circle cx="12" cy="12" r="8" />;
+  }
+}
+
+export function Icon({
+  name,
+  size = 20,
+  className,
+  strokeWidth = 1.8,
+}: {
+  name: IconName;
+  size?: number;
+  className?: string;
+  strokeWidth?: number;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <IconGlyph name={name} />
+    </svg>
+  );
+}
