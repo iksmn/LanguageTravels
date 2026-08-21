@@ -10,6 +10,7 @@ const LANG_NAME: Record<string, string> = {
   es: "Espanhol",
   en: "Inglês",
   zh: "Mandarim",
+  ja: "Japonês",
 };
 
 export type AppView = "plan" | "map" | "verbs" | "cast" | "passport" | "offline";
