@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Week } from "../data/curriculum";
+import { CAST_MAP, findChar } from "../data/cast";
 import {
   SESSION_ICONS,
   SESSION_META,
@@ -12,6 +13,7 @@ import {
 } from "../lib/engine";
 import { canSpeak, speak, stopSpeaking } from "../lib/speech";
 import { Icon, type IconName } from "./Icons";
+import { Avatar } from "./Avatar";
 
 /* ------------------------------ confete ------------------------------ */
 
@@ -88,7 +90,7 @@ function Certificate({ xp, examXp }: { xp: number; examXp: number }) {
           dias
         </div>
         <div className="rounded-md border border-ink/15 px-1 py-1.5">
-          <p className="text-[13px] font-bold text-ink">12</p>
+          <p className="text-[13px] font-bold text-ink">13</p>
           carimbos
         </div>
         <div className="rounded-md border border-ink/15 px-1 py-1.5">
@@ -237,20 +239,27 @@ function DialogueScript({ week }: { week: Week }) {
       <div className="flex flex-col gap-2.5">
         {week.dialogue.map((line, i) => {
           const you = line.who === "you";
+          const ch = you ? null : findChar(line.speaker);
+          const speakerLabel = you ? "Você" : line.speaker ?? week.localName;
           return (
-            <div key={i} className={`flex ${you ? "justify-end" : "justify-start"}`}>
+            <div key={i} className={`flex items-end gap-2 ${you ? "justify-end" : "justify-start"}`}>
+              {!you && (
+                <span className={`shrink-0 rounded-full ring-2 ring-paper ${ch ? "" : "hidden"}`}>
+                  {ch && <Avatar char={ch} size={30} />}
+                </span>
+              )}
               <div
                 className={`max-w-[88%] rounded-xl border-2 px-3.5 py-2.5 transition-all duration-300 ${
                   you ? "border-ink/25 bg-card" : "border-ink/15 bg-paper"
                 } ${active === i ? "-translate-y-0.5 shadow-print-sm" : ""}`}
-                style={active === i ? { borderColor: week.color } : undefined}
+                style={active === i ? { borderColor: ch?.color ?? week.color } : undefined}
               >
                 <div className="mb-1 flex items-center gap-2">
                   <span
                     className="rounded px-1.5 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] uppercase"
-                    style={{ background: `${you ? "#4c5f74" : week.color}1f`, color: you ? "#4c5f74" : week.color }}
+                    style={{ background: `${you ? "#4c5f74" : ch?.color ?? week.color}1f`, color: you ? "#4c5f74" : ch?.color ?? week.color }}
                   >
-                    {you ? "Você" : week.localName}
+                    {speakerLabel}
                   </span>
                   <button
                     onClick={() => speak(line.fr)}
@@ -610,8 +619,37 @@ export function SessionModal({
         <div ref={bodyRef} className="slim-scroll flex-1 overflow-y-auto px-4 py-5 sm:px-6">
           {phase === "session" ? (
             <>
+              {week && (
+                <div className="fade-up mb-4 flex items-start gap-3 rounded-lg border-2 border-ink/12 bg-card px-3.5 py-3">
+                  <div className="flex shrink-0 -space-x-2 pt-1">
+                    {week.cast.map((id) => {
+                      const c = CAST_MAP[id];
+                      return c ? (
+                        <span key={id} className="rounded-full ring-2 ring-paper" title={c.name}>
+                          <Avatar char={c} size={30} />
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: week.color }}>
+                      Le récit · {week.themes.map((t) => t.fr).join(" · ")}
+                    </p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-ink-soft italic">{week.story}</p>
+                  </div>
+                </div>
+              )}
               {info.type === "vocab" && week && <VocabCards week={week} />}
-              {info.type === "dialogue" && week && <DialogueScript week={week} />}
+              {info.type === "dialogue" && week && (
+                <>
+                  {week.num === 13 && (
+                    <div className="mb-4">
+                      <VocabCards week={week} />
+                    </div>
+                  )}
+                  <DialogueScript week={week} />
+                </>
+              )}
               {info.type === "culture" && week && <CultureSession week={week} />}
               {info.type === "quiz" && week && <AuthoredQuiz week={week} onDone={(s) => handleDone(s, week.quiz.length)} />}
               {info.type === "review" && (

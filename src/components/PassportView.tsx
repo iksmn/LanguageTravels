@@ -129,7 +129,7 @@ export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onRes
             </div>
             <h3 className="mt-3 font-display text-[26px] font-extrabold tracking-tight">Diplôme de Français — Niveau A1</h3>
             <p className="mx-auto mt-2 max-w-md text-[13.5px] leading-relaxed text-ink-soft">
-              Concedido a quem percorreu os 90 dias da rota francesa: 12 paradas, 60 palavras, diálogos, escuta e um
+              Concedido a quem percorreu os 90 dias do Grand Tour pela Francofonia — França, Suíça, Bélgica e Luxemburgo: 12 paradas, 60 palavras, diálogos, escuta e um
               exame final. <strong className="text-ink">Bravo, et à la prochaine !</strong>
             </p>
             <p className="mt-4 font-mono text-[10px] tracking-[0.2em] text-ink/45 uppercase">

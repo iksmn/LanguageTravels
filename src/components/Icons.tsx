@@ -37,7 +37,11 @@ export type IconName =
   | "sparkle"
   | "cap"
   | "calendar"
-  | "flag";
+  | "flag"
+  | "users"
+  | "music"
+  | "wine"
+  | "heart";
 
 /** Glifos puros (viewBox 24×24, stroke=currentColor) — reutilizáveis dentro de <svg> maior. */
 export function IconGlyph({ name }: { name: IconName }): JSX.Element {
@@ -273,6 +277,33 @@ export function IconGlyph({ name }: { name: IconName }): JSX.Element {
           <path d="M5 21V4" />
           <path d="M5 4h13l-2.5 3.5L18 11H5" />
         </>
+      );
+    case "users":
+      return (
+        <>
+          <circle cx="9" cy="8" r="3.5" />
+          <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" />
+          <path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 14.4c2.4.7 4 2.5 4 5.1" />
+        </>
+      );
+    case "music":
+      return (
+        <>
+          <path d="M9 18V6l10-2v12" />
+          <circle cx="6.5" cy="18" r="2.5" />
+          <circle cx="16.5" cy="16" r="2.5" />
+        </>
+      );
+    case "wine":
+      return (
+        <>
+          <path d="M8 3h8c0 4.4-1.8 7-4 7s-4-2.6-4-7Z" />
+          <path d="M12 10v8M8 21h8" />
+        </>
+      );
+    case "heart":
+      return (
+        <path d="M12 20.5S4 15 4 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5c0 5.5-8 11-8 11Z" />
       );
     default:
       return <circle cx="12" cy="12" r="8" />;

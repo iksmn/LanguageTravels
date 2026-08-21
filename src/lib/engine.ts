@@ -1,4 +1,5 @@
-import { WEEKS, type Week } from "../data/curriculum";
+import { WEEKS, WEEK_VERBS, type Week } from "../data/curriculum";
+import { conjugate, withPronoun, VERB_MAP, IMPERSONAL } from "../data/verbs";
 import type { IconName } from "../components/Icons";
 
 export const SESSION_ICONS: Record<string, IconName> = {
@@ -26,7 +27,7 @@ export interface DayInfo {
   day: number;
   week: number; // 1..13
   type: SessionType;
-  weekData: Week | null; // null na semana 13
+  weekData: Week | null;
 }
 
 export const TOTAL_DAYS = 90;
@@ -35,8 +36,8 @@ export const WEEKS_TOTAL = 13;
 /** Tipo de sessão por dia dentro da semana (1..7). */
 const WEEK_TYPES: SessionType[] = ["vocab", "dialogue", "quiz", "review", "listening", "challenge", "culture"];
 
-/** Dias 85–90: a Grande Revisão. */
-const FINAL_TYPES: SessionType[] = ["review", "review", "review", "listening", "challenge", "exam"];
+/** Dias 85–90: a semana final em Mônaco (revisão, último diálogo, escuta, desafio e exame). */
+const FINAL_TYPES: SessionType[] = ["review", "dialogue", "review", "listening", "challenge", "exam"];
 
 export const SESSION_META: Record<SessionType, { label: string; color: string; xpHint: string }> = {
   vocab: { label: "Vocabulário", color: "#0e8f8b", xpHint: "+20 XP" },
@@ -57,7 +58,7 @@ export function getDayInfo(day: number): DayInfo {
     return { day: d, week, type: WEEK_TYPES[dayInWeek - 1], weekData: WEEKS[week - 1] };
   }
   const idx = d - 85; // 0..5
-  return { day: d, week: 13, type: FINAL_TYPES[idx], weekData: null };
+  return { day: d, week: 13, type: FINAL_TYPES[idx], weekData: WEEKS[12] ?? null };
 }
 
 /* ------------------------- RNG determinístico ------------------------- */
@@ -155,11 +156,68 @@ function poolForWeeks(weekNums: number[]): Pool {
   return weekNums.flatMap((w) => (WEEKS[w - 1] ? WEEKS[w - 1].vocab : []));
 }
 
-const allWeeks = () => Array.from({ length: WEEKS.length }, (_, i) => i + 1);
+const allWeeks = () => Array.from({ length: 12 }, (_, i) => i + 1);
+
+/** Questões de conjugação (présent) a partir de verbos da base Reverso. */
+function conjugateQs(verbInfs: string[], n: number, seed: number): GenQ[] {
+  const rng = mulberry32(seed);
+  const usable = verbInfs.filter((inf) => {
+    const v = VERB_MAP[inf];
+    return v && !IMPERSONAL.has(inf.replace(/^s'|^se /, "")) && conjugate(inf) !== null;
+  });
+  return shuffle(usable, rng)
+    .slice(0, n)
+    .map((inf) => {
+      const verb = VERB_MAP[inf];
+      const forms = conjugate(inf)!;
+      const person = Math.floor(rng() * 6);
+      const correct = forms[person];
+      if (!correct) return null;
+      const pronoun = withPronoun(person, correct).replace(/ .+$/, "");
+      const others = [...new Set(forms.filter((_, i) => i !== person && forms[i]))];
+      const distractors = shuffle(others, rng).slice(0, 3);
+      const options = shuffle([correct, ...distractors], rng);
+      const q: GenQ = {
+        prompt: `Conjuguez : « ${pronoun} ___ » (${inf})`,
+        options,
+        a: options.indexOf(correct),
+        why: `${withPronoun(person, correct)} — présent de « ${inf} » (${verb.pt}).`,
+      };
+      return q;
+    })
+    .filter((q) => q !== null) as GenQ[];
+}
 
 /** Questões de uma sessão gerada (review / listening / challenge / exam). */
 export function sessionQuestions(info: DayInfo, seed: number): GenQ[] {
   const { day, week, type } = info;
+
+  // Semana 13 — Mônaco, dias 85..90
+  if (week === 13) {
+    const full = poolForWeeks(allWeeks());
+    const wk13 = WEEKS[12];
+    switch (type) {
+      case "review":
+        return day === 85
+          ? translateQs(poolForWeeks([1, 2, 3, 4, 5, 6]), 8, seed)
+          : reverseQs(poolForWeeks([7, 8, 9, 10, 11, 12]), 8, seed);
+      case "listening":
+        return listeningQs([...full, ...(wk13 ? wk13.vocab : [])], 6, seed);
+      case "challenge":
+        return [
+          ...mixedQs(full, 5, seed),
+          ...conjugateQs(WEEK_VERBS[wk13?.id ?? ""] ?? [], 3, seed + 31),
+        ];
+      case "exam":
+        return [
+          ...mixedQs(full, 7, seed),
+          ...conjugateQs(WEEK_VERBS[wk13?.id ?? ""] ?? [], 3, seed + 37),
+        ];
+      default:
+        return [];
+    }
+  }
+
   if (week <= 12 && info.weekData) {
     const wk = info.weekData;
     const upTo = poolForWeeks(allWeeks().filter((w) => w <= week));
@@ -169,30 +227,15 @@ export function sessionQuestions(info: DayInfo, seed: number): GenQ[] {
       case "listening":
         return listeningQs(wk.vocab, 5, seed);
       case "challenge":
-        return mixedQs(upTo, 8, seed);
+        return [
+          ...mixedQs(upTo, 5, seed),
+          ...conjugateQs(WEEK_VERBS[wk.id] ?? [], 3, seed + 31),
+        ];
       default:
         return [];
     }
   }
-  // Semana 13 — dias 85..90
-  const idx = day - 85;
-  const full = poolForWeeks(allWeeks());
-  switch (idx) {
-    case 0:
-      return translateQs(poolForWeeks([1, 2, 3, 4]), 6, seed);
-    case 1:
-      return reverseQs(poolForWeeks([5, 6, 7, 8]), 6, seed);
-    case 2:
-      return translateQs(poolForWeeks([9, 10, 11, 12]), 6, seed);
-    case 3:
-      return listeningQs(full, 6, seed);
-    case 4:
-      return mixedQs(full, 8, seed);
-    case 5:
-      return mixedQs(full, 10, seed);
-    default:
-      return [];
-  }
+  return [];
 }
 
 /* ------------------------------ XP e níveis --------------------------- */
@@ -252,7 +295,8 @@ export function xpForSession(type: SessionType, score: number, total: number): n
   }
 }
 
-/** O carimbo da semana é garantido ao concluir o quiz (dia 3 da semana). */
+/** O carimbo da semana é garantido ao concluir o quiz (dia 3). Em Mônaco, vale o exame (dia 90). */
 export function weekStampDay(week: number): number | null {
+  if (week === 13) return 90;
   return week <= 12 ? (week - 1) * 7 + 3 : null;
 }

@@ -1,14 +1,15 @@
 import { WEEKS } from "../data/curriculum";
+import { CAST_MAP } from "../data/cast";
 import {
   SESSION_ICONS,
   SESSION_META,
   TOTAL_DAYS,
   WEEKS_TOTAL,
   getDayInfo,
-  type SessionType,
 } from "../lib/engine";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { Icon, type IconName } from "./Icons";
+import { Avatar } from "./Avatar";
 
 function ProgressRing({ pct }: { pct: number }) {
   const r = 34;
@@ -132,6 +133,23 @@ function WeekRow({
             {isFinal ? "Dias 85–90 · exame final" : wk?.city}
           </p>
         </div>
+        {!isFinal && wk && (
+          <div className="flex w-full items-center justify-between gap-2 sm:mt-1.5">
+            <div className="flex -space-x-1.5">
+              {wk.cast.map((id) => {
+                const c = CAST_MAP[id];
+                return c ? (
+                  <span key={id} className="rounded-full ring-2 ring-card transition-transform duration-200 hover:-translate-y-1" title={c.name}>
+                    <Avatar char={c} size={20} />
+                  </span>
+                ) : null;
+              })}
+            </div>
+            <p className="truncate font-mono text-[8.5px] font-semibold tracking-[0.08em] text-ink/45 uppercase" title={wk.themes.map((t) => `${t.fr} — ${t.pt}`).join("\n")}>
+              {wk.themes.map((t) => t.fr).join(" · ")}
+            </p>
+          </div>
+        )}
         <div className="flex items-center gap-1.5 sm:mt-1">
           {stamped ? (
             <span className="flex items-center gap-1 font-mono text-[9.5px] font-bold tracking-wider text-leaf uppercase">
@@ -204,7 +222,11 @@ export function PlanView({
                 {meta.label}
               </span>
               <span className="font-mono text-[10px] font-semibold tracking-[0.18em] text-ink-soft uppercase">
-                {finished ? "Programa concluído" : info.week <= 12 ? `Semaine ${String(info.week).padStart(2, "0")} · ${info.weekData?.place}` : "La Grande Révision"}
+                {finished
+                  ? "Programa concluído"
+                  : info.week <= 12
+                    ? `Semaine ${String(info.week).padStart(2, "0")} · ${info.weekData?.place} · ${info.weekData?.themes.map((t) => t.fr).join(" + ")}`
+                    : "La Grande Révision"}
               </span>
             </div>
 
@@ -214,7 +236,7 @@ export function PlanView({
                   90 dias. 12 carimbos. <span className="text-bus">Un diplôme.</span>
                 </h2>
                 <p className="mt-1 max-w-xl text-[14px] text-ink-soft">
-                  Você completou a rota francesa inteira, de Charles de Gaulle à Corse. Seu certificado A1 está no passaporte.
+                  Você completou o Grand Tour pela Francofonia — de Paris aos Alpes suíços, de Bruxelas a Luxemburgo. Seu certificado A1 está no passaporte.
                 </p>
               </>
             ) : (
@@ -277,7 +299,7 @@ export function PlanView({
           ))}
         </div>
         <p className="px-1 pt-1 text-[12px] text-ink-soft italic">
-          Cada semana é uma parada na França: vocabulário, diálogo, quiz (carimbo!), revisão, escuta, desafio e um dia de cultura.
+          Cada semana é uma parada na Francofonia: vocabulário, diálogo, quiz (carimbo!), revisão, escuta, desafio e um dia de cultura.
         </p>
       </section>
     </div>
