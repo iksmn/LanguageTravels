@@ -6,11 +6,16 @@ Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
 - **Francês** — França, Suíça, Bélgica, Luxemburgo e Mônaco
 - **Italiano** — Itália e Suíça
 - **Alemão** — Alemanha, Suíça, Áustria e Liechtenstein
-- **Espanhol** — Espanha e Portugal
-- **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda (de Barcelona ao Cabo de São Vicente)
+- **Espanhol** — Espanha e Portugal (de Barcelona ao Cabo de São Vicente)
+- **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda
 
 Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
 passaporte e diploma final.
+
+> **Cada idioma tem seus próprios personagens** — seis companheiros de viagem distintos
+> (nome, cidade, profissão, personalidade e avatar), criados para a cultura de cada rota e
+> visíveis na aba *Compagnons*. Todos seguem a mesma filosofia: liberdade, amizade profunda
+> e apoio mútuo, sem ciúmes. Os temas de astronomia e futebol acompanham todas as rotas.
 
 > Todo o progresso é salvo **automaticamente no navegador** (localStorage) e pode ser
 > exportado/restaurado como arquivo `.json`. As **fontes são empacotadas localmente**
