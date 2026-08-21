@@ -1,23 +1,23 @@
 import { useMemo, useState } from "react";
 import {
-  GROUP_COLOR,
-  GROUP_LABEL,
-  IMPERSONAL,
-  PRONOUNS,
-  VERB_LIST,
-  VERB_SOURCE_URL,
-  conjugate,
-  reversoUrl,
-  withPronoun,
-  type Verb,
-} from "../data/verbs";
-import { WEEK_VERBS } from "../data/curriculum";
+  conjugateLang,
+  conjugatorSourceUrl,
+  conjugatorUrl,
+  groupColor,
+  groupLabel,
+  isItalian,
+  pronouns,
+  speechLang,
+  verbList,
+  weekVerbs,
+  withPronounLang,
+  type VerbShape,
+} from "../data/content";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { mulberry32, shuffle } from "../lib/engine";
 import { canSpeak, speak } from "../lib/speech";
 import { Icon } from "./Icons";
 
-const TOUR_VERBS = new Set(Object.values(WEEK_VERBS).flat());
 const norm = (s: string) =>
   s
     .normalize("NFD")
@@ -26,21 +26,14 @@ const norm = (s: string) =>
 
 type Filter = "all" | 1 | 2 | 3 | "tour";
 
-const FILTERS: { id: Filter; label: string; color?: string }[] = [
-  { id: "all", label: "Tous · 250" },
-  { id: 1, label: "1ᵉʳ groupe · -er", color: GROUP_COLOR[1] },
-  { id: 2, label: "2ᵉ groupe · -ir", color: GROUP_COLOR[2] },
-  { id: 3, label: "3ᵉ groupe · irrég.", color: GROUP_COLOR[3] },
-  { id: "tour", label: "★ du Grand Tour", color: "#b8860b" },
-];
+const isImpersonal = (inf: string) => !isItalian() && (inf === "falloir" || inf === "pleuvoir");
 
 /* ------------------------- mini-quiz de conjugação ------------------- */
 
-function VerbQuiz({ verb, onDone }: { verb: Verb; onDone: (score: number, total: number) => void }) {
-  const base = verb.inf.replace(/^s'|^se /, "");
-  const isImper = IMPERSONAL.has(base);
+function VerbQuiz({ verb, onDone }: { verb: VerbShape; onDone: (score: number, total: number) => void }) {
+  const isImper = isImpersonal(verb.inf);
   const persons = isImper ? [2] : [0, 1, 2, 3, 4, 5];
-  const forms = conjugate(verb.inf) ?? [];
+  const forms = conjugateLang(verb.inf) ?? [];
 
   const questions = useMemo(() => {
     const rng = mulberry32(verb.inf.length * 97 + verb.inf.charCodeAt(0));
@@ -58,7 +51,7 @@ function VerbQuiz({ verb, onDone }: { verb: Verb; onDone: (score: number, total:
   const q = questions[qi];
   if (!q || !q.correct) return null;
 
-  const pronoun = withPronoun(q.person, q.correct).replace(/ .+$/, "");
+  const pronoun = withPronounLang(q.person, q.correct).replace(/ .+$/, "");
 
   const pick = (i: number) => {
     if (picked !== null) return;
@@ -80,12 +73,12 @@ function VerbQuiz({ verb, onDone }: { verb: Verb; onDone: (score: number, total:
         <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-ink-soft uppercase">
           Quiz · questão {qi + 1}/{questions.length}
         </p>
-        <p className="font-mono text-[11px] font-semibold" style={{ color: GROUP_COLOR[verb.g] }}>
+        <p className="font-mono text-[11px] font-semibold" style={{ color: groupColor(verb.g) }}>
           {score} acerto{score === 1 ? "" : "s"}
         </p>
       </div>
       <p className="mt-2 font-display text-[17px] font-bold">
-        Conjuguez : « {pronoun} ___ » <span className="text-ink-soft">({verb.inf})</span>
+        Conjugue: « {pronoun} ___ » <span className="text-ink-soft">({verb.inf})</span>
       </p>
       <div className="mt-2.5 grid grid-cols-2 gap-1.5">
         {q.options.map((opt, i) => {
@@ -110,8 +103,8 @@ function VerbQuiz({ verb, onDone }: { verb: Verb; onDone: (score: number, total:
       </div>
       {picked !== null && (
         <div className="fade-up mt-2 flex items-center justify-between gap-2">
-          <p className={`text-[12.5px] ${picked === q.options.indexOf(q.correct) || q.options[picked] === q.correct ? "text-leaf" : "text-ink-soft"}`}>
-            {q.options[picked] === q.correct ? "Très bien !" : `Correto: «${withPronoun(q.person, q.correct)}»`}
+          <p className={`text-[12.5px] ${q.options[picked] === q.correct ? "text-leaf" : "text-ink-soft"}`}>
+            {q.options[picked] === q.correct ? (isItalian() ? "Bravissimo!" : "Très bien !") : `Correto: «${withPronounLang(q.person, q.correct)}»`}
           </p>
           <button
             onClick={next}
@@ -134,19 +127,17 @@ function VerbDetail({
   onClose,
   onScore,
 }: {
-  verb: Verb;
+  verb: VerbShape;
   best: number;
   onClose: () => void;
   onScore: (score: number, total: number) => void;
 }) {
-  const forms = conjugate(verb.inf) ?? [];
-  const base = verb.inf.replace(/^s'|^se /, "");
-  const isImper = IMPERSONAL.has(base);
-  const isTour = TOUR_VERBS.has(verb.inf);
+  const forms = conjugateLang(verb.inf) ?? [];
+  const isImper = isImpersonal(verb.inf);
   const [training, setTraining] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number } | null>(null);
-
   const rows = isImper ? [2] : [0, 1, 2, 3, 4, 5];
+  const PR = pronouns();
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-3 sm:p-5">
@@ -154,20 +145,13 @@ function VerbDetail({
       <div className="fade-up slim-scroll relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl border-2 border-ink bg-paper p-5 shadow-print">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2.5">
-              <h2 className="font-display text-[26px] font-extrabold tracking-tight">{verb.inf}</h2>
-              {isTour && (
-                <span className="rounded-full border border-mustard/60 bg-mustard/12 px-2 py-0.5 font-mono text-[9px] font-bold tracking-[0.14em] text-mustard uppercase">
-                  ★ Grand Tour
-                </span>
-              )}
-            </div>
+            <h2 className="font-display text-[26px] font-extrabold tracking-tight">{verb.inf}</h2>
             <p className="text-[14px] text-ink-soft">{verb.pt}</p>
             <span
               className="mt-1.5 inline-block rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-semibold tracking-wide"
-              style={{ borderColor: `${GROUP_COLOR[verb.g]}55`, color: GROUP_COLOR[verb.g], background: `${GROUP_COLOR[verb.g]}0d` }}
+              style={{ borderColor: `${groupColor(verb.g)}55`, color: groupColor(verb.g), background: `${groupColor(verb.g)}0d` }}
             >
-              {GROUP_LABEL[verb.g]}
+              {groupLabel(verb.g)}
             </span>
           </div>
           <button
@@ -181,9 +165,11 @@ function VerbDetail({
         {/* tabela de conjugação */}
         <div className="mt-4 overflow-hidden rounded-lg border-2 border-ink/15">
           <div className="flex items-center justify-between bg-ink px-3 py-1.5">
-            <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-paper uppercase">Présent de l'indicatif</p>
+            <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-paper uppercase">
+              {isItalian() ? "Presente indicativo" : "Présent de l'indicatif"}
+            </p>
             <button
-              onClick={() => rows.forEach((p) => forms[p] && speak(withPronoun(p, forms[p])))}
+              onClick={() => rows.forEach((p) => forms[p] && speak(withPronounLang(p, forms[p]), speechLang()))}
               className="flex items-center gap-1 font-mono text-[10px] font-semibold text-paper/80 hover:text-mustard"
             >
               <Icon name="volume" size={13} strokeWidth={2.2} />
@@ -196,13 +182,13 @@ function VerbDetail({
                 forms[p] ? (
                   <tr key={p} className="group border-t border-ink/8">
                     <td className="w-[38%] px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-ink-soft uppercase">
-                      {PRONOUNS[p]}
+                      {PR[p]}
                     </td>
                     <td className="px-3 py-1.5 font-display text-[16px] font-bold">{forms[p]}</td>
                     <td className="w-10 pr-2 text-right">
                       <button
-                        onClick={() => speak(withPronoun(p, forms[p]))}
-                        className="text-ink/30 transition-colors group-hover:text-ink-soft hover:text-bus"
+                        onClick={() => speak(withPronounLang(p, forms[p]), speechLang())}
+                        className="text-ink/30 transition-colors hover:text-bus group-hover:text-ink-soft"
                         title="Ouvir"
                       >
                         <Icon name="volume" size={15} strokeWidth={2} />
@@ -234,7 +220,7 @@ function VerbDetail({
               <button
                 onClick={() => setTraining(true)}
                 className="btn-press flex shrink-0 items-center gap-1.5 rounded-lg border-2 border-ink px-3.5 py-2 font-mono text-[11px] font-bold tracking-wide text-card uppercase shadow-print-sm"
-                style={{ background: GROUP_COLOR[verb.g] }}
+                style={{ background: groupColor(verb.g) }}
               >
                 <Icon name="play" size={13} strokeWidth={2.4} />
                 Treinar
@@ -254,8 +240,12 @@ function VerbDetail({
           {result && (
             <div className="fade-up rounded-lg border-2 border-leaf/50 bg-leaf/10 px-3.5 py-3">
               <p className="font-display text-[16px] font-bold text-leaf">
-                {result.score}/{result.total} — {result.score === result.total ? "Parfait !" : result.score >= result.total / 2 ? "Très bien !" : "Continue !"
-                }
+                {result.score}/{result.total} —{" "}
+                {result.score === result.total
+                  ? isItalian() ? "Perfetto!" : "Parfait !"
+                  : result.score >= result.total / 2
+                    ? isItalian() ? "Molto bene!" : "Très bien !"
+                    : "Continue !"}
               </p>
               <button
                 onClick={() => {
@@ -272,7 +262,7 @@ function VerbDetail({
         </div>
 
         <a
-          href={reversoUrl(verb.inf)}
+          href={conjugatorUrl(verb.inf)}
           target="_blank"
           rel="noreferrer"
           className="mt-4 flex items-center gap-1.5 font-mono text-[11px] font-semibold text-cobalt hover:underline"
@@ -290,22 +280,32 @@ function VerbDetail({
 export function VerbsView({ prog }: { prog: UseProgressReturn }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
-  const [selected, setSelected] = useState<Verb | null>(null);
+  const [selected, setSelected] = useState<VerbShape | null>(null);
 
-  const verbs = prog.progress.verbs ?? {};
-  const trained = Object.keys(verbs).filter((k) => (verbs[k] ?? 0) > 0).length;
-  const mastered = Object.keys(verbs).filter((k) => (verbs[k] ?? 0) >= 6).length;
+  const it = isItalian();
+  const TOUR_VERBS = useMemo(() => new Set(Object.values(weekVerbs()).flat()), [it]);
+  const verbsRecord = prog.progress.verbs ?? {};
+  const trained = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) > 0).length;
+  const mastered = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) >= 6).length;
+
+  const FILTERS: { id: Filter; label: string; color?: string }[] = [
+    { id: "all", label: it ? "Tutti · 250" : "Tous · 250" },
+    { id: 1, label: it ? "1ª coniug. · -are" : "1ᵉʳ groupe · -er", color: groupColor(1) },
+    { id: 2, label: it ? "2ª coniug. · -ere" : "2ᵉ groupe · -ir", color: groupColor(2) },
+    { id: 3, label: it ? "3ª coniug. · -ire" : "3ᵉ groupe · irrég.", color: groupColor(3) },
+    { id: "tour", label: it ? "★ del viaggio" : "★ du Grand Tour", color: "#b8860b" },
+  ];
 
   const list = useMemo(() => {
     const q = norm(query.trim());
-    return VERB_LIST.filter((v) => {
+    return verbList().filter((v) => {
       if (filter === 1 || filter === 2 || filter === 3) {
         if (v.g !== filter) return false;
       } else if (filter === "tour" && !TOUR_VERBS.has(v.inf)) return false;
       if (q && !norm(v.inf).includes(q) && !norm(v.pt).includes(q)) return false;
       return true;
     });
-  }, [query, filter]);
+  }, [query, filter, TOUR_VERBS, it]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -316,17 +316,17 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
           <div className="min-w-0">
             <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.24em] text-mustard uppercase">
               <Icon name="book" size={14} strokeWidth={2.2} />
-              Le Conjugueur
+              {it ? "Il Coniugatore" : "Le Conjugueur"}
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
-              Les 250 verbes <span className="text-mustard">essentiels</span>
+              {it ? <>I 250 verbi <span className="text-mustard">essenziali</span></> : <>Les 250 verbes <span className="text-mustard">essentiels</span></>}
             </h1>
             <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-paper/75">
               Baseados na lista dos verbos mais conjugados do{" "}
-              <a href={VERB_SOURCE_URL} target="_blank" rel="noreferrer" className="font-semibold text-mustard underline decoration-mustard/40 hover:decoration-mustard">
+              <a href={conjugatorSourceUrl()} target="_blank" rel="noreferrer" className="font-semibold text-mustard underline decoration-mustard/40 hover:decoration-mustard">
                 Reverso Conjugator
               </a>
-              . Toque num verbo para ver o présent complet, ouvir e treinar.
+              . Toque num verbo para ver o presente completo, ouvir e treinar.
             </p>
           </div>
           <div className="flex shrink-0 gap-2">
@@ -354,7 +354,7 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar verbo… (ex.: danser, amar)"
+            placeholder={it ? "Cerca un verbo… (es.: ballare, amare)" : "Buscar verbo… (ex.: danser, amar)"}
             className="w-full rounded-lg border-2 border-ink/20 bg-card py-2.5 pl-9 pr-3 font-sans text-[14px] outline-none transition-colors placeholder:text-ink/35 focus:border-ink"
           />
         </div>
@@ -379,7 +379,7 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
       {/* grid */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {list.map((v, i) => {
-          const score = verbs[v.inf] ?? 0;
+          const score = verbsRecord[v.inf] ?? 0;
           const isTour = TOUR_VERBS.has(v.inf);
           return (
             <button
@@ -389,7 +389,7 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
               style={{ animationDelay: `${Math.min(i, 30) * 14}ms` }}
             >
               <div className="flex w-full items-center justify-between gap-1">
-                <span className="h-1.5 w-8 rounded-full" style={{ background: GROUP_COLOR[v.g] }} />
+                <span className="h-1.5 w-8 rounded-full" style={{ background: groupColor(v.g) }} />
                 <span className="flex items-center gap-1">
                   {isTour && <Icon name="star" size={11} strokeWidth={2.4} className="text-mustard" />}
                   {score >= 6 ? (
@@ -423,7 +423,7 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
       {selected && (
         <VerbDetail
           verb={selected}
-          best={verbs[selected.inf] ?? 0}
+          best={verbsRecord[selected.inf] ?? 0}
           onClose={() => setSelected(null)}
           onScore={(score, total) => {
             if (total === 6) prog.saveVerbScore(selected.inf, score);

@@ -1,5 +1,11 @@
-import { WEEKS, WEEK_VERBS, type Week } from "../data/curriculum";
-import { conjugate, withPronoun, VERB_MAP, IMPERSONAL } from "../data/verbs";
+import type { Week } from "../data/curriculum";
+import {
+  weeks,
+  weekVerbs,
+  verbList,
+  conjugateLang,
+  withPronounLang,
+} from "../data/content";
 import type { IconName } from "../components/Icons";
 
 export const SESSION_ICONS: Record<string, IconName> = {
@@ -55,10 +61,10 @@ export function getDayInfo(day: number): DayInfo {
   if (d <= 84) {
     const week = Math.ceil(d / 7);
     const dayInWeek = ((d - 1) % 7) + 1;
-    return { day: d, week, type: WEEK_TYPES[dayInWeek - 1], weekData: WEEKS[week - 1] };
+    return { day: d, week, type: WEEK_TYPES[dayInWeek - 1], weekData: weeks()[week - 1] ?? null };
   }
   const idx = d - 85; // 0..5
-  return { day: d, week: 13, type: FINAL_TYPES[idx], weekData: WEEKS[12] ?? null };
+  return { day: d, week: 13, type: FINAL_TYPES[idx], weekData: weeks()[12] ?? null };
 }
 
 /* ------------------------- RNG determinístico ------------------------- */
@@ -153,35 +159,34 @@ function mixedQs(pool: Pool, n: number, seed: number): GenQ[] {
 }
 
 function poolForWeeks(weekNums: number[]): Pool {
-  return weekNums.flatMap((w) => (WEEKS[w - 1] ? WEEKS[w - 1].vocab : []));
+  const w = weeks();
+  return weekNums.flatMap((n) => (w[n - 1] ? w[n - 1].vocab : []));
 }
 
 const allWeeks = () => Array.from({ length: 12 }, (_, i) => i + 1);
 
-/** Questões de conjugação (présent) a partir de verbos da base Reverso. */
+/** Questões de conjugação (présent / presente) a partir dos verbos da semana. */
 function conjugateQs(verbInfs: string[], n: number, seed: number): GenQ[] {
   const rng = mulberry32(seed);
-  const usable = verbInfs.filter((inf) => {
-    const v = VERB_MAP[inf];
-    return v && !IMPERSONAL.has(inf.replace(/^s'|^se /, "")) && conjugate(inf) !== null;
-  });
+  const vmap = Object.fromEntries(verbList().map((v) => [v.inf, v]));
+  const usable = verbInfs.filter((inf) => vmap[inf] && conjugateLang(inf) !== null);
   return shuffle(usable, rng)
     .slice(0, n)
     .map((inf) => {
-      const verb = VERB_MAP[inf];
-      const forms = conjugate(inf)!;
+      const verb = vmap[inf];
+      const forms = conjugateLang(inf)!;
       const person = Math.floor(rng() * 6);
       const correct = forms[person];
       if (!correct) return null;
-      const pronoun = withPronoun(person, correct).replace(/ .+$/, "");
+      const pronoun = withPronounLang(person, correct).replace(/ .+$/, "");
       const others = [...new Set(forms.filter((_, i) => i !== person && forms[i]))];
       const distractors = shuffle(others, rng).slice(0, 3);
       const options = shuffle([correct, ...distractors], rng);
       const q: GenQ = {
-        prompt: `Conjuguez : « ${pronoun} ___ » (${inf})`,
+        prompt: `Conjugue: « ${pronoun} ___ » (${inf})`,
         options,
         a: options.indexOf(correct),
-        why: `${withPronoun(person, correct)} — présent de « ${inf} » (${verb.pt}).`,
+        why: `${withPronounLang(person, correct)} — presente de « ${inf} » (${verb.pt}).`,
       };
       return q;
     })
@@ -195,7 +200,7 @@ export function sessionQuestions(info: DayInfo, seed: number): GenQ[] {
   // Semana 13 — Mônaco, dias 85..90
   if (week === 13) {
     const full = poolForWeeks(allWeeks());
-    const wk13 = WEEKS[12];
+    const wk13 = weeks()[12];
     switch (type) {
       case "review":
         return day === 85
@@ -206,12 +211,12 @@ export function sessionQuestions(info: DayInfo, seed: number): GenQ[] {
       case "challenge":
         return [
           ...mixedQs(full, 5, seed),
-          ...conjugateQs(WEEK_VERBS[wk13?.id ?? ""] ?? [], 3, seed + 31),
+          ...conjugateQs(weekVerbs()[wk13?.id ?? ""] ?? [], 3, seed + 31),
         ];
       case "exam":
         return [
           ...mixedQs(full, 7, seed),
-          ...conjugateQs(WEEK_VERBS[wk13?.id ?? ""] ?? [], 3, seed + 37),
+          ...conjugateQs(weekVerbs()[wk13?.id ?? ""] ?? [], 3, seed + 37),
         ];
       default:
         return [];
@@ -229,7 +234,7 @@ export function sessionQuestions(info: DayInfo, seed: number): GenQ[] {
       case "challenge":
         return [
           ...mixedQs(upTo, 5, seed),
-          ...conjugateQs(WEEK_VERBS[wk.id] ?? [], 3, seed + 31),
+          ...conjugateQs(weekVerbs()[wk.id] ?? [], 3, seed + 31),
         ];
       default:
         return [];

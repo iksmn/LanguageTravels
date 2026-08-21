@@ -52,10 +52,10 @@ export const WEEK_VERBS: Record<string, string[]> = {
 /** Idiomas do programa 90 dias · A1. Apenas "fr" está ativo por enquanto. */
 export const LANGUAGES = [
   { code: "fr", name: "Francês", native: "Français", greeting: "Bonjour !", flag: "fr", available: true },
+  { code: "it", name: "Italiano", native: "Italiano", greeting: "Ciao!", flag: "it", available: true },
   { code: "de", name: "Alemão", native: "Deutsch", greeting: "Hallo!", flag: "de", available: false },
   { code: "es", name: "Espanhol", native: "Español", greeting: "¡Hola!", flag: "es", available: false },
   { code: "en", name: "Inglês", native: "English", greeting: "Hello!", flag: "gb", available: false },
-  { code: "it", name: "Italiano", native: "Italiano", greeting: "Ciao!", flag: "it", available: false },
 ] as const;
 
 export type LangCode = (typeof LANGUAGES)[number]["code"];
