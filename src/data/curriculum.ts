@@ -56,6 +56,7 @@ export const LANGUAGES = [
   { code: "de", name: "Alemão", native: "Deutsch", greeting: "Hallo!", flag: "de", available: true },
   { code: "es", name: "Espanhol", native: "Español", greeting: "¡Hola!", flag: "es", available: true },
   { code: "en", name: "Inglês", native: "English", greeting: "Hello!", flag: "gb", available: true },
+  { code: "ja", name: "Japonês", native: "日本語", greeting: "こんにちは！", flag: "jp", available: true },
   { code: "zh", name: "Mandarim", native: "中文", greeting: "你好！", flag: "cn", available: true },
 ] as const;
 

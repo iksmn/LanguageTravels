@@ -61,6 +61,9 @@ import { WEEKS_EN, WEEK_VERBS_EN } from "./curriculum-en";
 import { WEEKS_ZH, WEEK_VERBS_ZH } from "./curriculum-zh";
 import { VERBS_ZH } from "./verbs-zh";
 import { CAST_ZH, GROUP_QUOTE_ZH } from "./cast-zh";
+import { WEEKS_JA, WEEK_VERBS_JA } from "./curriculum-ja";
+import { VERBS_JA, conjugateJA, withPronounJA, JA_FORMS, JA_GROUP_LABEL, JA_GROUP_COLOR } from "./verbs-ja";
+import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
 
 export interface VerbShape {
   inf: string;
@@ -90,6 +93,7 @@ export function weeks(): Week[] {
     case "es": return WEEKS_ES;
     case "en": return WEEKS_EN;
     case "zh": return WEEKS_ZH;
+    case "ja": return WEEKS_JA;
     default: return WEEKS;
   }
 }
@@ -100,6 +104,7 @@ export function weekVerbs(): Record<string, string[]> {
     case "es": return WEEK_VERBS_ES;
     case "en": return WEEK_VERBS_EN;
     case "zh": return WEEK_VERBS_ZH;
+    case "ja": return WEEK_VERBS_JA;
     default: return WEEK_VERBS;
   }
 }
@@ -113,6 +118,7 @@ export function verbList(): VerbShape[] {
     case "es": return VERBS_ES as VerbShape[];
     case "en": return VERBS_EN as VerbShape[];
     case "zh": return VERBS_ZH as VerbShape[];
+    case "ja": return VERBS_JA as VerbShape[];
     default: return VERB_LIST as VerbShape[];
   }
 }
@@ -123,6 +129,7 @@ export function conjugateLang(inf: string): string[] | null {
     case "es": return conjugateES(inf);
     case "en": return conjugateEN(inf);
     case "zh": return null; // mandarim não conjuga
+    case "ja": return conjugateJA(inf);
     default: return conjugateFR(inf);
   }
 }
@@ -133,6 +140,7 @@ export function withPronounLang(person: number, form: string): string {
     case "es": return withPronounES(person, form);
     case "en": return withPronounEN(person, form);
     case "zh": return form;
+    case "ja": return withPronounJA(person, form);
     default: return withPronounFR(person, form);
   }
 }
@@ -143,6 +151,7 @@ export function pronouns(): string[] {
     case "es": return ES_PRONOUNS;
     case "en": return EN_PRONOUNS;
     case "zh": return ["我 wǒ", "你 nǐ", "他/她 tā", "我们", "你们", "他们"];
+    case "ja": return JA_FORMS;
     default: return PRONOUNS;
   }
 }
@@ -153,6 +162,7 @@ export function groupLabel(g: 1 | 2 | 3): string {
     case "es": return ES_GROUP_LABEL[g];
     case "en": return EN_GROUP_LABEL[g];
     case "zh": return g === 1 ? "Ação 动作" : g === 2 ? "Estado 状态" : "Modal 能愿";
+    case "ja": return JA_GROUP_LABEL[g];
     default: return GROUP_LABEL[g];
   }
 }
@@ -163,6 +173,7 @@ export function groupColor(g: 1 | 2 | 3): string {
     case "es": return ES_GROUP_COLOR[g];
     case "en": return EN_GROUP_COLOR[g];
     case "zh": return g === 1 ? "#0e8f8b" : g === 2 ? "#e8930c" : "#d7263d";
+    case "ja": return JA_GROUP_COLOR[g];
     default: return GROUP_COLOR[g];
   }
 }
@@ -177,6 +188,10 @@ export function conjugatorUrl(inf: string): string {
       const v = VERBS_ZH.find((x) => x.inf === inf);
       return `https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encodeURIComponent(v?.py ?? inf)}`;
     }
+    case "ja": {
+      const v = VERBS_JA.find((x) => x.inf === inf);
+      return `https://conjugator.reverso.net/conjugation-japanese-verb-${encodeURIComponent(v?.py ?? inf).replace(/\s+/g, "-")}.html`;
+    }
     default: return reversoUrlFR(inf);
   }
 }
@@ -187,6 +202,7 @@ export function conjugatorSourceUrl(): string {
     case "es": return "https://conjugator.reverso.net/index-spanish-1-250.html";
     case "en": return "https://conjugator.reverso.net/index-english-1-250.html";
     case "zh": return "https://www.mdbg.net/chinese/dictionary";
+    case "ja": return "https://conjugator.reverso.net/index-japanese-1-250.html";
     default: return VERB_SOURCE_URL;
   }
 }
@@ -200,6 +216,7 @@ export function speechLang(): string {
     case "es": return "es-ES";
     case "en": return "en-GB";
     case "zh": return "zh-CN";
+    case "ja": return "ja-JP";
     default: return "fr-FR";
   }
 }
@@ -214,6 +231,7 @@ export function langMeta(): { name: string; native: string; flag: string; greeti
     es: { name: "Espanhol", native: "Español", flag: "es", greeting: "¡Hola!" },
     en: { name: "Inglês", native: "English", flag: "gb", greeting: "Hello!" },
     zh: { name: "Mandarim", native: "中文", flag: "cn", greeting: "你好！" },
+    ja: { name: "Japonês", native: "日本語", flag: "jp", greeting: "こんにちは！" },
   };
   return map[_lang] ?? map.fr;
 }
@@ -237,6 +255,7 @@ export function castList(): Character[] {
     case "es": return CAST_ES;
     case "en": return CAST_EN;
     case "zh": return CAST_ZH;
+    case "ja": return CAST_JA;
     default: return CHARACTERS;
   }
 }
@@ -252,6 +271,7 @@ export function groupQuote(): { fr: string; pt: string } {
     case "es": return GROUP_QUOTE_ES;
     case "en": return GROUP_QUOTE_EN;
     case "zh": return GROUP_QUOTE_ZH;
+    case "ja": return GROUP_QUOTE_JA;
     default: return GROUP_QUOTE;
   }
 }
