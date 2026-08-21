@@ -7,6 +7,7 @@ import { PlanView } from "./components/PlanView";
 import { GrandTourMap } from "./components/GrandTourMap";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
+import { VerbsView } from "./components/VerbsView";
 import { SessionModal } from "./components/SessionModal";
 import { getDayInfo, TOTAL_DAYS } from "./lib/engine";
 
@@ -108,6 +109,7 @@ function Shell() {
               }}
             />
           )}
+          {view === "verbs" && <VerbsView prog={prog} />}
           {view === "passport" && (
             <PassportView
               prog={prog}

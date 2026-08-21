@@ -90,7 +90,7 @@ function Certificate({ xp, examXp }: { xp: number; examXp: number }) {
           dias
         </div>
         <div className="rounded-md border border-ink/15 px-1 py-1.5">
-          <p className="text-[13px] font-bold text-ink">12</p>
+          <p className="text-[13px] font-bold text-ink">13</p>
           carimbos
         </div>
         <div className="rounded-md border border-ink/15 px-1 py-1.5">
@@ -640,7 +640,16 @@ export function SessionModal({
                 </div>
               )}
               {info.type === "vocab" && week && <VocabCards week={week} />}
-              {info.type === "dialogue" && week && <DialogueScript week={week} />}
+              {info.type === "dialogue" && week && (
+                <>
+                  {week.num === 13 && (
+                    <div className="mb-4">
+                      <VocabCards week={week} />
+                    </div>
+                  )}
+                  <DialogueScript week={week} />
+                </>
+              )}
               {info.type === "culture" && week && <CultureSession week={week} />}
               {info.type === "quiz" && week && <AuthoredQuiz week={week} onDone={(s) => handleDone(s, week.quiz.length)} />}
               {info.type === "review" && (

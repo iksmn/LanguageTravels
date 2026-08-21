@@ -3,7 +3,7 @@ import { Icon } from "./Icons";
 import { Flag } from "./Flag";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
 
-export type AppView = "plan" | "map" | "passport" | "cast";
+export type AppView = "plan" | "map" | "verbs" | "cast" | "passport";
 
 function useAnimatedNumber(target: number, duration = 700): number {
   const [display, setDisplay] = useState(target);
@@ -27,9 +27,10 @@ function useAnimatedNumber(target: number, duration = 700): number {
   return display;
 }
 
-const TABS: { id: AppView; label: string; icon: "calendar" | "compass" | "passport" | "users" }[] = [
+const TABS: { id: AppView; label: string; icon: "calendar" | "compass" | "passport" | "users" | "book" }[] = [
   { id: "plan", label: "Plano 90 dias", icon: "calendar" },
   { id: "map", label: "Mapa da rota", icon: "compass" },
+  { id: "verbs", label: "Verbes · 250", icon: "book" },
   { id: "cast", label: "Compagnons", icon: "users" },
   { id: "passport", label: "Passaporte", icon: "passport" },
 ];

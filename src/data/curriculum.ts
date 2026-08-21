@@ -32,6 +32,23 @@ export type Week = {
   quiz: QuizQ[];
 };
 
+/** Verbos da base Reverso trabalhados em cada semana (id da semana → infinitivos). */
+export const WEEK_VERBS: Record<string, string[]> = {
+  cdg: ["être", "avoir", "parler", "venir", "aimer"],
+  marais: ["danser", "regarder", "sourire", "boire", "plaire", "séduire"],
+  verbier: ["blottir", "faire", "vouloir", "tenir", "partager", "embrasser"],
+  geneve: ["jeter", "souhaiter", "offrir", "rester", "vivre"],
+  luxembourg: ["travailler", "gagner", "habiter", "investir"],
+  bruxelles: ["goûter", "découvrir", "choisir", "attendre", "rire"],
+  avignon: ["vendre", "acheter", "payer", "sentir", "finir"],
+  nice: ["bronzer", "nager", "préférer", "pleuvoir", "flirter"],
+  lyon: ["manger", "servir", "ajouter", "réussir"],
+  strasbourg: ["apprendre", "comprendre", "écrire", "raconter", "oublier"],
+  montsaintmichel: ["monter", "marcher", "traverser", "prévoir", "protéger"],
+  ajaccio: ["partir", "revenir", "promettre", "remercier", "revoir"],
+  monaco: ["conduire", "gagner", "fêter", "saluer", "célébrer"],
+};
+
 /** Idiomas do programa 90 dias · A1. Apenas "fr" está ativo por enquanto. */
 export const LANGUAGES = [
   { code: "fr", name: "Francês", native: "Français", greeting: "Bonjour !", flag: "fr", available: true },
@@ -542,16 +559,16 @@ export const WEEKS: Week[] = [
   {
     id: "ajaccio",
     num: 12,
-    title: "Au revoir, la Francofonie !",
+    title: "Au revoir, mes amis !",
     place: "Porto de Ajaccio",
     city: "Ajaccio",
     region: "França · Corse",
     theme: "Futuro e despedida",
-    desc: "Última parada: a ilha de Napoleão. Os seis companheiros se despedem com você, à beira-mar.",
+    desc: "A ilha de Napoleão. Os seis companheiros se despedem no porto — mas a rota ainda guarda um último brilho.",
     tip: "«À bientôt» se diz com o coração. E o futuro próximo: «Je vais revenir» — eu vou voltar.",
     culture: "Napoleão Bonaparte nasceu em Ajaccio em 1769 — a casa dele hoje é museu.",
     story:
-      "No porto de Ajaccio, os seis estão reunidos pela última vez. Thomas promete: «Un jour, on regardera les étoiles ensemble en Corse». Marc já planeja o jantar de despedida. Entre abraços e «à bientôt», você percebe que aprendeu muito mais que francês — aprendeu a viajar, amar e se despedir com leveza. «Nous sommes libres, et c'est ce qui nous unit», diz Camille. E o mar, azul, aplaude.",
+      "No porto de Ajaccio, os seis estão reunidos. Thomas promete: «Un jour, on regardera les étoiles ensemble en Corse». Marc já planeja o jantar de reencontro. Entre abraços e «à bientôt», você percebe que aprendeu muito mais que francês — aprendeu a viajar, amar e se despedir com leveza. «Nous sommes libres, et c'est ce qui nous unit», diz Camille. Você embarca no ferry: falta uma última parada antes do exame — um certo principado à beira-mar.",
     cast: ["thomas", "julien", "marc", "lea", "camille", "sophie"],
     themes: [
       { fr: "Le futur", pt: "O futuro" },
@@ -580,6 +597,51 @@ export const WEEKS: Week[] = [
       { q: "«À bientôt» é…", options: ["até breve", "bom dia", "por favor", "obrigado"], a: 0, why: "A despedida que deixa a porta aberta para o próximo «bonjour»." },
       { q: "«Je vais revenir» indica…", options: ["um plano futuro", "uma lembrança", "uma ordem", "um desejo impossível"], a: 0, why: "«Aller» + infinitivo = futuro próximo. Eu vou voltar." },
       { q: "«Merci pour tout» significa…", options: ["obrigado por tudo", "até a próxima", "boa viagem", "com prazer"], a: 0, why: "O agradecimento que resume 90 dias de jornada." },
+    ],
+  },
+  {
+    id: "monaco",
+    num: 13,
+    title: "Le grand final",
+    place: "Monte-Carlo",
+    city: "Monaco",
+    region: "Principauté de Monaco",
+    theme: "Grande revisão e exame",
+    desc: "A última parada, com vista para o Mediterrâneo: revise toda a rota, depois conquiste o diploma A1.",
+    tip: "Revisar com vista para o mar rende mais: leia em voz alta, ouça, respire. O exame é logo ali.",
+    culture: "Monaco é o segundo menor país do mundo (2 km²) — e o Grand Prix passa pelas mesmas ruas que você acabou de caminhar.",
+    story:
+      "Os amigos ficaram pelo caminho — mas Sophie e Marc apareceram de surpresa no terraço de Monte-Carlo para o último brinde. Entre iates e luzes douradas, você repassa mentalmente toda a rota: de Paris a Mônaco, 90 dias. «On y est !», ri Sophie. Amanhã é o exame final; hoje, a noite é sua.",
+    cast: ["sophie", "marc"],
+    themes: [
+      { fr: "La révision", pt: "A revisão" },
+      { fr: "Le diplôme", pt: "O diploma" },
+    ],
+    x: 588,
+    y: 536,
+    color: "#b8860b",
+    icon: "trophy",
+    localName: "Sophie",
+    localRole: "Jornalista e brinde oficial",
+    vocab: [
+      { fr: "On y est", pt: "Chegamos / cá estamos", ipa: "/ɔ̃niɛ/" },
+      { fr: "Le yacht", pt: "O iate", ipa: "/jak/" },
+      { fr: "Le Grand Prix", pt: "O Grande Prêmio", ipa: "/ləɡʁɑ̃pʁi/" },
+      { fr: "La principauté", pt: "O principado", ipa: "/lapʁɛ̃sipote/" },
+      { fr: "Élégant", pt: "Elegante", ipa: "/eleɡɑ̃/" },
+    ],
+    dialogue: [
+      { who: "local", speaker: "Sophie", fr: "On y est ! Monte-Carlo ! Ce soir, on fête tes quatre-vingt-dix jours.", pt: "Chegamos! Monte-Carlo! Hoje à noite celebramos seus noventa dias." },
+      { who: "you", fr: "Je n'arrive pas à y croire. De Paris à Monaco, quelle aventure !", pt: "Não consigo acreditar. De Paris a Mônaco, que aventura!" },
+      { who: "local", speaker: "Marc", fr: "Et demain, je conduis la décapotable sur le circuit du Grand Prix. Tu viens ?", pt: "E amanhã vou dirigir o conversível no circuito do Grand Prix. Você vem?" },
+      { who: "you", fr: "Bien sûr ! Mais ce soir, on danse d'abord. La nuit est magnifique.", pt: "Claro! Mas hoje à noite dançamos primeiro. A noite está linda." },
+      { who: "local", speaker: "Sophie", fr: "Regarde la mer, les lumières… C'est élégant, non ? À la prochaine aventure !", pt: "Olha o mar, as luzes… É elegante, não? À próxima aventura!" },
+      { who: "you", fr: "À la prochaine ! Et cette fois, je gagne le Grand Prix.", pt: "À próxima! E desta vez, eu venço o Grand Prix." },
+    ],
+    quiz: [
+      { q: "«On y est !» quer dizer…", options: ["Chegamos!", "Vamos embora", "Estamos perdidos", "É tarde"], a: 0, why: "Expressão de chegada triunfal: «cá estamos!»." },
+      { q: "«Quatre-vingt-dix» é o número…", options: ["70", "80", "90", "100"], a: 2, why: "4 × 20 + 10 = 90. A matemática francesa em ação." },
+      { q: "«Je conduis» vem do verbo…", options: ["conduire", "construire", "cuire", "conclure"], a: 0, why: "Conduire (dirigir): je conduis, tu conduis, il conduit…" },
     ],
   },
 ];

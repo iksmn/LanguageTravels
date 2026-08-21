@@ -14,6 +14,8 @@ export interface LangProgress {
   streak: number;
   lastActive: string | null;
   days: Record<number, DayRecord>;
+  /** Melhor pontuação (0–6) em cada verbo treinado no conjugador. */
+  verbs: Record<string, number>;
 }
 
 export interface Store {
@@ -24,7 +26,7 @@ export interface Store {
 const STORE_KEY = "rumo:store:v2";
 
 function freshLang(): LangProgress {
-  return { xp: 0, streak: 0, lastActive: null, days: {} };
+  return { xp: 0, streak: 0, lastActive: null, days: {}, verbs: {} };
 }
 
 function load(): Store {
@@ -65,6 +67,7 @@ export interface UseProgressReturn {
   chooseLanguage: (code: string) => void;
   backToGate: () => void; // volta à escolha de idiomas (progresso preservado)
   resetActive: () => void;
+  saveVerbScore: (inf: string, score: number) => void; // guarda a melhor pontuação no verbo
   level: number;
 }
 
@@ -76,7 +79,7 @@ export function useProgress(): UseProgressReturn {
   }, [store]);
 
   const lang = (store.active as LangCode | null) ?? null;
-  const progress: LangProgress = lang ? store.langs[lang] ?? freshLang() : freshLang();
+  const progress: LangProgress = lang ? { ...freshLang(), ...store.langs[lang] } : freshLang();
 
   const currentDay = (() => {
     for (let d = 1; d <= TOTAL_DAYS; d++) if (!progress.days[d]) return d;
@@ -87,7 +90,7 @@ export function useProgress(): UseProgressReturn {
   const unlockedDay = useCallback((d: number) => d <= currentDay, [currentDay]);
 
   const weekStamps: number[] = [];
-  for (let w = 1; w <= 12; w++) {
+  for (let w = 1; w <= 13; w++) {
     const sd = weekStampDay(w);
     if (sd && progress.days[sd]) weekStamps.push(w);
   }
@@ -129,6 +132,22 @@ export function useProgress(): UseProgressReturn {
     setStore((prev) => ({ ...prev, active: null }));
   }, []);
 
+  const saveVerbScore = useCallback(
+    (inf: string, score: number) => {
+      if (!lang) return;
+      setStore((prev) => {
+        const p = { ...freshLang(), ...prev.langs[lang] };
+        const best = Math.max(p.verbs[inf] ?? 0, score);
+        if (best === (p.verbs[inf] ?? 0)) return prev;
+        return {
+          ...prev,
+          langs: { ...prev.langs, [lang]: { ...p, verbs: { ...p.verbs, [inf]: best } } },
+        };
+      });
+    },
+    [lang],
+  );
+
   const resetActive = useCallback(() => {
     setStore((prev) => {
       if (!prev.active) return prev;
@@ -149,6 +168,7 @@ export function useProgress(): UseProgressReturn {
     chooseLanguage,
     backToGate,
     resetActive,
+    saveVerbScore,
     level: levelFromXp(progress.xp),
   };
 }
