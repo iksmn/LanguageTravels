@@ -144,12 +144,12 @@ function VocabCards({ week }: { week: Week }) {
                       tabIndex={0}
                       onClick={(e) => {
                         e.stopPropagation();
-                        speak(v.fr);
+                        speak(v.fr, speechLang());
                       }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.stopPropagation();
-                          speak(v.fr);
+                          speak(v.fr, speechLang());
                         }
                       }}
                       className="grid h-8 w-8 shrink-0 place-items-center rounded-md border-2 border-ink/15 text-ink-soft transition-all hover:scale-110 hover:border-ink hover:text-bus"
@@ -200,7 +200,7 @@ function DialogueScript({ week }: { week: Week }) {
     week.dialogue.forEach((line, i) => {
       timeouts.current.push(
         window.setTimeout(() => {
-          speak(line.fr);
+          speak(line.fr, speechLang());
           setActive(i);
         }, acc),
       );
@@ -263,7 +263,7 @@ function DialogueScript({ week }: { week: Week }) {
                     {speakerLabel}
                   </span>
                   <button
-                    onClick={() => speak(line.fr)}
+                    onClick={() => speak(line.fr, speechLang())}
                     className="text-ink-soft transition-colors hover:text-bus"
                     title="Ouvir frase"
                   >
@@ -310,7 +310,7 @@ function CultureSession({ week }: { week: Week }) {
         <p className="mt-3 text-right font-mono text-[11px] text-ink-soft">— {week.localName}, {week.localRole.toLowerCase()}</p>
       </div>
       <button
-        onClick={() => speak(week.culture.replace(/[«»]/g, ""))}
+        onClick={() => speak(week.culture.replace(/[«»]/g, ""), speechLang())}
         className="flex w-fit items-center gap-2 self-end rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[10.5px] font-semibold tracking-wide uppercase shadow-print-sm btn-press"
       >
         <Icon name="volume" size={13} strokeWidth={2.2} />
@@ -453,7 +453,7 @@ function GenQuiz({
 
   useEffect(() => {
     if (listen && q.audio) {
-      const t = window.setTimeout(() => speak(q.audio!), 350);
+      const t = window.setTimeout(() => speak(q.audio!, speechLang()), 350);
       return () => window.clearTimeout(t);
     }
   }, [qi, listen, q.audio]);
@@ -478,7 +478,7 @@ function GenQuiz({
         <h3 className="font-display text-[19px] leading-snug font-bold">{q.prompt}</h3>
         {listen && q.audio && (
           <button
-            onClick={() => speak(q.audio!)}
+            onClick={() => speak(q.audio!, speechLang())}
             className="btn-press flex items-center gap-2 rounded-lg border-2 border-ink px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide uppercase shadow-print-sm"
             style={{ background: `${color}18`, color }}
           >

@@ -43,7 +43,7 @@ export function LangGate({ onPick }: { onPick: (code: string) => void }) {
             </div>
           </div>
           <p className="hidden font-mono text-[11px] tracking-[0.18em] text-ink-soft uppercase md:block">
-            1 idioma · 90 dias · 15 min/dia
+            {LANGUAGES.filter((l) => l.available).length} idiomas · 90 dias · 15 min/dia
           </p>
         </header>
 

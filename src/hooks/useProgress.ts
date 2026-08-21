@@ -68,6 +68,8 @@ export interface UseProgressReturn {
   backToGate: () => void; // volta à escolha de idiomas (progresso preservado)
   resetActive: () => void;
   saveVerbScore: (inf: string, score: number) => void; // guarda a melhor pontuação no verbo
+  exportStore: () => string; // JSON do progresso para backup
+  restoreStore: (json: string) => boolean; // restaura backup; false se inválido
   level: number;
 }
 
@@ -155,6 +157,33 @@ export function useProgress(): UseProgressReturn {
     });
   }, []);
 
+  /** Serializa o progresso para backup em arquivo. */
+  const exportStore = useCallback((): string => JSON.stringify(store, null, 2), [store]);
+
+  /** Restaura progresso a partir de um JSON exportado. Retorna true se válido. */
+  const restoreStore = useCallback((json: string): boolean => {
+    try {
+      const parsed = JSON.parse(json) as Partial<Store>;
+      if (!parsed || typeof parsed !== "object" || !parsed.langs || typeof parsed.langs !== "object") {
+        return false;
+      }
+      const langs: Record<string, LangProgress> = {};
+      for (const [code, raw] of Object.entries(parsed.langs as Record<string, Partial<LangProgress>>)) {
+        langs[code] = {
+          ...freshLang(),
+          ...raw,
+          days: raw && typeof raw.days === "object" && raw.days ? raw.days : {},
+          verbs: raw && typeof raw.verbs === "object" && raw.verbs ? raw.verbs : {},
+        };
+      }
+      const active = typeof parsed.active === "string" && langs[parsed.active] ? parsed.active : null;
+      setStore({ active, langs });
+      return true;
+    } catch {
+      return false;
+    }
+  }, []);
+
   return {
     store,
     lang,
@@ -169,6 +198,8 @@ export function useProgress(): UseProgressReturn {
     backToGate,
     resetActive,
     saveVerbScore,
+    exportStore,
+    restoreStore,
     level: levelFromXp(progress.xp),
   };
 }
