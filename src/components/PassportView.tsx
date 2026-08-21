@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { WEEKS } from "../data/curriculum";
+import { useRef, useState } from "react";
+import { weeks } from "../data/content";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { Icon } from "./Icons";
+import { useToast } from "./Toasts";
 
 function formatDate(iso: string) {
   try {
@@ -14,8 +15,37 @@ function formatDate(iso: string) {
 
 export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onReset: () => void }) {
   const [confirming, setConfirming] = useState(false);
+  const toast = useToast();
+  const fileRef = useRef<HTMLInputElement>(null);
   const done = Math.min(prog.currentDay - 1, TOTAL_DAYS);
   const pct = Math.round((done / TOTAL_DAYS) * 100);
+
+  const handleExport = () => {
+    const json = prog.exportStore();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "rumo-progresso.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast("Backup salvo em rumo-progresso.json", "success");
+  };
+
+  const handleImportFile = async (file: File | null) => {
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const ok = prog.restoreStore(text);
+      toast(ok ? "Progresso restaurado com sucesso!" : "Arquivo inválido — use um backup do Rumo.", ok ? "success" : "lock");
+    } catch {
+      toast("Não foi possível ler o arquivo.", "lock");
+    } finally {
+      if (fileRef.current) fileRef.current.value = "";
+    }
+  };
 
   return (
     <section className="mx-auto flex max-w-4xl flex-col gap-5">
@@ -74,7 +104,7 @@ export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onRes
           <p className="font-mono text-[10px] tracking-[0.16em] text-ink-soft uppercase">1 carimbo por semana · no dia do quiz</p>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {WEEKS.map((w, i) => {
+          {weeks().map((w, i) => {
             const rec = prog.progress.days[(w.num - 1) * 7 + 3];
             const earned = Boolean(rec);
             return (
@@ -152,6 +182,44 @@ export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onRes
       </div>
 
       {/* rodapé: reset */}
+      {/* backup do progresso */}
+      <div className="flex flex-col gap-3 rounded-xl border-2 border-ink/15 bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.18em] text-teal uppercase">
+            <Icon name="passport" size={13} strokeWidth={2.2} />
+            Backup local
+          </p>
+          <p className="mt-1 text-[12.5px] leading-snug text-ink-soft">
+            Seu progresso vive no <span className="font-mono text-[11px]">localStorage</span> deste navegador. Exporte um
+            arquivo <span className="font-mono text-[11px]">.json</span> para guardar ou levar para outro dispositivo — e
+            importe de volta quando quiser.
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="btn-press flex items-center gap-1.5 rounded-md border-2 border-ink bg-teal px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide text-card uppercase shadow-print-sm"
+          >
+            <Icon name="arrowRight" size={13} strokeWidth={2.4} />
+            Exportar
+          </button>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="btn-press flex items-center gap-1.5 rounded-md border-2 border-ink/25 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-ink-soft uppercase shadow-print-sm hover:border-teal hover:text-teal"
+          >
+            <Icon name="arrowLeft" size={13} strokeWidth={2.4} />
+            Importar
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={(e) => handleImportFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
+      </div>
+
       <div className="flex items-center justify-between gap-3 border-t-2 border-ink/10 px-1 pt-4">
         <p className="text-[12px] text-ink-soft">
           Progresso salvo localmente neste navegador. Zerar apaga XP, carimbos e sequência.

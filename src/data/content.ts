@@ -81,7 +81,9 @@ export function conjugatorUrl(inf: string): string {
   return reversoUrlFR(inf);
 }
 export function conjugatorSourceUrl(): string {
-  return VERB_SOURCE_URL; // índice Reverso (francês); o italiano usa a mesma base de conjugação
+  return _lang === "it"
+    ? "https://conjugator.reverso.net/index-italian-1-250.html"
+    : VERB_SOURCE_URL;
 }
 
 /* --------------------------- áudio --------------------------- */
