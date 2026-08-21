@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Fontes locais (woff2 empacotados pelo Vite — app 100% offline) */
+@import "@fontsource/bricolage-grotesque/700.css";
+@import "@fontsource/bricolage-grotesque/800.css";
+@import "@fontsource/instrument-sans/400.css";
+@import "@fontsource/instrument-sans/500.css";
+@import "@fontsource/instrument-sans/600.css";
+@import "@fontsource/instrument-sans/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+
 @theme {
   --font-display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
   --font-sans: "Instrument Sans", system-ui, sans-serif;

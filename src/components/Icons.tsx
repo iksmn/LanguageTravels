@@ -41,7 +41,12 @@ export type IconName =
   | "users"
   | "music"
   | "wine"
-  | "heart";
+  | "heart"
+  | "users"
+  | "download"
+  | "mic"
+  | "type"
+  | "harddrive";
 
 /** Glifos puros (viewBox 24×24, stroke=currentColor) — reutilizáveis dentro de <svg> maior. */
 export function IconGlyph({ name }: { name: IconName }): JSX.Element {
@@ -304,6 +309,33 @@ export function IconGlyph({ name }: { name: IconName }): JSX.Element {
     case "heart":
       return (
         <path d="M12 20.5S4 15 4 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 8 2.5c0 5.5-8 11-8 11Z" />
+      );
+    case "download":
+      return (
+        <>
+          <path d="M12 3v11M7.5 10 12 14.5 16.5 10" />
+          <path d="M4 17v2.5A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5V17" />
+        </>
+      );
+    case "mic":
+      return (
+        <>
+          <rect x="9" y="2.5" width="6" height="11" rx="3" />
+          <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5M9 21.5h6" />
+        </>
+      );
+    case "type":
+      return (
+        <>
+          <path d="M5 7V4.5h14V7M12 4.5v15M8.5 19.5h7" />
+        </>
+      );
+    case "harddrive":
+      return (
+        <>
+          <path d="M21 12H3M5.5 4.5h13L21 12v6a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18v-6Z" />
+          <path d="M6.5 15.5h.01M10 15.5h.01" strokeWidth={2.6} />
+        </>
       );
     default:
       return <circle cx="12" cy="12" r="8" />;
