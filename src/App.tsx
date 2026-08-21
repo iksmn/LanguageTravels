@@ -8,6 +8,7 @@ import { GrandTourMap } from "./components/GrandTourMap";
 import { ItalyMap } from "./components/ItalyMap";
 import { IberiaMap } from "./components/IberiaMap";
 import { GermanyMap } from "./components/GermanyMap";
+import { BritainIrelandMap } from "./components/BritainIrelandMap";
 import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
@@ -54,7 +55,15 @@ function Shell() {
 
   // Mantém o resolvedor de conteúdo sincronizado com o idioma ativo.
   setLang(
-    prog.lang === "it" ? "it" : prog.lang === "de" ? "de" : prog.lang === "es" ? "es" : "fr",
+    prog.lang === "it"
+      ? "it"
+      : prog.lang === "de"
+        ? "de"
+        : prog.lang === "es"
+          ? "es"
+          : prog.lang === "en"
+            ? "en"
+            : "fr",
   );
 
   const openDay = (d: number) => {
@@ -110,7 +119,9 @@ function Shell() {
                     ? GermanyMap
                     : prog.lang === "es"
                       ? IberiaMap
-                      : GrandTourMap;
+                      : prog.lang === "en"
+                        ? BritainIrelandMap
+                        : GrandTourMap;
               return (
                 <MapComp
                   prog={prog}

@@ -43,6 +43,15 @@ import {
   ES_GROUP_LABEL,
   ES_GROUP_COLOR,
 } from "./verbs-es";
+import {
+  VERBS_EN,
+  conjugateEN,
+  withPronounEN,
+  EN_PRONOUNS,
+  EN_GROUP_LABEL,
+  EN_GROUP_COLOR,
+} from "./verbs-en";
+import { WEEKS_EN, WEEK_VERBS_EN } from "./curriculum-en";
 
 export interface VerbShape {
   inf: string;
@@ -69,6 +78,7 @@ export function weeks(): Week[] {
     case "it": return WEEKS_IT;
     case "de": return WEEKS_DE;
     case "es": return WEEKS_ES;
+    case "en": return WEEKS_EN;
     default: return WEEKS;
   }
 }
@@ -77,6 +87,7 @@ export function weekVerbs(): Record<string, string[]> {
     case "it": return WEEK_VERBS_IT;
     case "de": return WEEK_VERBS_DE;
     case "es": return WEEK_VERBS_ES;
+    case "en": return WEEK_VERBS_EN;
     default: return WEEK_VERBS;
   }
 }
@@ -88,6 +99,7 @@ export function verbList(): VerbShape[] {
     case "it": return VERB_LIST_IT as VerbShape[];
     case "de": return VERBS_DE as VerbShape[];
     case "es": return VERBS_ES as VerbShape[];
+    case "en": return VERBS_EN as VerbShape[];
     default: return VERB_LIST as VerbShape[];
   }
 }
@@ -96,6 +108,7 @@ export function conjugateLang(inf: string): string[] | null {
     case "it": return conjugateIT(inf);
     case "de": return conjugateDE(inf);
     case "es": return conjugateES(inf);
+    case "en": return conjugateEN(inf);
     default: return conjugateFR(inf);
   }
 }
@@ -104,6 +117,7 @@ export function withPronounLang(person: number, form: string): string {
     case "it": return withPronounIT(person, form);
     case "de": return withPronounDE(person, form);
     case "es": return withPronounES(person, form);
+    case "en": return withPronounEN(person, form);
     default: return withPronounFR(person, form);
   }
 }
@@ -112,6 +126,7 @@ export function pronouns(): string[] {
     case "it": return IT_PRONOUNS;
     case "de": return DE_PRONOUNS;
     case "es": return ES_PRONOUNS;
+    case "en": return EN_PRONOUNS;
     default: return PRONOUNS;
   }
 }
@@ -120,6 +135,7 @@ export function groupLabel(g: 1 | 2 | 3): string {
     case "it": return GROUP_LABEL_IT[g];
     case "de": return DE_GROUP_LABEL[g];
     case "es": return ES_GROUP_LABEL[g];
+    case "en": return EN_GROUP_LABEL[g];
     default: return GROUP_LABEL[g];
   }
 }
@@ -128,6 +144,7 @@ export function groupColor(g: 1 | 2 | 3): string {
     case "it": return GROUP_COLOR_IT[g];
     case "de": return DE_GROUP_COLOR[g];
     case "es": return ES_GROUP_COLOR[g];
+    case "en": return EN_GROUP_COLOR[g];
     default: return GROUP_COLOR[g];
   }
 }
@@ -137,6 +154,7 @@ export function conjugatorUrl(inf: string): string {
     case "it": return `https://conjugator.reverso.net/conjugation-italian-verb-${base}.html`;
     case "de": return `https://conjugator.reverso.net/conjugation-german-verb-${base}.html`;
     case "es": return `https://conjugator.reverso.net/conjugation-spanish-verb-${base}.html`;
+    case "en": return `https://conjugator.reverso.net/conjugation-english-verb-${base}.html`;
     default: return reversoUrlFR(inf);
   }
 }
@@ -145,6 +163,7 @@ export function conjugatorSourceUrl(): string {
     case "it": return "https://conjugator.reverso.net/index-italian-1-250.html";
     case "de": return "https://conjugator.reverso.net/index-german-1-250.html";
     case "es": return "https://conjugator.reverso.net/index-spanish-1-250.html";
+    case "en": return "https://conjugator.reverso.net/index-english-1-250.html";
     default: return VERB_SOURCE_URL;
   }
 }
@@ -156,6 +175,7 @@ export function speechLang(): string {
     case "it": return "it-IT";
     case "de": return "de-DE";
     case "es": return "es-ES";
+    case "en": return "en-GB";
     default: return "fr-FR";
   }
 }
@@ -168,6 +188,7 @@ export function langMeta(): { name: string; native: string; flag: string; greeti
     it: { name: "Italiano", native: "Italiano", flag: "it", greeting: "Ciao!" },
     de: { name: "Alemão", native: "Deutsch", flag: "de", greeting: "Hallo!" },
     es: { name: "Espanhol", native: "Español", flag: "es", greeting: "¡Hola!" },
+    en: { name: "Inglês", native: "English", flag: "gb", greeting: "Hello!" },
   };
   return map[_lang] ?? map.fr;
 }
