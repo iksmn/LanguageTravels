@@ -122,6 +122,8 @@ const TEST_PHRASES: Record<string, string> = {
   fr: "Bonjour ! Les étoiles brillent ce soir.",
   it: "Ciao! Le stelle brillano stasera.",
   de: "Hallo! Die Sterne funkeln heute Abend.",
+  es: "¡Hola! Las estrellas brillan esta noche.",
+  en: "Hello! The stars are shining tonight.",
 };
 
 export function OfflineView({ prog }: { prog: UseProgressReturn }) {
@@ -132,12 +134,27 @@ export function OfflineView({ prog }: { prog: UseProgressReturn }) {
 
   const lang = prog.lang ?? "fr";
   const code = lang.slice(0, 2);
-  const langLabel = code === "fr" ? "Francês" : code === "it" ? "Italiano" : "Alemão";
+  const langLabel =
+    code === "fr"
+      ? "Francês"
+      : code === "it"
+        ? "Italiano"
+        : code === "de"
+          ? "Alemão"
+          : code === "es"
+            ? "Espanhol"
+            : "Inglês";
 
   useEffect(() => {
     listVoices().then((vs) => {
       setVoices(vs);
-      setPinned({ fr: getPinnedVoice("fr-FR"), it: getPinnedVoice("it-IT"), de: getPinnedVoice("de-DE") });
+      setPinned({
+        fr: getPinnedVoice("fr-FR"),
+        it: getPinnedVoice("it-IT"),
+        de: getPinnedVoice("de-DE"),
+        es: getPinnedVoice("es-ES"),
+        en: getPinnedVoice("en-GB"),
+      });
     });
     const t = window.setTimeout(() => {
       if (typeof document !== "undefined" && document.fonts?.check) {

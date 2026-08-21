@@ -1,4 +1,4 @@
-# RUMO — 90 dias de Francês, Italiano & Alemão (nível A1)
+# RUMO — 90 dias de Francês, Italiano, Alemão, Espanhol & Inglês (nível A1)
 
 Aplicativo de aprendizado de idiomas que roda **100% no navegador e offline**, sem backend.
 Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
@@ -6,6 +6,8 @@ Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
 - **Francês** — França, Suíça, Bélgica, Luxemburgo e Mônaco
 - **Italiano** — Itália e Suíça
 - **Alemão** — Alemanha, Suíça, Áustria e Liechtenstein
+- **Espanhol** — Espanha e Portugal
+- **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda (de Barcelona ao Cabo de São Vicente)
 
 Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
 passaporte e diploma final.
@@ -163,4 +165,4 @@ npm run build   # versão de produção em dist/
 npm run preview # testa o build localmente
 ```
 
-**Bonne route, buon viaggio und gute Reise!** 🇫🇷 🇮🇹 🇩🇪
+**Bonne route, buon viaggio, gute Reise, buen viaje and have a good trip!** 🇫🇷 🇮🇹 🇩🇪 🇪🇸 🇬🇧

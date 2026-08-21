@@ -6,7 +6,9 @@ import { LangGate } from "./components/LangGate";
 import { PlanView } from "./components/PlanView";
 import { GrandTourMap } from "./components/GrandTourMap";
 import { ItalyMap } from "./components/ItalyMap";
+import { IberiaMap } from "./components/IberiaMap";
 import { GermanyMap } from "./components/GermanyMap";
+import { BritainIrelandMap } from "./components/BritainIrelandMap";
 import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
@@ -52,7 +54,17 @@ function Shell() {
   }
 
   // Mantém o resolvedor de conteúdo sincronizado com o idioma ativo.
-  setLang(prog.lang === "it" ? "it" : prog.lang === "de" ? "de" : "fr");
+  setLang(
+    prog.lang === "it"
+      ? "it"
+      : prog.lang === "de"
+        ? "de"
+        : prog.lang === "es"
+          ? "es"
+          : prog.lang === "en"
+            ? "en"
+            : "fr",
+  );
 
   const openDay = (d: number) => {
     if (d < 1 || d > TOTAL_DAYS) return;
@@ -100,7 +112,16 @@ function Shell() {
           )}
           {view === "map" &&
             (() => {
-              const MapComp = prog.lang === "it" ? ItalyMap : prog.lang === "de" ? GermanyMap : GrandTourMap;
+              const MapComp =
+                prog.lang === "it"
+                  ? ItalyMap
+                  : prog.lang === "de"
+                    ? GermanyMap
+                    : prog.lang === "es"
+                      ? IberiaMap
+                      : prog.lang === "en"
+                        ? BritainIrelandMap
+                        : GrandTourMap;
               return (
                 <MapComp
                   prog={prog}

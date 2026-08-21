@@ -8,6 +8,7 @@ import type { LangCode, Week } from "./curriculum";
 import { WEEKS, WEEK_VERBS } from "./curriculum";
 import { WEEKS_IT, WEEK_VERBS_IT } from "./curriculum-it";
 import { WEEKS_DE, WEEK_VERBS_DE } from "./curriculum-de";
+import { WEEKS_ES, WEEK_VERBS_ES } from "./curriculum-es";
 import {
   VERB_LIST,
   conjugate as conjugateFR,
@@ -34,6 +35,23 @@ import {
   DE_GROUP_LABEL,
   DE_GROUP_COLOR,
 } from "./verbs-de";
+import {
+  VERBS_ES,
+  conjugateES,
+  withPronounES,
+  ES_PRONOUNS,
+  ES_GROUP_LABEL,
+  ES_GROUP_COLOR,
+} from "./verbs-es";
+import {
+  VERBS_EN,
+  conjugateEN,
+  withPronounEN,
+  EN_PRONOUNS,
+  EN_GROUP_LABEL,
+  EN_GROUP_COLOR,
+} from "./verbs-en";
+import { WEEKS_EN, WEEK_VERBS_EN } from "./curriculum-en";
 
 export interface VerbShape {
   inf: string;
@@ -56,57 +74,121 @@ export function isItalian(): boolean {
 /* ------------------------- currículo ------------------------- */
 
 export function weeks(): Week[] {
-  return _lang === "it" ? WEEKS_IT : _lang === "de" ? WEEKS_DE : WEEKS;
+  switch (_lang) {
+    case "it": return WEEKS_IT;
+    case "de": return WEEKS_DE;
+    case "es": return WEEKS_ES;
+    case "en": return WEEKS_EN;
+    default: return WEEKS;
+  }
 }
 export function weekVerbs(): Record<string, string[]> {
-  return _lang === "it" ? WEEK_VERBS_IT : _lang === "de" ? WEEK_VERBS_DE : WEEK_VERBS;
+  switch (_lang) {
+    case "it": return WEEK_VERBS_IT;
+    case "de": return WEEK_VERBS_DE;
+    case "es": return WEEK_VERBS_ES;
+    case "en": return WEEK_VERBS_EN;
+    default: return WEEK_VERBS;
+  }
 }
 
 /* -------------------------- verbos --------------------------- */
 
 export function verbList(): VerbShape[] {
-  return (_lang === "it" ? VERB_LIST_IT : _lang === "de" ? VERBS_DE : VERB_LIST) as VerbShape[];
+  switch (_lang) {
+    case "it": return VERB_LIST_IT as VerbShape[];
+    case "de": return VERBS_DE as VerbShape[];
+    case "es": return VERBS_ES as VerbShape[];
+    case "en": return VERBS_EN as VerbShape[];
+    default: return VERB_LIST as VerbShape[];
+  }
 }
 export function conjugateLang(inf: string): string[] | null {
-  return _lang === "it" ? conjugateIT(inf) : _lang === "de" ? conjugateDE(inf) : conjugateFR(inf);
+  switch (_lang) {
+    case "it": return conjugateIT(inf);
+    case "de": return conjugateDE(inf);
+    case "es": return conjugateES(inf);
+    case "en": return conjugateEN(inf);
+    default: return conjugateFR(inf);
+  }
 }
 export function withPronounLang(person: number, form: string): string {
-  return _lang === "it" ? withPronounIT(person, form) : _lang === "de" ? withPronounDE(person, form) : withPronounFR(person, form);
+  switch (_lang) {
+    case "it": return withPronounIT(person, form);
+    case "de": return withPronounDE(person, form);
+    case "es": return withPronounES(person, form);
+    case "en": return withPronounEN(person, form);
+    default: return withPronounFR(person, form);
+  }
 }
 export function pronouns(): string[] {
-  return _lang === "it" ? IT_PRONOUNS : _lang === "de" ? DE_PRONOUNS : PRONOUNS;
+  switch (_lang) {
+    case "it": return IT_PRONOUNS;
+    case "de": return DE_PRONOUNS;
+    case "es": return ES_PRONOUNS;
+    case "en": return EN_PRONOUNS;
+    default: return PRONOUNS;
+  }
 }
 export function groupLabel(g: 1 | 2 | 3): string {
-  return _lang === "it" ? GROUP_LABEL_IT[g] : _lang === "de" ? DE_GROUP_LABEL[g] : GROUP_LABEL[g];
+  switch (_lang) {
+    case "it": return GROUP_LABEL_IT[g];
+    case "de": return DE_GROUP_LABEL[g];
+    case "es": return ES_GROUP_LABEL[g];
+    case "en": return EN_GROUP_LABEL[g];
+    default: return GROUP_LABEL[g];
+  }
 }
 export function groupColor(g: 1 | 2 | 3): string {
-  return _lang === "it" ? GROUP_COLOR_IT[g] : _lang === "de" ? DE_GROUP_COLOR[g] : GROUP_COLOR[g];
+  switch (_lang) {
+    case "it": return GROUP_COLOR_IT[g];
+    case "de": return DE_GROUP_COLOR[g];
+    case "es": return ES_GROUP_COLOR[g];
+    case "en": return EN_GROUP_COLOR[g];
+    default: return GROUP_COLOR[g];
+  }
 }
 export function conjugatorUrl(inf: string): string {
   const base = inf.replace(/^s'|^se |^sich /, "").replace(/'/g, "-");
-  if (_lang === "it") return `https://conjugator.reverso.net/conjugation-italian-verb-${base}.html`;
-  if (_lang === "de") return `https://conjugator.reverso.net/conjugation-german-verb-${base}.html`;
-  return reversoUrlFR(inf);
+  switch (_lang) {
+    case "it": return `https://conjugator.reverso.net/conjugation-italian-verb-${base}.html`;
+    case "de": return `https://conjugator.reverso.net/conjugation-german-verb-${base}.html`;
+    case "es": return `https://conjugator.reverso.net/conjugation-spanish-verb-${base}.html`;
+    case "en": return `https://conjugator.reverso.net/conjugation-english-verb-${base}.html`;
+    default: return reversoUrlFR(inf);
+  }
 }
 export function conjugatorSourceUrl(): string {
-  if (_lang === "it") return "https://conjugator.reverso.net/index-italian-1-250.html";
-  if (_lang === "de") return "https://conjugator.reverso.net/index-german-1-250.html";
-  return VERB_SOURCE_URL;
+  switch (_lang) {
+    case "it": return "https://conjugator.reverso.net/index-italian-1-250.html";
+    case "de": return "https://conjugator.reverso.net/index-german-1-250.html";
+    case "es": return "https://conjugator.reverso.net/index-spanish-1-250.html";
+    case "en": return "https://conjugator.reverso.net/index-english-1-250.html";
+    default: return VERB_SOURCE_URL;
+  }
 }
 
 /* --------------------------- áudio --------------------------- */
 
 export function speechLang(): string {
-  return _lang === "it" ? "it-IT" : _lang === "de" ? "de-DE" : "fr-FR";
+  switch (_lang) {
+    case "it": return "it-IT";
+    case "de": return "de-DE";
+    case "es": return "es-ES";
+    case "en": return "en-GB";
+    default: return "fr-FR";
+  }
 }
 
 /* --------------------- metadados do idioma ------------------- */
 
 export function langMeta(): { name: string; native: string; flag: string; greeting: string } {
-  const map = {
+  const map: Record<string, { name: string; native: string; flag: string; greeting: string }> = {
     fr: { name: "Francês", native: "Français", flag: "fr", greeting: "Bonjour !" },
     it: { name: "Italiano", native: "Italiano", flag: "it", greeting: "Ciao!" },
     de: { name: "Alemão", native: "Deutsch", flag: "de", greeting: "Hallo!" },
-  } as const;
-  return _lang === "it" ? map.it : _lang === "de" ? map.de : map.fr;
+    es: { name: "Espanhol", native: "Español", flag: "es", greeting: "¡Hola!" },
+    en: { name: "Inglês", native: "English", flag: "gb", greeting: "Hello!" },
+  };
+  return map[_lang] ?? map.fr;
 }
