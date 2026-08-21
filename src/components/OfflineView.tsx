@@ -122,6 +122,7 @@ const TEST_PHRASES: Record<string, string> = {
   fr: "Bonjour ! Les étoiles brillent ce soir.",
   it: "Ciao! Le stelle brillano stasera.",
   de: "Hallo! Die Sterne funkeln heute Abend.",
+  es: "¡Hola! Las estrellas brillan esta noche.",
 };
 
 export function OfflineView({ prog }: { prog: UseProgressReturn }) {
@@ -132,7 +133,8 @@ export function OfflineView({ prog }: { prog: UseProgressReturn }) {
 
   const lang = prog.lang ?? "fr";
   const code = lang.slice(0, 2);
-  const langLabel = code === "fr" ? "Francês" : code === "it" ? "Italiano" : "Alemão";
+  const langLabel =
+    code === "fr" ? "Francês" : code === "it" ? "Italiano" : code === "de" ? "Alemão" : "Espanhol";
 
   useEffect(() => {
     listVoices().then((vs) => {

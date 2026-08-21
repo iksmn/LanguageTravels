@@ -54,7 +54,7 @@ export const LANGUAGES = [
   { code: "fr", name: "Francês", native: "Français", greeting: "Bonjour !", flag: "fr", available: true },
   { code: "it", name: "Italiano", native: "Italiano", greeting: "Ciao!", flag: "it", available: true },
   { code: "de", name: "Alemão", native: "Deutsch", greeting: "Hallo!", flag: "de", available: true },
-  { code: "es", name: "Espanhol", native: "Español", greeting: "¡Hola!", flag: "es", available: false },
+  { code: "es", name: "Espanhol", native: "Español", greeting: "¡Hola!", flag: "es", available: true },
   { code: "en", name: "Inglês", native: "English", greeting: "Hello!", flag: "gb", available: false },
 ] as const;
 

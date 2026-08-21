@@ -3,7 +3,7 @@ import { Icon } from "./Icons";
 import { Flag } from "./Flag";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
 
-const LANG_NAME: Record<string, string> = { fr: "Francês", it: "Italiano", de: "Alemão" };
+const LANG_NAME: Record<string, string> = { fr: "Francês", it: "Italiano", de: "Alemão", es: "Espanhol" };
 
 export type AppView = "plan" | "map" | "verbs" | "cast" | "passport" | "offline";
 

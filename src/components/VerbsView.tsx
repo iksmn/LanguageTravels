@@ -167,7 +167,13 @@ function VerbDetail({
         <div className="mt-4 overflow-hidden rounded-lg border-2 border-ink/15">
           <div className="flex items-center justify-between bg-ink px-3 py-1.5">
             <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-paper uppercase">
-              {activeLang() === "it" ? "Presente indicativo" : activeLang() === "de" ? "Präsens" : "Présent de l'indicatif"}
+              {activeLang() === "it"
+                ? "Presente indicativo"
+                : activeLang() === "de"
+                  ? "Präsens"
+                  : activeLang() === "es"
+                    ? "Presente de indicativo"
+                    : "Présent de l'indicatif"}
             </p>
             <button
               onClick={() => rows.forEach((p) => forms[p] && speak(withPronounLang(p, forms[p]), speechLang()))}
@@ -269,7 +275,13 @@ function VerbDetail({
           className="mt-4 flex items-center gap-1.5 font-mono text-[11px] font-semibold text-cobalt hover:underline"
         >
           <Icon name="globe" size={13} strokeWidth={2.2} />
-          {activeLang() === "it" ? "Tutte le coniugazioni su Reverso" : activeLang() === "de" ? "Alle Konjugationen auf Reverso" : "Toutes les conjugaisons sur Reverso"}
+          {activeLang() === "it"
+            ? "Tutte le coniugazioni su Reverso"
+            : activeLang() === "de"
+              ? "Alle Konjugationen auf Reverso"
+              : activeLang() === "es"
+                ? "Todas las conjugaciones en Reverso"
+                : "Toutes les conjugaisons sur Reverso"}
         </a>
       </div>
     </div>
@@ -291,9 +303,11 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
   const trained = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) > 0).length;
   const mastered = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) >= 6).length;
 
-  const TOUR_LABEL = lang === "it" ? "★ del viaggio" : lang === "de" ? "★ der Route" : "★ du Grand Tour";
+  const TOUR_LABEL =
+    lang === "it" ? "★ del viaggio" : lang === "de" ? "★ der Route" : lang === "es" ? "★ de la ruta" : "★ du Grand Tour";
+  const ALL_LABEL = lang === "it" ? "Tutti" : lang === "de" ? "Alle" : lang === "es" ? "Todos" : "Tous";
   const FILTERS: { id: Filter; label: string; color?: string }[] = [
-    { id: "all", label: `${lang === "it" ? "Tutti" : lang === "de" ? "Alle" : "Tous"} · ${allVerbs.length}` },
+    { id: "all", label: `${ALL_LABEL} · ${allVerbs.length}` },
     { id: 1, label: groupLabel(1), color: groupColor(1) },
     { id: 2, label: groupLabel(2), color: groupColor(2) },
     { id: 3, label: groupLabel(3), color: groupColor(3) },
@@ -320,13 +334,15 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
           <div className="min-w-0">
             <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.24em] text-mustard uppercase">
               <Icon name="book" size={14} strokeWidth={2.2} />
-              {lang === "it" ? "Il Coniugatore" : lang === "de" ? "Der Konjugator" : "Le Conjugueur"}
+              {lang === "it" ? "Il Coniugatore" : lang === "de" ? "Der Konjugator" : lang === "es" ? "El Conjugador" : "Le Conjugueur"}
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
               {lang === "it" ? (
                 <>I {allVerbs.length} verbi <span className="text-mustard">essenziali</span></>
               ) : lang === "de" ? (
                 <>Die {allVerbs.length} <span className="text-mustard">wichtigen</span> Verben</>
+              ) : lang === "es" ? (
+                <>Los {allVerbs.length} verbos <span className="text-mustard">esenciales</span></>
               ) : (
                 <>Les {allVerbs.length} verbes <span className="text-mustard">essentiels</span></>
               )}
