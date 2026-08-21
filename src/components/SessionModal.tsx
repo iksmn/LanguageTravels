@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import type { Week } from "../data/curriculum";
-import { CAST_MAP, findChar } from "../data/cast";
 import {
   SESSION_ICONS,
   SESSION_META,
@@ -12,7 +11,7 @@ import {
   type GenQ,
 } from "../lib/engine";
 import { canSpeak, speak, stopSpeaking } from "../lib/speech";
-import { speechLang } from "../data/content";
+import { speechLang, resolveSpeaker, castMap, localizeNames } from "../data/content";
 import { Icon, type IconName } from "./Icons";
 import { Avatar } from "./Avatar";
 
@@ -214,11 +213,14 @@ function DialogueScript({ week }: { week: Week }) {
     );
   };
 
+  const localChar = resolveSpeaker(week.localName);
+  const localLabel = localChar ? localChar.name.split(" ")[0] : week.localName;
+
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <p className="text-[13px] text-ink-soft">
-          Conversa com <strong className="text-ink">{week.localName}</strong> · {week.localRole}
+          Conversa com <strong className="text-ink">{localLabel}</strong> · {week.localRole}
         </p>
         <div className="flex gap-2">
           <button
@@ -240,8 +242,12 @@ function DialogueScript({ week }: { week: Week }) {
       <div className="flex flex-col gap-2.5">
         {week.dialogue.map((line, i) => {
           const you = line.who === "you";
-          const ch = you ? null : findChar(line.speaker);
-          const speakerLabel = you ? "Você" : line.speaker ?? week.localName;
+          const ch = you ? null : resolveSpeaker(line.speaker ?? week.localName);
+          const speakerLabel = you
+            ? "Você"
+            : ch
+              ? ch.name.split(" ")[0]
+              : line.speaker ?? week.localName;
           return (
             <div key={i} className={`flex items-end gap-2 ${you ? "justify-end" : "justify-start"}`}>
               {!you && (
@@ -307,7 +313,9 @@ function CultureSession({ week }: { week: Week }) {
           Dica de local
         </p>
         <p className="mt-2 text-[14.5px] leading-relaxed text-ink">{week.tip}</p>
-        <p className="mt-3 text-right font-mono text-[11px] text-ink-soft">— {week.localName}, {week.localRole.toLowerCase()}</p>
+        <p className="mt-3 text-right font-mono text-[11px] text-ink-soft">
+          — {resolveSpeaker(week.localName)?.name.split(" ")[0] ?? week.localName}, {week.localRole.toLowerCase()}
+        </p>
       </div>
       <button
         onClick={() => speak(week.culture.replace(/[«»]/g, ""), speechLang())}
@@ -624,7 +632,7 @@ export function SessionModal({
                 <div className="fade-up mb-4 flex items-start gap-3 rounded-lg border-2 border-ink/12 bg-card px-3.5 py-3">
                   <div className="flex shrink-0 -space-x-2 pt-1">
                     {week.cast.map((id) => {
-                      const c = CAST_MAP[id];
+                      const c = castMap()[id];
                       return c ? (
                         <span key={id} className="rounded-full ring-2 ring-paper" title={c.name}>
                           <Avatar char={c} size={30} />
@@ -636,7 +644,7 @@ export function SessionModal({
                     <p className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: week.color }}>
                       Le récit · {week.themes.map((t) => t.fr).join(" · ")}
                     </p>
-                    <p className="mt-1 text-[13px] leading-relaxed text-ink-soft italic">{week.story}</p>
+                    <p className="mt-1 text-[13px] leading-relaxed text-ink-soft italic">{localizeNames(week.story)}</p>
                   </div>
                 </div>
               )}

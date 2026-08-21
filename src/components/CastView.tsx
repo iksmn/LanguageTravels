@@ -1,5 +1,5 @@
-import { CHARACTERS, GROUP_PRINCIPLES, GROUP_QUOTE, type Character } from "../data/cast";
-import { weeks } from "../data/content";
+import { GROUP_PRINCIPLES, type Character } from "../data/cast";
+import { castList, groupQuote, langMeta, weeks } from "../data/content";
 import { Avatar } from "./Avatar";
 import { Icon } from "./Icons";
 
@@ -106,12 +106,12 @@ export function CastView({ onOpenWeek }: { onOpenWeek: (week: number) => void })
               Les compagnons de voyage
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
-              Seis amigos, quatro países, <span className="text-mustard">liberdade para aprender junto</span>
+              Seis amigos, uma rota de {langMeta().name.toLowerCase()}, <span className="text-mustard">liberdade para aprender junto</span>
             </h1>
             <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-paper/80">
-              Eles se cruzam entre observatórios, bistrôs, chalés alpinos e terraços — do Marais aos Alpes suíços, de
-              Bruxelas a Luxemburgo. Nos dias 10–19, o <strong className="text-paper">intermédio romântico</strong>: uma
-              festa em Paris e um chalé em Verbier. Sem ciúmes, sem rivalidade — amizade profunda e conexões que fluem.
+              Eles se cruzam entre observatórios, bistrôs, estádios e terraços ao longo de toda a rota. Sem ciúmes, sem
+              rivalidade — amizade profunda, apoio mútuo e conexões que fluem no tempo certo. Conheça quem vai acompanhar
+              você nos próximos 90 dias.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {GROUP_PRINCIPLES.map((p) => (
@@ -124,14 +124,14 @@ export function CastView({ onOpenWeek }: { onOpenWeek: (week: number) => void })
           <div className="shrink-0 lg:pl-4">
             <div className="relative rounded-xl border-2 border-paper/20 bg-paper/8 p-5 text-center" style={{ background: "rgba(255,253,244,0.07)" }}>
               <div className="flex -space-x-2.5 justify-center">
-                {CHARACTERS.map((c) => (
+                {castList().map((c) => (
                   <span key={c.id} className="rounded-full ring-2 ring-navy transition-transform duration-200 hover:-translate-y-1.5 hover:rotate-3">
                     <Avatar char={c} size={44} />
                   </span>
                 ))}
               </div>
-              <p className="mt-3 font-display text-[15px] font-bold italic">« {GROUP_QUOTE.fr} »</p>
-              <p className="mt-1 font-mono text-[10px] tracking-[0.14em] text-paper/60 uppercase">{GROUP_QUOTE.pt}</p>
+              <p className="mt-3 font-display text-[15px] font-bold italic">« {groupQuote().fr} »</p>
+              <p className="mt-1 font-mono text-[10px] tracking-[0.14em] text-paper/60 uppercase">{groupQuote().pt}</p>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@ export function CastView({ onOpenWeek }: { onOpenWeek: (week: number) => void })
 
       {/* elenco */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {CHARACTERS.map((c, i) => (
+        {castList().map((c, i) => (
           <CharacterCard key={c.id} char={c} index={i} onOpenWeek={onOpenWeek} />
         ))}
       </div>

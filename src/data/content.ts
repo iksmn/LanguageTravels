@@ -51,6 +51,12 @@ import {
   EN_GROUP_LABEL,
   EN_GROUP_COLOR,
 } from "./verbs-en";
+import type { Character } from "./cast";
+import { CHARACTERS, GROUP_QUOTE } from "./cast";
+import { CAST_IT, GROUP_QUOTE_IT } from "./cast-it";
+import { CAST_DE, GROUP_QUOTE_DE } from "./cast-de";
+import { CAST_ES, GROUP_QUOTE_ES } from "./cast-es";
+import { CAST_EN, GROUP_QUOTE_EN } from "./cast-en";
 import { WEEKS_EN, WEEK_VERBS_EN } from "./curriculum-en";
 
 export interface VerbShape {
@@ -191,4 +197,75 @@ export function langMeta(): { name: string; native: string; flag: string; greeti
     en: { name: "Inglês", native: "English", flag: "gb", greeting: "Hello!" },
   };
   return map[_lang] ?? map.fr;
+}
+
+/* --------------------------- elenco ---------------------------- */
+
+/** Nome canônico (francês) de cada personagem, usado como chave nas rotas. */
+const FRENCH_FIRST: Record<string, string> = {
+  thomas: "Thomas",
+  julien: "Julien",
+  marc: "Marc",
+  lea: "Léa",
+  camille: "Camille",
+  sophie: "Sophie",
+};
+
+export function castList(): Character[] {
+  switch (_lang) {
+    case "it": return CAST_IT;
+    case "de": return CAST_DE;
+    case "es": return CAST_ES;
+    case "en": return CAST_EN;
+    default: return CHARACTERS;
+  }
+}
+
+export function castMap(): Record<string, Character> {
+  return Object.fromEntries(castList().map((c) => [c.id, c]));
+}
+
+export function groupQuote(): { fr: string; pt: string } {
+  switch (_lang) {
+    case "it": return GROUP_QUOTE_IT;
+    case "de": return GROUP_QUOTE_DE;
+    case "es": return GROUP_QUOTE_ES;
+    case "en": return GROUP_QUOTE_EN;
+    default: return GROUP_QUOTE;
+  }
+}
+
+const normName = (s: string) =>
+  s
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+/** Resolve quem fala: aceita id canônico, nome do personagem ativo ou nome francês. */
+export function resolveSpeaker(raw: string): Character | undefined {
+  const list = castList();
+  const r = normName(raw);
+  const bySelf = list.find(
+    (c) => normName(c.id) === r || normName(c.name) === r || normName(c.name.split(" ")[0]) === r,
+  );
+  if (bySelf) return bySelf;
+  const canon = Object.keys(FRENCH_FIRST).find((k) => normName(FRENCH_FIRST[k]) === r);
+  if (canon) return list.find((c) => c.id === canon);
+  return undefined;
+}
+
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** Troca os nomes franceses de um texto pelos nomes do elenco ativo. */
+export function localizeNames(text: string): string {
+  const list = castList();
+  let out = text;
+  for (const c of list) {
+    const frName = FRENCH_FIRST[c.id];
+    if (!frName) continue;
+    const localFirst = c.name.split(" ")[0];
+    out = out.replace(new RegExp(`\\b${escapeRegExp(frName)}\\b`, "g"), localFirst);
+  }
+  return out;
 }
