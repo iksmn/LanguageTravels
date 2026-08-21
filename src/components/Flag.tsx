@@ -1,5 +1,20 @@
 import { useId, type ReactNode } from "react";
 
+/** Estrela de 5 pontas em path. */
+function starPath(cx: number, cy: number, r: number): string {
+  const pts: string[] = [];
+  for (let i = 0; i < 10; i++) {
+    const rad = i % 2 === 0 ? r : r * 0.42;
+    const a = (Math.PI / 5) * i - Math.PI / 2;
+    pts.push(`${(cx + rad * Math.cos(a)).toFixed(2)},${(cy + rad * Math.sin(a)).toFixed(2)}`);
+  }
+  return `M${pts.join("L")}Z`;
+}
+
+function Star({ cx, cy, r }: { cx: number; cy: number; r: number }) {
+  return <path d={starPath(cx, cy, r)} fill="#e8b40c" />;
+}
+
 /** Bandeiras em SVG puro (24×16, cantos arredondados). */
 export function Flag({ code, size = 22 }: { code: string; size?: number }) {
   const uid = useId().replace(/[:]/g, "");
@@ -53,6 +68,18 @@ export function Flag({ code, size = 22 }: { code: string; size?: number }) {
           <path d="M0 0l24 16M24 0L0 16" stroke="#d7263d" strokeWidth="1.5" />
           <path d="M12 0v16M0 8h24" stroke="#fffdf4" strokeWidth="5.4" />
           <path d="M12 0v16M0 8h24" stroke="#d7263d" strokeWidth="3" />
+        </>
+      );
+      break;
+    case "cn":
+      inner = (
+        <>
+          <rect width="24" height="16" fill="#d7263d" />
+          <Star cx={4.6} cy={4.4} r={2.4} />
+          <Star cx={8.6} cy={1.8} r={0.8} />
+          <Star cx={9.8} cy={3.6} r={0.8} />
+          <Star cx={9.8} cy={5.6} r={0.8} />
+          <Star cx={8.6} cy={7.4} r={0.8} />
         </>
       );
       break;
