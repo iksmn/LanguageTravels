@@ -1,4 +1,4 @@
-import { WEEKS } from "../data/curriculum";
+import { weeks } from "../data/content";
 import { CAST_MAP } from "../data/cast";
 import {
   SESSION_ICONS,
@@ -102,7 +102,7 @@ function WeekRow({
   rowIndex: number;
 }) {
   const isFinal = week === WEEKS_TOTAL;
-  const wk = isFinal ? null : WEEKS[week - 1];
+  const wk = isFinal ? null : weeks()[week - 1] ?? null;
   const startDay = (week - 1) * 7 + 1;
   const days = isFinal
     ? [85, 86, 87, 88, 89, 90]

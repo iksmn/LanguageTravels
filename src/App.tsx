@@ -5,11 +5,13 @@ import { Header, type AppView } from "./components/Header";
 import { LangGate } from "./components/LangGate";
 import { PlanView } from "./components/PlanView";
 import { GrandTourMap } from "./components/GrandTourMap";
+import { ItalyMap } from "./components/ItalyMap";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
 import { VerbsView } from "./components/VerbsView";
 import { SessionModal } from "./components/SessionModal";
 import { getDayInfo, TOTAL_DAYS } from "./lib/engine";
+import { setLang } from "./data/content";
 
 function Ambient() {
   return (
@@ -47,6 +49,9 @@ function Shell() {
     return <LangGate onPick={prog.chooseLanguage} />;
   }
 
+  // Mantém o resolvedor de conteúdo sincronizado com o idioma ativo.
+  setLang(prog.lang === "it" ? "it" : "fr");
+
   const openDay = (d: number) => {
     if (d < 1 || d > TOTAL_DAYS) return;
     if (!prog.unlockedDay(d)) {
@@ -83,6 +88,7 @@ function Shell() {
           xp={prog.progress.xp}
           streak={prog.progress.streak}
           day={prog.currentDay}
+          lang={prog.lang}
           onLanguages={() => prog.backToGate()}
         />
 
@@ -90,17 +96,28 @@ function Shell() {
           {view === "plan" && (
             <PlanView prog={prog} onOpenDay={openDay} onPassport={() => setView("passport")} />
           )}
-          {view === "map" && (
-            <GrandTourMap
-              prog={prog}
-              onSelectWeek={(week) => {
-                const firstDay = (week - 1) * 7 + 1;
-                if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
-                else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
-              }}
-              onGoPlan={() => setView("plan")}
-            />
-          )}
+          {view === "map" &&
+            (prog.lang === "it" ? (
+              <ItalyMap
+                prog={prog}
+                onSelectWeek={(week) => {
+                  const firstDay = (week - 1) * 7 + 1;
+                  if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
+                  else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
+                }}
+                onGoPlan={() => setView("plan")}
+              />
+            ) : (
+              <GrandTourMap
+                prog={prog}
+                onSelectWeek={(week) => {
+                  const firstDay = (week - 1) * 7 + 1;
+                  if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
+                  else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
+                }}
+                onGoPlan={() => setView("plan")}
+              />
+            ))}
           {view === "cast" && (
             <CastView
               onOpenWeek={(week) => {

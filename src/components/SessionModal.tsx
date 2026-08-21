@@ -12,6 +12,7 @@ import {
   type GenQ,
 } from "../lib/engine";
 import { canSpeak, speak, stopSpeaking } from "../lib/speech";
+import { speechLang } from "../data/content";
 import { Icon, type IconName } from "./Icons";
 import { Avatar } from "./Avatar";
 

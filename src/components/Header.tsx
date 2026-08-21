@@ -3,6 +3,8 @@ import { Icon } from "./Icons";
 import { Flag } from "./Flag";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
 
+const LANG_NAME: Record<string, string> = { fr: "Francês", it: "Italiano" };
+
 export type AppView = "plan" | "map" | "verbs" | "cast" | "passport";
 
 function useAnimatedNumber(target: number, duration = 700): number {
@@ -41,6 +43,7 @@ export function Header({
   xp,
   streak,
   day,
+  lang,
   onLanguages,
 }: {
   view: AppView;
@@ -48,6 +51,7 @@ export function Header({
   xp: number;
   streak: number;
   day: number;
+  lang: string;
   onLanguages: () => void;
 }) {
   const axp = useAnimatedNumber(xp);
@@ -76,8 +80,8 @@ export function Header({
           className="btn-press ml-1 flex items-center gap-2 rounded-lg border-2 border-ink/20 bg-card px-2.5 py-1.5 shadow-print-sm"
           title="Trocar de idioma"
         >
-          <Flag code="fr" size={20} />
-          <span className="font-mono text-[11px] font-semibold tracking-wide uppercase">Francês</span>
+          <Flag code={lang} size={20} />
+          <span className="font-mono text-[11px] font-semibold tracking-wide uppercase">{LANG_NAME[lang] ?? lang}</span>
           <span className="font-mono text-[9px] text-ink/40">trocar</span>
         </button>
 
