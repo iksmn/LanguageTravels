@@ -120,6 +120,93 @@ function VerbQuiz({ verb, onDone }: { verb: VerbShape; onDone: (score: number, t
   );
 }
 
+/* ----------------------- mini-quiz de mandarim ----------------------- */
+
+function ZhVerbQuiz({ verb, onDone }: { verb: VerbShape; onDone: (score: number, total: number) => void }) {
+  const questions = useMemo(() => {
+    const rng = mulberry32(verb.inf.length * 97 + verb.inf.charCodeAt(0));
+    const others = shuffle(verbList().filter((v) => v.inf !== verb.inf), rng).slice(0, 9);
+    const mk = (correct: string, distractors: string[]) => {
+      const options = shuffle([correct, ...shuffle(distractors, rng).slice(0, 3)], rng);
+      return { options, correct };
+    };
+    return [
+      { prompt: `O que significa «${verb.inf} ${verb.py}»?`, ...mk(verb.pt, others.map((v) => v.pt)) },
+      { prompt: `Como se diz “${verb.pt}”?`, ...mk(`${verb.inf} ${verb.py}`, others.map((v) => `${v.inf} ${v.py}`)) },
+      { prompt: `Qual é o pinyin de «${verb.inf}»?`, ...mk(verb.py ?? "", others.map((v) => v.py ?? "").filter(Boolean)) },
+    ];
+  }, [verb.inf]);
+
+  const [qi, setQi] = useState(0);
+  const [picked, setPicked] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const q = questions[qi];
+  if (!q) return null;
+
+  const pick = (i: number) => {
+    if (picked !== null) return;
+    setPicked(i);
+    if (q.options[i] === q.correct) setScore((s) => s + 1);
+  };
+  const next = () => {
+    if (qi + 1 < questions.length) {
+      setQi(qi + 1);
+      setPicked(null);
+    } else {
+      onDone(score, questions.length);
+    }
+  };
+
+  return (
+    <div className="rounded-lg border-2 border-ink/15 bg-paper p-3.5">
+      <div className="flex items-center justify-between">
+        <p className="font-mono text-[10px] font-bold tracking-[0.16em] text-ink-soft uppercase">
+          Quiz · questão {qi + 1}/{questions.length}
+        </p>
+        <p className="font-mono text-[11px] font-semibold" style={{ color: groupColor(verb.g) }}>
+          {score} acerto{score === 1 ? "" : "s"}
+        </p>
+      </div>
+      <p className="mt-2 font-display text-[17px] font-bold">{q.prompt}</p>
+      <div className="mt-2.5 grid grid-cols-2 gap-1.5">
+        {q.options.map((opt, i) => {
+          const show = picked !== null;
+          const isCorrect = opt === q.correct;
+          const isPicked = picked === i;
+          let cls = "border-ink/20 bg-card hover:border-ink hover:-translate-y-0.5";
+          if (show && isCorrect) cls = "border-leaf bg-leaf/12 text-leaf";
+          else if (show && isPicked) cls = "border-bus bg-bus/10 text-bus shake";
+          else if (show) cls = "border-ink/12 bg-card opacity-50";
+          return (
+            <button
+              key={`${opt}-${i}`}
+              disabled={show}
+              onClick={() => pick(i)}
+              className={`btn-press rounded-md border-2 px-2.5 py-1.5 text-left font-display text-[15px] font-semibold ${cls}`}
+            >
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+      {picked !== null && (
+        <div className="fade-up mt-2 flex items-center justify-between gap-2">
+          <p className={`text-[12.5px] ${q.options[picked] === q.correct ? "text-leaf" : "text-ink-soft"}`}>
+            {q.options[picked] === q.correct ? "很好！(hěn hǎo!)" : `Correto: «${q.correct}»`}
+          </p>
+          <button
+            onClick={next}
+            className="btn-press flex items-center gap-1 rounded-md border-2 border-ink bg-ink px-3 py-1.5 font-mono text-[10.5px] font-bold tracking-wide text-paper uppercase"
+          >
+            {qi + 1 < questions.length ? "Próxima" : "Concluir"}
+            <Icon name="arrowRight" size={12} strokeWidth={2.6} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ------------------------------ detalhe ------------------------------ */
 
 function VerbDetail({
@@ -135,6 +222,7 @@ function VerbDetail({
 }) {
   const forms = conjugateLang(verb.inf) ?? [];
   const isImper = isImpersonal(verb.inf);
+  const isZh = activeLang() === "zh";
   const [training, setTraining] = useState(false);
   const [result, setResult] = useState<{ score: number; total: number } | null>(null);
   const rows = isImper ? [2] : [0, 1, 2, 3, 4, 5];
@@ -146,7 +234,8 @@ function VerbDetail({
       <div className="fade-up slim-scroll relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl border-2 border-ink bg-paper p-5 shadow-print">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="font-display text-[26px] font-extrabold tracking-tight">{verb.inf}</h2>
+            <h2 className={`font-extrabold tracking-tight ${isZh ? "font-display text-[40px]" : "font-display text-[26px]"}`}>{verb.inf}</h2>
+            {isZh && verb.py && <p className="font-mono text-[15px] font-semibold text-cobalt">{verb.py}</p>}
             <p className="text-[14px] text-ink-soft">{verb.pt}</p>
             <span
               className="mt-1.5 inline-block rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-semibold tracking-wide"
@@ -163,8 +252,36 @@ function VerbDetail({
           </button>
         </div>
 
+        {/* cartão do caractere (mandarim — não conjuga) */}
+        {isZh && (
+          <div className="mt-4 rounded-lg border-2 border-ink/15 bg-card p-4">
+            <div className="flex items-center justify-between">
+              <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-ink-soft uppercase">Caractere · 汉字</p>
+              <button
+                onClick={() => speak(verb.inf, speechLang())}
+                className="btn-press flex items-center gap-1.5 rounded-md border-2 border-ink/20 bg-paper px-2.5 py-1 font-mono text-[10px] font-semibold uppercase shadow-print-sm"
+              >
+                <Icon name="volume" size={13} strokeWidth={2.2} />
+                Ouvir
+              </button>
+            </div>
+            <div className="mt-3 flex items-center justify-center gap-6 py-2">
+              <span className="font-display text-[64px] leading-none font-extrabold" style={{ color: groupColor(verb.g) }}>
+                {verb.inf}
+              </span>
+              <div className="leading-tight">
+                <p className="font-mono text-[16px] font-semibold text-cobalt">{verb.py}</p>
+                <p className="text-[15px] font-semibold">{verb.pt}</p>
+              </div>
+            </div>
+            <p className="mt-2 border-t border-ink/8 pt-2 text-[11px] text-ink-soft italic">
+              O mandarim não conjuga verbos — a forma é única para todas as pessoas e tempos.
+            </p>
+          </div>
+        )}
+
         {/* tabela de conjugação */}
-        <div className="mt-4 overflow-hidden rounded-lg border-2 border-ink/15">
+        {!isZh && <div className="mt-4 overflow-hidden rounded-lg border-2 border-ink/15">
           <div className="flex items-center justify-between bg-ink px-3 py-1.5">
             <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-paper uppercase">
               {activeLang() === "it"
@@ -213,17 +330,17 @@ function VerbDetail({
               Verbe impersonnel — usado sobretudo na 3ª pessoa (il faut / il pleut).
             </p>
           )}
-        </div>
+        </div>}
 
         {/* quiz / resultado */}
         <div className="mt-4">
           {!training && !result && (
             <div className="flex items-center justify-between gap-3 rounded-lg border-2 border-dashed border-ink/25 bg-card/70 px-3.5 py-3">
               <div>
-                <p className="font-display text-[15px] font-bold">Treinar este verbo</p>
+                <p className="font-display text-[15px] font-bold">{isZh ? "Treinar este caractere" : "Treinar este verbo"}</p>
                 <p className="text-[12px] text-ink-soft">
-                  {isImper ? "1 questão rápida." : "6 questões — uma por pessoa."}{" "}
-                  {best > 0 && `Melhor: ${best}/${isImper ? 1 : 6}.`}
+                  {isZh ? "3 questões: significado, caractere e pinyin." : isImper ? "1 questão rápida." : "6 questões — uma por pessoa."}{" "}
+                  {best > 0 && `Melhor: ${best}/${isZh ? 3 : isImper ? 1 : 6}.`}
                 </p>
               </div>
               <button
@@ -236,16 +353,26 @@ function VerbDetail({
               </button>
             </div>
           )}
-          {training && (
-            <VerbQuiz
-              verb={verb}
-              onDone={(score, total) => {
-                setResult({ score, total });
-                setTraining(false);
-                onScore(score, total);
-              }}
-            />
-          )}
+          {training &&
+            (isZh ? (
+              <ZhVerbQuiz
+                verb={verb}
+                onDone={(score, total) => {
+                  setResult({ score, total });
+                  setTraining(false);
+                  onScore(score, total);
+                }}
+              />
+            ) : (
+              <VerbQuiz
+                verb={verb}
+                onDone={(score, total) => {
+                  setResult({ score, total });
+                  setTraining(false);
+                  onScore(score, total);
+                }}
+              />
+            ))}
           {result && (
             <div className="fade-up rounded-lg border-2 border-leaf/50 bg-leaf/10 px-3.5 py-3">
               <p className="font-display text-[16px] font-bold text-leaf">
@@ -304,8 +431,9 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
   const allVerbs = useMemo(() => verbList(), [lang]);
   const TOUR_VERBS = useMemo(() => new Set(Object.values(weekVerbs()).flat()), [lang]);
   const verbsRecord = prog.progress.verbs ?? {};
+  const masteredThreshold = lang === "zh" ? 3 : 6;
   const trained = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) > 0).length;
-  const mastered = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) >= 6).length;
+  const mastered = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) >= masteredThreshold).length;
 
   const TOUR_LABEL =
     lang === "it"

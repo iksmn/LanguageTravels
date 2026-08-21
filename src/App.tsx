@@ -9,6 +9,7 @@ import { ItalyMap } from "./components/ItalyMap";
 import { IberiaMap } from "./components/IberiaMap";
 import { GermanyMap } from "./components/GermanyMap";
 import { BritainIrelandMap } from "./components/BritainIrelandMap";
+import { ChinaMap } from "./components/ChinaMap";
 import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
@@ -63,7 +64,9 @@ function Shell() {
           ? "es"
           : prog.lang === "en"
             ? "en"
-            : "fr",
+            : prog.lang === "zh"
+              ? "zh"
+              : "fr",
   );
 
   const openDay = (d: number) => {
@@ -121,7 +124,9 @@ function Shell() {
                       ? IberiaMap
                       : prog.lang === "en"
                         ? BritainIrelandMap
-                        : GrandTourMap;
+                        : prog.lang === "zh"
+                          ? ChinaMap
+                          : GrandTourMap;
               return (
                 <MapComp
                   prog={prog}

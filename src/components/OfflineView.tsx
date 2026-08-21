@@ -124,6 +124,7 @@ const TEST_PHRASES: Record<string, string> = {
   de: "Hallo! Die Sterne funkeln heute Abend.",
   es: "¡Hola! Las estrellas brillan esta noche.",
   en: "Hello! The stars are shining tonight.",
+  zh: "你好！今晚星星很亮。",
 };
 
 export function OfflineView({ prog }: { prog: UseProgressReturn }) {
@@ -143,7 +144,9 @@ export function OfflineView({ prog }: { prog: UseProgressReturn }) {
           ? "Alemão"
           : code === "es"
             ? "Espanhol"
-            : "Inglês";
+            : code === "en"
+              ? "Inglês"
+              : "Mandarim";
 
   useEffect(() => {
     listVoices().then((vs) => {
@@ -154,6 +157,7 @@ export function OfflineView({ prog }: { prog: UseProgressReturn }) {
         de: getPinnedVoice("de-DE"),
         es: getPinnedVoice("es-ES"),
         en: getPinnedVoice("en-GB"),
+        zh: getPinnedVoice("zh-CN"),
       });
     });
     const t = window.setTimeout(() => {

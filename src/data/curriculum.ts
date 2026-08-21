@@ -1,7 +1,7 @@
 import type { IconName } from "../components/Icons";
 
 export type Vocab = { fr: string; pt: string; ipa: string };
-export type DialogueLine = { who: "local" | "you"; fr: string; pt: string; speaker?: string };
+export type DialogueLine = { who: "local" | "you"; fr: string; pt: string; speaker?: string; py?: string };
 export type QuizQ = { q: string; options: string[]; a: number; why: string };
 
 export type Week = {
@@ -56,6 +56,7 @@ export const LANGUAGES = [
   { code: "de", name: "Alemão", native: "Deutsch", greeting: "Hallo!", flag: "de", available: true },
   { code: "es", name: "Espanhol", native: "Español", greeting: "¡Hola!", flag: "es", available: true },
   { code: "en", name: "Inglês", native: "English", greeting: "Hello!", flag: "gb", available: true },
+  { code: "zh", name: "Mandarim", native: "中文", greeting: "你好！", flag: "cn", available: true },
 ] as const;
 
 export type LangCode = (typeof LANGUAGES)[number]["code"];

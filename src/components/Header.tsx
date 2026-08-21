@@ -9,6 +9,7 @@ const LANG_NAME: Record<string, string> = {
   de: "Alemão",
   es: "Espanhol",
   en: "Inglês",
+  zh: "Mandarim",
 };
 
 export type AppView = "plan" | "map" | "verbs" | "cast" | "passport" | "offline";
