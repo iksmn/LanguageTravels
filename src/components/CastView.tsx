@@ -1,6 +1,13 @@
 import { CHARACTERS, GROUP_PRINCIPLES, GROUP_QUOTE, type Character } from "../data/cast";
+import { weeks } from "../data/content";
 import { Avatar } from "./Avatar";
 import { Icon } from "./Icons";
+
+/** Semanas (do currículo ativo) em que o personagem aparece. */
+const weeksForChar = (id: string): number[] =>
+  weeks()
+    .filter((w) => w.cast.includes(id))
+    .map((w) => w.num);
 
 function CharacterCard({ char, index, onOpenWeek }: { char: Character; index: number; onOpenWeek: (w: number) => void }) {
   const first = char.name.split(" ")[0];
@@ -69,7 +76,7 @@ function CharacterCard({ char, index, onOpenWeek }: { char: Character; index: nu
             </span>
           ))}
           <span className="mx-1 h-3 w-px bg-ink/15" />
-          {char.weeks.map((w) => (
+          {weeksForChar(char.id).map((w) => (
             <button
               key={w}
               onClick={() => onOpenWeek(w)}

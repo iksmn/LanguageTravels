@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import {
+  activeLang,
   conjugateLang,
   conjugatorSourceUrl,
   conjugatorUrl,
@@ -166,7 +167,7 @@ function VerbDetail({
         <div className="mt-4 overflow-hidden rounded-lg border-2 border-ink/15">
           <div className="flex items-center justify-between bg-ink px-3 py-1.5">
             <p className="font-mono text-[10px] font-bold tracking-[0.18em] text-paper uppercase">
-              {isItalian() ? "Presente indicativo" : "Présent de l'indicatif"}
+              {activeLang() === "it" ? "Presente indicativo" : activeLang() === "de" ? "Präsens" : "Présent de l'indicatif"}
             </p>
             <button
               onClick={() => rows.forEach((p) => forms[p] && speak(withPronounLang(p, forms[p]), speechLang()))}
@@ -268,7 +269,7 @@ function VerbDetail({
           className="mt-4 flex items-center gap-1.5 font-mono text-[11px] font-semibold text-cobalt hover:underline"
         >
           <Icon name="globe" size={13} strokeWidth={2.2} />
-          Toutes les conjugaisons sur Reverso
+          {activeLang() === "it" ? "Tutte le coniugazioni su Reverso" : activeLang() === "de" ? "Alle Konjugationen auf Reverso" : "Toutes les conjugaisons sur Reverso"}
         </a>
       </div>
     </div>
@@ -283,17 +284,20 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
   const [selected, setSelected] = useState<VerbShape | null>(null);
 
   const it = isItalian();
-  const TOUR_VERBS = useMemo(() => new Set(Object.values(weekVerbs()).flat()), [it]);
+  const lang = activeLang();
+  const allVerbs = useMemo(() => verbList(), [lang]);
+  const TOUR_VERBS = useMemo(() => new Set(Object.values(weekVerbs()).flat()), [lang]);
   const verbsRecord = prog.progress.verbs ?? {};
   const trained = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) > 0).length;
   const mastered = Object.keys(verbsRecord).filter((k) => (verbsRecord[k] ?? 0) >= 6).length;
 
+  const TOUR_LABEL = lang === "it" ? "★ del viaggio" : lang === "de" ? "★ der Route" : "★ du Grand Tour";
   const FILTERS: { id: Filter; label: string; color?: string }[] = [
-    { id: "all", label: it ? "Tutti · 250" : "Tous · 250" },
-    { id: 1, label: it ? "1ª coniug. · -are" : "1ᵉʳ groupe · -er", color: groupColor(1) },
-    { id: 2, label: it ? "2ª coniug. · -ere" : "2ᵉ groupe · -ir", color: groupColor(2) },
-    { id: 3, label: it ? "3ª coniug. · -ire" : "3ᵉ groupe · irrég.", color: groupColor(3) },
-    { id: "tour", label: it ? "★ del viaggio" : "★ du Grand Tour", color: "#b8860b" },
+    { id: "all", label: `${lang === "it" ? "Tutti" : lang === "de" ? "Alle" : "Tous"} · ${allVerbs.length}` },
+    { id: 1, label: groupLabel(1), color: groupColor(1) },
+    { id: 2, label: groupLabel(2), color: groupColor(2) },
+    { id: 3, label: groupLabel(3), color: groupColor(3) },
+    { id: "tour", label: TOUR_LABEL, color: "#b8860b" },
   ];
 
   const list = useMemo(() => {
@@ -316,10 +320,16 @@ export function VerbsView({ prog }: { prog: UseProgressReturn }) {
           <div className="min-w-0">
             <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.24em] text-mustard uppercase">
               <Icon name="book" size={14} strokeWidth={2.2} />
-              {it ? "Il Coniugatore" : "Le Conjugueur"}
+              {lang === "it" ? "Il Coniugatore" : lang === "de" ? "Der Konjugator" : "Le Conjugueur"}
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
-              {it ? <>I 250 verbi <span className="text-mustard">essenziali</span></> : <>Les 250 verbes <span className="text-mustard">essentiels</span></>}
+              {lang === "it" ? (
+                <>I {allVerbs.length} verbi <span className="text-mustard">essenziali</span></>
+              ) : lang === "de" ? (
+                <>Die {allVerbs.length} <span className="text-mustard">wichtigen</span> Verben</>
+              ) : (
+                <>Les {allVerbs.length} verbes <span className="text-mustard">essentiels</span></>
+              )}
             </h1>
             <p className="mt-1.5 max-w-xl text-[13.5px] leading-relaxed text-paper/75">
               Baseados na lista dos verbos mais conjugados do{" "}

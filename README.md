@@ -1,12 +1,19 @@
-# RUMO — 90 dias de Francês & Italiano (nível A1)
+# RUMO — 90 dias de Francês, Italiano & Alemão (nível A1)
 
-Aplicativo de aprendizado de idiomas que roda **100% no navegador**, sem backend.
-Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais (França, Suíça,
-Bélgica, Luxemburgo e Mônaco no francês; Itália e Suíça no italiano), com vocabulário,
-diálogos com áudio, quizzes, conjugador de verbos, carimbos de passaporte e diploma final.
+Aplicativo de aprendizado de idiomas que roda **100% no navegador e offline**, sem backend.
+Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
+
+- **Francês** — França, Suíça, Bélgica, Luxemburgo e Mônaco
+- **Italiano** — Itália e Suíça
+- **Alemão** — Alemanha, Suíça, Áustria e Liechtenstein
+
+Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
+passaporte e diploma final.
 
 > Todo o progresso é salvo **automaticamente no navegador** (localStorage) e pode ser
-> exportado/restaurado como arquivo `.json`.
+> exportado/restaurado como arquivo `.json`. As **fontes são empacotadas localmente**
+> (@fontsource) e há uma **Central Offline** no app para auditar vozes, fixar a preferida
+> e baixar corpus de áudio, tabela de verbos e backup — escolhendo o destino dos arquivos.
 
 ---
 
@@ -120,17 +127,34 @@ location.reload()
 
 ---
 
-## 8. Observações
+## 8. Central Offline (aba *Offline*)
 
-- **Áudio / pronúncia** usa a Web Speech API do sistema (`fr-FR` e `it-IT`). Se o seu
-  sistema não tiver essas vozes, o app continua funcionando — apenas sem som.
-- **Sem internet:** depois de carregado uma vez, o app funciona offline (é um SPA estático),
-  mas vozes de síntese em nuvem e os links externos do conjugador (Reverso) exigem conexão.
+Tudo foi pensado para rodar **sem internet**:
+
+- **Fontes** empacotadas via `@fontsource` (os arquivos `.woff2` vão junto no build —
+  nenhum CDN é chamado).
+- **Vozes (TTS):** a aba *Offline* lista as vozes instaladas no sistema para o idioma ativo
+  (`fr-FR`, `it-IT` ou `de-DE`), marca as que são **locais** (offline) e permite **fixar**
+  a preferida — usada em todas as falas do app.
+- **Rotinas de download** (com escolha de destino via File System Access API):
+  - `rumo-corpus-XX.txt` — todas as frases e diálogos da rota (para usar num TTS offline).
+  - `rumo-verbos-XX.csv` — os verbos conjugados no presente.
+  - `rumo-progresso.json` — backup completo.
+
+> Os links para o conjugador Reverso são externos (opcionais) e exigem conexão; tudo o
+> mais funciona offline.
+
+---
+
+## 9. Observações
+
+- **Áudio / pronúncia** usa a Web Speech API do sistema. Se o seu sistema não tiver vozes
+  no idioma, o app continua funcionando — apenas sem som.
 - **Sem cookies / sem conta:** nada é enviado a servidor algum. Tudo fica no seu navegador.
 
 ---
 
-## 9. Comandos rápidos (resumo)
+## 10. Comandos rápidos (resumo)
 
 ```bash
 npm install     # 1x — instala dependências
@@ -139,4 +163,4 @@ npm run build   # versão de produção em dist/
 npm run preview # testa o build localmente
 ```
 
-**Bonne route e buon viaggio!** 🇫🇷 🇮🇹
+**Bonne route, buon viaggio und gute Reise!** 🇫🇷 🇮🇹 🇩🇪

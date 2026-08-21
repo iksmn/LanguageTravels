@@ -6,6 +6,8 @@ import { LangGate } from "./components/LangGate";
 import { PlanView } from "./components/PlanView";
 import { GrandTourMap } from "./components/GrandTourMap";
 import { ItalyMap } from "./components/ItalyMap";
+import { GermanyMap } from "./components/GermanyMap";
+import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
 import { VerbsView } from "./components/VerbsView";
@@ -50,7 +52,7 @@ function Shell() {
   }
 
   // Mantém o resolvedor de conteúdo sincronizado com o idioma ativo.
-  setLang(prog.lang === "it" ? "it" : "fr");
+  setLang(prog.lang === "it" ? "it" : prog.lang === "de" ? "de" : "fr");
 
   const openDay = (d: number) => {
     if (d < 1 || d > TOTAL_DAYS) return;
@@ -97,27 +99,20 @@ function Shell() {
             <PlanView prog={prog} onOpenDay={openDay} onPassport={() => setView("passport")} />
           )}
           {view === "map" &&
-            (prog.lang === "it" ? (
-              <ItalyMap
-                prog={prog}
-                onSelectWeek={(week) => {
-                  const firstDay = (week - 1) * 7 + 1;
-                  if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
-                  else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
-                }}
-                onGoPlan={() => setView("plan")}
-              />
-            ) : (
-              <GrandTourMap
-                prog={prog}
-                onSelectWeek={(week) => {
-                  const firstDay = (week - 1) * 7 + 1;
-                  if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
-                  else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
-                }}
-                onGoPlan={() => setView("plan")}
-              />
-            ))}
+            (() => {
+              const MapComp = prog.lang === "it" ? ItalyMap : prog.lang === "de" ? GermanyMap : GrandTourMap;
+              return (
+                <MapComp
+                  prog={prog}
+                  onSelectWeek={(week: number) => {
+                    const firstDay = (week - 1) * 7 + 1;
+                    if (prog.unlockedDay(firstDay)) setSessionDay(firstDay);
+                    else toast(`A Semana ${String(week).padStart(2, "0")} ainda está fechada — siga a rota em ordem.`, "lock");
+                  }}
+                  onGoPlan={() => setView("plan")}
+                />
+              );
+            })()}
           {view === "cast" && (
             <CastView
               onOpenWeek={(week) => {
@@ -127,6 +122,7 @@ function Shell() {
             />
           )}
           {view === "verbs" && <VerbsView prog={prog} />}
+          {view === "offline" && <OfflineView prog={prog} />}
           {view === "passport" && (
             <PassportView
               prog={prog}
