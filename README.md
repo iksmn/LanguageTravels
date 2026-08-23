@@ -162,10 +162,11 @@ e um medidor de precisão.
   ancorando esse léxico A1 ao longo da rota.
 - **Recompensa:** concluir a cópia do dia dá **+15 XP** (uma vez por dia, salvo
   em `progress.copies`).
-- **Por idioma:** disponível para **francês** (`src/data/dictees-fr.ts`) e
+- **Por idioma:** disponível para **francês** (`src/data/dictees-fr.ts`),
   **italiano** (`src/data/dictees-it.ts`, com temas de automobilismo, Vaticano e
-  locais históricos). Os demais idiomas exibem o caderno assim que seus corpora
-  forem adicionados.
+  locais históricos) e **alemão** (`src/data/dictees-de.ts`, com temas de
+  futebol, automobilismo e história alemã). Os demais idiomas exibem o caderno
+  assim que seus corpora forem adicionados.
 
 ---
 
