@@ -65,6 +65,7 @@ import { WEEKS_JA, WEEK_VERBS_JA } from "./curriculum-ja";
 import { VERBS_JA, conjugateJA, withPronounJA, JA_FORMS, JA_GROUP_LABEL, JA_GROUP_COLOR } from "./verbs-ja";
 import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
 import { DICTEES_FR, type DicteeLine } from "./dictees-fr";
+import { DICTEES_IT } from "./dictees-it";
 
 export interface VerbShape {
   inf: string;
@@ -304,7 +305,8 @@ export function resolveSpeaker(raw: string): Character | undefined {
  * Por enquanto só o francês tem corpus próprio; os demais retornam [].
  */
 export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
-  const all = _lang === "fr" ? DICTEES_FR[weekId] ?? [] : [];
+  const source = _lang === "it" ? DICTEES_IT : _lang === "fr" ? DICTEES_FR : null;
+  const all = source ? source[weekId] ?? [] : [];
   if (!all.length) return [];
   const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
   return all.slice(0, count);

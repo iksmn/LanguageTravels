@@ -13,7 +13,7 @@ const LANG_NAME: Record<string, string> = {
   ja: "Japonês",
 };
 
-export type AppView = "plan" | "map" | "verbs" | "cast" | "passport" | "offline";
+export type AppView = "plan" | "map" | "verbs" | "cards" | "cast" | "passport" | "offline";
 
 function useAnimatedNumber(target: number, duration = 700): number {
   const [display, setDisplay] = useState(target);
@@ -37,10 +37,11 @@ function useAnimatedNumber(target: number, duration = 700): number {
   return display;
 }
 
-const TABS: { id: AppView; label: string; icon: "calendar" | "compass" | "passport" | "users" | "book" | "harddrive" }[] = [
+const TABS: { id: AppView; label: string; icon: "calendar" | "compass" | "passport" | "users" | "book" | "harddrive" | "cards" }[] = [
   { id: "plan", label: "Plano 90 dias", icon: "calendar" },
   { id: "map", label: "Mapa da rota", icon: "compass" },
   { id: "verbs", label: "Verbos", icon: "book" },
+  { id: "cards", label: "Cartões", icon: "cards" },
   { id: "cast", label: "Compagnons", icon: "users" },
   { id: "offline", label: "Offline", icon: "harddrive" },
   { id: "passport", label: "Passaporte", icon: "passport" },

@@ -18,6 +18,8 @@ export interface LangProgress {
   verbs: Record<string, number>;
   /** Dias em que a cópia do "Cahier de copie" foi concluída. */
   copies: Record<number, boolean>;
+  /** Estado Leitner de cada flashcard: caixa (0–3) + timestamp da última nota. */
+  cards: Record<string, { b: number; t: number }>;
 }
 
 export interface Store {
@@ -28,7 +30,7 @@ export interface Store {
 const STORE_KEY = "rumo:store:v2";
 
 function freshLang(): LangProgress {
-  return { xp: 0, streak: 0, lastActive: null, days: {}, verbs: {}, copies: {} };
+  return { xp: 0, streak: 0, lastActive: null, days: {}, verbs: {}, copies: {}, cards: {} };
 }
 
 function load(): Store {
@@ -76,6 +78,7 @@ export interface UseProgressReturn {
   completeCopy: (day: number, xp: number) => number; // conclui a cópia e soma XP
   clearDay: (day: number) => boolean; // reabre um dia para refazer do zero
   resetAll: () => void; // zera o progresso de todos os idiomas
+  gradeCard: (cardLang: string, cardId: string, box: number) => void; // nota Leitner do cartão
   level: number;
 }
 
@@ -201,6 +204,18 @@ export function useProgress(): UseProgressReturn {
     [lang],
   );
 
+  /** Avalia um flashcard (caixa Leitner 0–3) no progresso do idioma dono do cartão. */
+  const gradeCard = useCallback((cardLang: string, cardId: string, box: number) => {
+    setStore((prev) => {
+      const p = { ...freshLang(), ...prev.langs[cardLang] };
+      const next: LangProgress = {
+        ...p,
+        cards: { ...p.cards, [cardId]: { b: box, t: Date.now() } },
+      };
+      return { ...prev, langs: { ...prev.langs, [cardLang]: next } };
+    });
+  }, []);
+
   /** Zera o progresso de TODOS os idiomas (o idioma ativo continua selecionado). */
   const resetAll = useCallback(() => {
     setStore((prev) => {
@@ -249,6 +264,7 @@ export function useProgress(): UseProgressReturn {
           days: raw && typeof raw.days === "object" && raw.days ? raw.days : {},
           verbs: raw && typeof raw.verbs === "object" && raw.verbs ? raw.verbs : {},
           copies: raw && typeof raw.copies === "object" && raw.copies ? raw.copies : {},
+          cards: raw && typeof raw.cards === "object" && raw.cards ? raw.cards : {},
         };
       }
       const active = typeof parsed.active === "string" && langs[parsed.active] ? parsed.active : null;
@@ -277,6 +293,7 @@ export function useProgress(): UseProgressReturn {
     completeCopy,
     clearDay,
     resetAll,
+    gradeCard,
     exportStore,
     restoreStore,
     level: levelFromXp(progress.xp),

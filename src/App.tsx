@@ -15,6 +15,7 @@ import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
 import { VerbsView } from "./components/VerbsView";
+import { FlashcardsView } from "./components/FlashcardsView";
 import { SessionModal } from "./components/SessionModal";
 import { getDayInfo, TOTAL_DAYS } from "./lib/engine";
 import { setLang, langMeta } from "./data/content";
@@ -151,6 +152,7 @@ function Shell() {
             />
           )}
           {view === "verbs" && <VerbsView prog={prog} />}
+          {view === "cards" && <FlashcardsView prog={prog} />}
           {view === "offline" && <OfflineView prog={prog} />}
           {view === "passport" && (
             <PassportView
