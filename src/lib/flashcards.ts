@@ -19,6 +19,9 @@ import { WEEKS_ES, WEEK_VERBS_ES } from "../data/curriculum-es";
 import { WEEKS_EN, WEEK_VERBS_EN } from "../data/curriculum-en";
 import { WEEKS_ZH, WEEK_VERBS_ZH } from "../data/curriculum-zh";
 import { WEEKS_JA, WEEK_VERBS_JA } from "../data/curriculum-ja";
+import { WEEKS_RU, WEEK_VERBS_RU } from "../data/curriculum-ru";
+import { WEEKS_FA, WEEK_VERBS_FA } from "../data/curriculum-fa";
+import { WEEKS_AR, WEEK_VERBS_AR } from "../data/curriculum-ar";
 import { VERB_LIST } from "../data/verbs";
 import { VERB_LIST_IT } from "../data/verbs-it";
 import { VERBS_DE } from "../data/verbs-de";
@@ -26,6 +29,9 @@ import { VERBS_ES } from "../data/verbs-es";
 import { VERBS_EN } from "../data/verbs-en";
 import { VERBS_ZH } from "../data/verbs-zh";
 import { VERBS_JA } from "../data/verbs-ja";
+import { VERBS_RU } from "../data/verbs-ru";
+import { VERBS_FA } from "../data/verbs-fa";
+import { VERBS_AR } from "../data/verbs-ar";
 
 export interface LangMeta {
   code: string;
@@ -43,18 +49,21 @@ export const FC_LANGS: LangMeta[] = [
   { code: "en", name: "Inglês", flag: "gb", speech: "en-GB", readingLabel: "IPA" },
   { code: "zh", name: "Mandarim", flag: "cn", speech: "zh-CN", readingLabel: "pinyin" },
   { code: "ja", name: "Japonês", flag: "jp", speech: "ja-JP", readingLabel: "romaji" },
+  { code: "ru", name: "Russo", flag: "ru", speech: "ru-RU", readingLabel: "transliteração" },
+  { code: "fa", name: "Farsi", flag: "ir", speech: "fa-IR", readingLabel: "transliteração" },
+  { code: "ar", name: "Árabe", flag: "sa", speech: "ar-SA", readingLabel: "transliteração" },
 ];
 
 const langMetaMap: Record<string, LangMeta> = Object.fromEntries(FC_LANGS.map((l) => [l.code, l]));
 
 const WEEKS_MAP: Record<string, Week[]> = {
-  fr: WEEKS, it: WEEKS_IT, de: WEEKS_DE, es: WEEKS_ES, en: WEEKS_EN, zh: WEEKS_ZH, ja: WEEKS_JA,
+  fr: WEEKS, it: WEEKS_IT, de: WEEKS_DE, es: WEEKS_ES, en: WEEKS_EN, zh: WEEKS_ZH, ja: WEEKS_JA, ru: WEEKS_RU, fa: WEEKS_FA, ar: WEEKS_AR,
 };
 const WEEKVERBS_MAP: Record<string, Record<string, string[]>> = {
-  fr: WEEK_VERBS, it: WEEK_VERBS_IT, de: WEEK_VERBS_DE, es: WEEK_VERBS_ES, en: WEEK_VERBS_EN, zh: WEEK_VERBS_ZH, ja: WEEK_VERBS_JA,
+  fr: WEEK_VERBS, it: WEEK_VERBS_IT, de: WEEK_VERBS_DE, es: WEEK_VERBS_ES, en: WEEK_VERBS_EN, zh: WEEK_VERBS_ZH, ja: WEEK_VERBS_JA, ru: WEEK_VERBS_RU, fa: WEEK_VERBS_FA, ar: WEEK_VERBS_AR,
 };
 const VERBS_MAP: Record<string, { inf: string; pt: string; py?: string }[]> = {
-  fr: VERB_LIST, it: VERB_LIST_IT, de: VERBS_DE, es: VERBS_ES, en: VERBS_EN, zh: VERBS_ZH, ja: VERBS_JA,
+  fr: VERB_LIST, it: VERB_LIST_IT, de: VERBS_DE, es: VERBS_ES, en: VERBS_EN, zh: VERBS_ZH, ja: VERBS_JA, ru: VERBS_RU, fa: VERBS_FA, ar: VERBS_AR,
 };
 
 export interface FlashCard {

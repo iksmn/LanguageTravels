@@ -14,6 +14,8 @@
 export interface DicteeLine {
   fr: string;
   pt: string;
+  /** Transcrição auxiliar: pinyin (zh), romaji (ja/fa) ou transliteração (ar). */
+  py?: string;
 }
 
 export const DICTEES_FR: Record<string, DicteeLine[]> = {
