@@ -16,6 +16,8 @@ export interface LangProgress {
   days: Record<number, DayRecord>;
   /** Melhor pontuação (0–6) em cada verbo treinado no conjugador. */
   verbs: Record<string, number>;
+  /** Dias em que a cópia do "Cahier de copie" foi concluída. */
+  copies: Record<number, boolean>;
 }
 
 export interface Store {
@@ -26,7 +28,7 @@ export interface Store {
 const STORE_KEY = "rumo:store:v2";
 
 function freshLang(): LangProgress {
-  return { xp: 0, streak: 0, lastActive: null, days: {}, verbs: {} };
+  return { xp: 0, streak: 0, lastActive: null, days: {}, verbs: {}, copies: {} };
 }
 
 function load(): Store {
@@ -70,6 +72,8 @@ export interface UseProgressReturn {
   saveVerbScore: (inf: string, score: number) => void; // guarda a melhor pontuação no verbo
   exportStore: () => string; // JSON do progresso para backup
   restoreStore: (json: string) => boolean; // restaura backup; false se inválido
+  isCopyDone: (day: number) => boolean; // cópia do "Cahier" já feita?
+  completeCopy: (day: number, xp: number) => number; // conclui a cópia e soma XP
   level: number;
 }
 
@@ -157,6 +161,33 @@ export function useProgress(): UseProgressReturn {
     });
   }, []);
 
+  /** A cópia do dia já foi concluída? */
+  const isCopyDone = useCallback(
+    (day: number): boolean => Boolean((progress.copies ?? {})[day]),
+    [progress],
+  );
+
+  /** Registra a conclusão da cópia do dia e soma o XP de bônus (uma vez por dia). */
+  const completeCopy = useCallback(
+    (day: number, xp: number): number => {
+      if (!lang) return 0;
+      let gained = 0;
+      setStore((prev) => {
+        const p = { ...freshLang(), ...prev.langs[lang] };
+        if ((p.copies ?? {})[day]) return prev; // já copiada
+        gained = xp;
+        const next: LangProgress = {
+          ...p,
+          xp: p.xp + xp,
+          copies: { ...p.copies, [day]: true },
+        };
+        return { ...prev, langs: { ...prev.langs, [lang]: next } };
+      });
+      return gained;
+    },
+    [lang],
+  );
+
   /** Serializa o progresso para backup em arquivo. */
   const exportStore = useCallback((): string => JSON.stringify(store, null, 2), [store]);
 
@@ -174,6 +205,7 @@ export function useProgress(): UseProgressReturn {
           ...raw,
           days: raw && typeof raw.days === "object" && raw.days ? raw.days : {},
           verbs: raw && typeof raw.verbs === "object" && raw.verbs ? raw.verbs : {},
+          copies: raw && typeof raw.copies === "object" && raw.copies ? raw.copies : {},
         };
       }
       const active = typeof parsed.active === "string" && langs[parsed.active] ? parsed.active : null;
@@ -198,6 +230,8 @@ export function useProgress(): UseProgressReturn {
     backToGate,
     resetActive,
     saveVerbScore,
+    isCopyDone,
+    completeCopy,
     exportStore,
     restoreStore,
     level: levelFromXp(progress.xp),

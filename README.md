@@ -10,7 +10,9 @@ Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
 - **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda
 
 Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
-passaporte e diploma final.
+passaporte, diploma final e um **Cahier de copie** — caderno de cópia à mão em
+todas as lições, com frases que crescem em complexidade e trazem dias da semana,
+meses e estações do ano.
 
 > **Cada idioma tem seus próprios personagens** — seis companheiros de viagem distintos
 > (nome, cidade, profissão, personalidade e avatar), criados para a cultura de cada rota e
@@ -134,7 +136,28 @@ location.reload()
 
 ---
 
-## 8. Central Offline (aba *Offline*)
+## 8. Cahier de copie (cópia à mão)
+
+Toda lição termina com um **caderno de cópia** no estilo dos *cahiers* franceses
+(pauta Seyes, margem vermelha, letra manuscrita). O aluno recopia as frases do
+diálogo da semana digitando, com feedback caractere a caractere (verde/vermelho)
+e um medidor de precisão.
+
+- **Progressão de complexidade:** cada semana tem 3 frases (simples → complexa).
+  Nos dias 1–2 copia-se 1 frase; nos dias 3–4, duas; do dia 5 em diante, as três.
+  As frases das últimas semanas são mais longas e ricas.
+- **Referências temporais:** as frases trazem **dias da semana** (*lundi…dimanche*),
+  **meses** (*janvier…décembre*) e **estações** (*printemps, été, automne, hiver*),
+  ancorando esse léxico A1 ao longo da rota.
+- **Recompensa:** concluir a cópia do dia dá **+15 XP** (uma vez por dia, salvo
+  em `progress.copies`).
+- **Por idioma:** implementado primeiro para o **francês** (corpus próprio em
+  `src/data/dictees-fr.ts`). Os demais idiomas exibem o caderno assim que seus
+  corpora forem adicionados.
+
+---
+
+## 9. Central Offline (aba *Offline*)
 
 Tudo foi pensado para rodar **sem internet**:
 
@@ -153,7 +176,7 @@ Tudo foi pensado para rodar **sem internet**:
 
 ---
 
-## 9. Observações
+## 10. Observações
 
 - **Áudio / pronúncia** usa a Web Speech API do sistema. Se o seu sistema não tiver vozes
   no idioma, o app continua funcionando — apenas sem som.
@@ -161,7 +184,7 @@ Tudo foi pensado para rodar **sem internet**:
 
 ---
 
-## 10. Comandos rápidos (resumo)
+## 11. Comandos rápidos (resumo)
 
 ```bash
 npm install     # 1x — instala dependências

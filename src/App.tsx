@@ -10,6 +10,7 @@ import { IberiaMap } from "./components/IberiaMap";
 import { GermanyMap } from "./components/GermanyMap";
 import { BritainIrelandMap } from "./components/BritainIrelandMap";
 import { ChinaMap } from "./components/ChinaMap";
+import { JapanMap } from "./components/JapanMap";
 import { OfflineView } from "./components/OfflineView";
 import { PassportView } from "./components/PassportView";
 import { CastView } from "./components/CastView";
@@ -66,7 +67,9 @@ function Shell() {
             ? "en"
             : prog.lang === "zh"
               ? "zh"
-              : "fr",
+              : prog.lang === "ja"
+                ? "ja"
+                : "fr",
   );
 
   const openDay = (d: number) => {
@@ -174,6 +177,7 @@ function Shell() {
           day={sessionDay}
           dayDone={Boolean(activeRecord)}
           totalXp={prog.progress.xp}
+          prog={prog}
           onClose={() => setSessionDay(null)}
           onFinish={finishDay}
           onExamFail={() => toast("Não foi dessa vez — o exame final pode ser refeito com novas questões.", "info")}

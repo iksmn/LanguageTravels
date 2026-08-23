@@ -46,7 +46,8 @@ export type IconName =
   | "download"
   | "mic"
   | "type"
-  | "harddrive";
+  | "harddrive"
+  | "pen";
 
 /** Glifos puros (viewBox 24×24, stroke=currentColor) — reutilizáveis dentro de <svg> maior. */
 export function IconGlyph({ name }: { name: IconName }): JSX.Element {
@@ -335,6 +336,13 @@ export function IconGlyph({ name }: { name: IconName }): JSX.Element {
         <>
           <path d="M21 12H3M5.5 4.5h13L21 12v6a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18v-6Z" />
           <path d="M6.5 15.5h.01M10 15.5h.01" strokeWidth={2.6} />
+        </>
+      );
+    case "pen":
+      return (
+        <>
+          <path d="m14.5 5 4.5 4.5L8.5 20 3 21l1-5.5Z" />
+          <path d="m12.5 7 4.5 4.5M17 2.5 21.5 7" />
         </>
       );
     default:
