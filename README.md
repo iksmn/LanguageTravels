@@ -10,9 +10,9 @@ Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
 - **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda
 
 Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
-passaporte, diploma final e um **Cahier de copie** — caderno de cópia à mão em
-todas as lições, com frases que crescem em complexidade e trazem dias da semana,
-meses e estações do ano.
+passaporte, diploma final, um **Cahier de copie** (caderno de cópia à mão, em
+francês e italiano) e uma central de **cartões de memória** de todos os idiomas
+com exportação para o **Anki**.
 
 > **Cada idioma tem seus próprios personagens** — seis companheiros de viagem distintos
 > (nome, cidade, profissão, personalidade e avatar), criados para a cultura de cada rota e
@@ -162,13 +162,31 @@ e um medidor de precisão.
   ancorando esse léxico A1 ao longo da rota.
 - **Recompensa:** concluir a cópia do dia dá **+15 XP** (uma vez por dia, salvo
   em `progress.copies`).
-- **Por idioma:** implementado primeiro para o **francês** (corpus próprio em
-  `src/data/dictees-fr.ts`). Os demais idiomas exibem o caderno assim que seus
-  corpora forem adicionados.
+- **Por idioma:** disponível para **francês** (`src/data/dictees-fr.ts`) e
+  **italiano** (`src/data/dictees-it.ts`, com temas de automobilismo, Vaticano e
+  locais históricos). Os demais idiomas exibem o caderno assim que seus corpora
+  forem adicionados.
 
 ---
 
-## 9. Central Offline (aba *Offline*)
+## 9. Cartões de memória (aba *Cartões*)
+
+Uma central de **flashcards de todos os idiomas**, integrada ao progresso:
+
+- **Desbloqueio automático:** ao concluir o dia de vocabulário de uma semana, as
+  palavras entram nos cartões; ao concluir o dia de quiz, os verbos do conjugador
+  entram também. Nada fica disponível antes de ser aprendido na rota.
+- **Repetição espaçada (Leitner, 4 caixas):** nova → 1 dia → 3 dias → 7 dias.
+  Estude em sessões de até 30 cartões avaliando *Errei / Difícil / Boa / Fácil*.
+- **Mandarim e japonês:** os cartões mostram **pinyin / romaji** e a pronúncia
+  por síntese de voz (`zh-CN` / `ja-JP`).
+- **Exportação para o Anki:** botão *Anki (.txt)* gera um arquivo de importação
+  (separador tab, HTML, etiquetas `rumo::<idioma>::<tipo>`); há também *CSV*.
+  O destino do arquivo é escolhido pelo usuário (File System Access API).
+
+---
+
+## 10. Central Offline (aba *Offline*)
 
 Tudo foi pensado para rodar **sem internet**:
 
@@ -187,7 +205,7 @@ Tudo foi pensado para rodar **sem internet**:
 
 ---
 
-## 10. Observações
+## 11. Observações
 
 - **Áudio / pronúncia** usa a Web Speech API do sistema. Se o seu sistema não tiver vozes
   no idioma, o app continua funcionando — apenas sem som.
@@ -195,7 +213,7 @@ Tudo foi pensado para rodar **sem internet**:
 
 ---
 
-## 11. Comandos rápidos (resumo)
+## 12. Comandos rápidos (resumo)
 
 ```bash
 npm install     # 1x — instala dependências
