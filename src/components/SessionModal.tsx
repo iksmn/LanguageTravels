@@ -14,6 +14,8 @@ import { canSpeak, speak, stopSpeaking } from "../lib/speech";
 import { speechLang, resolveSpeaker, castMap, localizeNames } from "../data/content";
 import { Icon, type IconName } from "./Icons";
 import { Avatar } from "./Avatar";
+import { CopyBook } from "./CopyBook";
+import type { UseProgressReturn } from "../hooks/useProgress";
 
 /* ------------------------------ confete ------------------------------ */
 
@@ -524,6 +526,7 @@ export function SessionModal({
   day,
   dayDone,
   totalXp,
+  prog,
   onClose,
   onFinish,
   onExamFail,
@@ -532,6 +535,7 @@ export function SessionModal({
   day: number;
   dayDone: boolean;
   totalXp: number;
+  prog: UseProgressReturn;
   onClose: () => void;
   onFinish: (day: number, xp: number, score?: number, total?: number) => number;
   onExamFail: () => void;
@@ -701,6 +705,8 @@ export function SessionModal({
                   onDone={(s) => handleDone(s, genQs.length)}
                 />
               )}
+              {/* Caderno de cópia — presente em todas as lições */}
+              {week && <CopyBook week={week} day={day} prog={prog} />}
             </>
           ) : (
             /* resultado */

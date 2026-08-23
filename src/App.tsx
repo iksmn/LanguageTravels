@@ -177,6 +177,7 @@ function Shell() {
           day={sessionDay}
           dayDone={Boolean(activeRecord)}
           totalXp={prog.progress.xp}
+          prog={prog}
           onClose={() => setSessionDay(null)}
           onFinish={finishDay}
           onExamFail={() => toast("Não foi dessa vez — o exame final pode ser refeito com novas questões.", "info")}

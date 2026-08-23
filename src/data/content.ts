@@ -64,6 +64,7 @@ import { CAST_ZH, GROUP_QUOTE_ZH } from "./cast-zh";
 import { WEEKS_JA, WEEK_VERBS_JA } from "./curriculum-ja";
 import { VERBS_JA, conjugateJA, withPronounJA, JA_FORMS, JA_GROUP_LABEL, JA_GROUP_COLOR } from "./verbs-ja";
 import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
+import { DICTEES_FR, type DicteeLine } from "./dictees-fr";
 
 export interface VerbShape {
   inf: string;
@@ -294,6 +295,19 @@ export function resolveSpeaker(raw: string): Character | undefined {
   const canon = Object.keys(FRENCH_FIRST).find((k) => normName(FRENCH_FIRST[k]) === r);
   if (canon) return list.find((c) => c.id === canon);
   return undefined;
+}
+
+/**
+ * Linhas de ditado do dia (Cahier de copie).
+ * A quantidade cresce ao longo da semana: 1 frase nos dias 1–2,
+ * 2 nos dias 3–4 e todas (3) do dia 5 em diante.
+ * Por enquanto só o francês tem corpus próprio; os demais retornam [].
+ */
+export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
+  const all = _lang === "fr" ? DICTEES_FR[weekId] ?? [] : [];
+  if (!all.length) return [];
+  const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
+  return all.slice(0, count);
 }
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
