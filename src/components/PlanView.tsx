@@ -1,5 +1,5 @@
-import { weeks } from "../data/content";
-import { CAST_MAP } from "../data/cast";
+import { weeks, uiStrings, weekTag } from "../data/content";
+import { castMap } from "../data/content";
 import {
   SESSION_ICONS,
   SESSION_META,
@@ -123,10 +123,10 @@ function WeekRow({
       >
         <div>
           <p className={`font-mono text-[10px] font-bold tracking-[0.18em] uppercase ${isFinal ? "text-mustard" : stamped ? "text-leaf" : "text-ink/45"}`}>
-            {isFinal ? "Semana 13" : `Semaine ${String(week).padStart(2, "0")}`}
+            {weekTag(week)}
           </p>
           <p className={`mt-0.5 font-display text-[13.5px] leading-tight font-bold ${isFinal ? "text-paper" : "text-ink"}`}>
-            {isFinal ? "La Grande Révision" : wk?.theme}
+            {isFinal ? uiStrings().grandeRevision : wk?.theme}
           </p>
           <p className={`mt-0.5 flex items-center gap-1 text-[11px] ${isFinal ? "text-paper/70" : "text-ink-soft"}`}>
             {!isFinal && <Icon name="pin" size={11} strokeWidth={2.2} />}
@@ -137,7 +137,7 @@ function WeekRow({
           <div className="flex w-full items-center justify-between gap-2 sm:mt-1.5">
             <div className="flex -space-x-1.5">
               {wk.cast.map((id) => {
-                const c = CAST_MAP[id];
+                const c = castMap()[id];
                 return c ? (
                   <span key={id} className="rounded-full ring-2 ring-card transition-transform duration-200 hover:-translate-y-1" title={c.name}>
                     <Avatar char={c} size={20} />
@@ -225,8 +225,8 @@ export function PlanView({
                 {finished
                   ? "Programa concluído"
                   : info.week <= 12
-                    ? `Semaine ${String(info.week).padStart(2, "0")} · ${info.weekData?.place} · ${info.weekData?.themes.map((t) => t.fr).join(" + ")}`
-                    : "La Grande Révision"}
+                    ? `${weekTag(info.week)} · ${info.weekData?.place} · ${info.weekData?.themes.map((t) => t.fr).join(" + ")}`
+                    : uiStrings().grandeRevision}
               </span>
             </div>
 

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "./Icons";
 import { Flag } from "./Flag";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
+import { uiStrings } from "../data/content";
 
 const LANG_NAME: Record<string, string> = {
   fr: "Francês",
@@ -37,15 +38,19 @@ function useAnimatedNumber(target: number, duration = 700): number {
   return display;
 }
 
-const TABS: { id: AppView; label: string; icon: "calendar" | "compass" | "passport" | "users" | "book" | "harddrive" | "cards" }[] = [
-  { id: "plan", label: "Plano 90 dias", icon: "calendar" },
-  { id: "map", label: "Mapa da rota", icon: "compass" },
-  { id: "verbs", label: "Verbos", icon: "book" },
-  { id: "cards", label: "Cartões", icon: "cards" },
-  { id: "cast", label: "Compagnons", icon: "users" },
-  { id: "offline", label: "Offline", icon: "harddrive" },
-  { id: "passport", label: "Passaporte", icon: "passport" },
-];
+type TabIcon = "calendar" | "compass" | "passport" | "users" | "book" | "harddrive" | "cards";
+
+function getTabs(): { id: AppView; label: string; icon: TabIcon }[] {
+  return [
+    { id: "plan", label: "Plano 90 dias", icon: "calendar" },
+    { id: "map", label: "Mapa da rota", icon: "compass" },
+    { id: "verbs", label: "Verbos", icon: "book" },
+    { id: "cards", label: "Cartões", icon: "cards" },
+    { id: "cast", label: uiStrings().companions, icon: "users" },
+    { id: "offline", label: "Offline", icon: "harddrive" },
+    { id: "passport", label: "Passaporte", icon: "passport" },
+  ];
+}
 
 export function Header({
   view,
@@ -97,7 +102,7 @@ export function Header({
 
         {/* abas */}
         <nav className="order-3 -mx-1 flex w-full gap-1 overflow-x-auto pb-0.5 md:order-none md:mx-0 md:w-auto md:flex-1 md:justify-center">
-          {TABS.map((t) => (
+          {getTabs().map((t) => (
             <button
               key={t.id}
               onClick={() => onView(t.id)}

@@ -83,6 +83,15 @@ export function Flag({ code, size = 22 }: { code: string; size?: number }) {
         </>
       );
       break;
+    case "jp":
+      // Hinomaru — campo branco com o disco solar central
+      inner = (
+        <>
+          <rect width="24" height="16" fill="#fffdf4" />
+          <circle cx="12" cy="8" r="4.6" fill="#bc002d" />
+        </>
+      );
+      break;
     default:
       inner = <rect width="24" height="16" fill="#e4dcc6" />;
   }
