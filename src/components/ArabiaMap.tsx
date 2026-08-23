@@ -8,27 +8,31 @@ import { Icon, IconGlyph } from "./Icons";
 const VB_W = 1000;
 const VB_H = 640;
 
+/* ── Rota Levante → Magrebe (9 países) ── */
+
 /* Marrocos */
-const MOROCCO_OUTLINE = "M30 260 L120 230 L180 260 L200 320 L170 380 L100 400 L40 360 Z";
-
+const MOROCCO_OUTLINE = "M35 255 L100 228 L150 245 L152 330 L125 395 L62 412 L32 345 Z";
+/* Argélia */
+const ALGERIA_OUTLINE = "M150 245 L215 230 L218 330 L200 395 L165 398 L152 330 Z";
 /* Tunísia */
-const TUNISIA_OUTLINE = "M180 220 L230 200 L260 230 L250 280 L210 290 L185 260 Z";
-
-/* Argélia/Líbia (contexto) */
-const MAGHREB_CONTEXT = "M180 260 L280 200 L430 300 L440 370 L420 420 L300 440 L200 380 Z";
-
+const TUNISIA_OUTLINE = "M215 230 L258 222 L272 245 L265 300 L235 312 L218 280 Z";
+/* Líbia */
+const LIBYA_OUTLINE = "M258 222 L330 235 L345 320 L320 415 L270 418 L245 350 L235 312 Z";
 /* Egito */
-const EGYPT_OUTLINE = "M280 200 L360 180 L420 220 L430 300 L380 340 L320 330 L280 280 Z";
+const EGYPT_OUTLINE = "M330 235 L400 245 L402 340 L375 415 L338 395 L338 320 Z";
+/* Palestina */
+const PALESTINE_OUTLINE = "M400 245 L430 240 L435 310 L415 332 L402 300 Z";
+/* Líbano */
+const LEBANON_OUTLINE = "M430 240 L452 232 L456 288 L438 300 L435 270 Z";
+/* Síria */
+const SYRIA_OUTLINE = "M452 232 L435 190 L465 158 L545 150 L568 205 L545 245 L480 252 Z";
+/* Iraque */
+const IRAQ_OUTLINE = "M545 245 L568 205 L545 150 L600 132 L705 152 L730 225 L700 305 L655 365 L595 340 L570 300 Z";
 
-/* Levante (Líbano, Jordânia) */
-const LEVANT_OUTLINE = "M380 190 L450 200 L470 260 L450 330 L420 340 L400 280 Z";
-
-/* Península Arábica */
-const ARABIA_OUTLINE =
-  "M430 300 L500 280 L580 300 L660 340 L700 400 L680 460 L600 480 L540 460 L480 420 L440 370 Z";
-
-/* Omã */
-const OMAN_OUTLINE = "M660 340 L720 380 L740 440 L700 470 L680 460 L700 400 Z";
+const COUNTRY_OUTLINES = [
+  MOROCCO_OUTLINE, ALGERIA_OUTLINE, TUNISIA_OUTLINE, LIBYA_OUTLINE, EGYPT_OUTLINE,
+  PALESTINE_OUTLINE, LEBANON_OUTLINE, SYRIA_OUTLINE, IRAQ_OUTLINE,
+];
 
 function segPath(a: { x: number; y: number }, b: { x: number; y: number }, i: number) {
   const mx = (a.x + b.x) / 2;
@@ -77,10 +81,10 @@ export function ArabiaMap({
       <div className="fade-up flex flex-wrap items-end justify-between gap-3 px-1">
         <div>
           <p className="font-mono text-[10px] font-semibold tracking-[0.22em] text-ink-soft uppercase">
-            المسار العربي · 12 paradas + exame · Egito, Jordânia, Líbano, EAU, Omã, Marrocos, Tunísia e Catar
+            المسار العربي · 12 paradas + exame · Iraque, Síria, Líbano, Palestina, Egito, Líbia, Argélia, Tunísia e Marrocos
           </p>
           <h1 className="mt-1 max-w-xl font-display text-2xl leading-[1.08] font-extrabold tracking-tight sm:text-[28px]">
-            Do Cairo a Doha, <span className="text-bus">uma semana de cada vez</span>
+            De Bagdá a Marraquexe, <span className="text-bus">uma semana de cada vez</span>
           </h1>
         </div>
         <button
@@ -99,52 +103,60 @@ export function ArabiaMap({
             <svg viewBox={`0 0 ${VB_W} ${VB_H}`} className="absolute inset-0 h-full w-full" role="img" aria-label="Mapa do mundo árabe com as 13 paradas da rota de árabe">
               {/* ondas decorativas (mares) */}
               <g stroke="#a8c8d8" strokeWidth="1.6" fill="none" strokeLinecap="round" opacity="0.9">
-                <path d="M280 120 q6-8 12 0 t12 0" />
-                <path d="M520 140 q6-8 12 0 t12 0" />
-                <path d="M820 300 q6-8 12 0 t12 0" />
+                <path d="M300 130 q6-8 12 0 t12 0" />
+                <path d="M620 100 q6-8 12 0 t12 0" />
+                <path d="M900 300 q6-8 12 0 t12 0" />
                 <path d="M300 520 q6-8 12 0 t12 0" />
                 <path d="M760 560 q6-8 12 0 t12 0" />
-                <path d="M80 160 q6-8 12 0 t12 0" />
+                <path d="M70 160 q6-8 12 0 t12 0" />
               </g>
 
-              {/* territórios */}
-              <path d={MAGHREB_CONTEXT} fill="#efe7d3" stroke="rgba(30,42,56,0.28)" strokeWidth="1.5" strokeLinejoin="round" opacity="0.6" />
-              <path d={MOROCCO_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
-              <path d={TUNISIA_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
-              <path d={EGYPT_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
-              <path d={LEVANT_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
-              <path d={ARABIA_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
-              <path d={OMAN_OUTLINE} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
+              {/* territórios (Levante → Magrebe) */}
+              {COUNTRY_OUTLINES.map((d, i) => (
+                <path key={i} d={d} fill="#efe7d3" stroke="rgba(30,42,56,0.55)" strokeWidth="2" strokeLinejoin="round" />
+              ))}
 
               {/* Nilo */}
-              <path d="M340 340 C 345 300 350 270 355 255 C 358 240 352 225 350 215" fill="none" stroke="#a6d3e6" strokeWidth="3" strokeLinecap="round" opacity="0.9" />
+              <path d="M365 415 C 368 380 370 355 372 340 C 374 322 368 305 366 295" fill="none" stroke="#a6d3e6" strokeWidth="3" strokeLinecap="round" opacity="0.9" />
+              {/* Tigre e Eufrates */}
+              <path d="M600 150 C 620 200 635 250 645 290 C 650 315 652 335 655 355" fill="none" stroke="#a6d3e6" strokeWidth="2.4" strokeLinecap="round" opacity="0.8" />
+              <path d="M575 165 C 585 215 592 260 598 300 C 602 325 606 342 610 355" fill="none" stroke="#a6d3e6" strokeWidth="2.4" strokeLinecap="round" opacity="0.8" />
 
-              {/* deserto (pontilhado) */}
+              {/* Saara (pontilhado) */}
               <g fill="rgba(190,150,80,0.35)">
-                <circle cx="540" cy="380" r="2" />
-                <circle cx="560" cy="400" r="2" />
-                <circle cx="590" cy="380" r="2" />
-                <circle cx="610" cy="420" r="2" />
-                <circle cx="520" cy="410" r="2" />
-                <circle cx="640" cy="400" r="2" />
+                <circle cx="120" cy="440" r="2" />
+                <circle cx="200" cy="450" r="2" />
+                <circle cx="280" cy="460" r="2" />
+                <circle cx="360" cy="465" r="2" />
+                <circle cx="450" cy="470" r="2" />
+                <circle cx="560" cy="450" r="2" />
+                <circle cx="650" cy="430" r="2" />
               </g>
 
-              {/* regiões e mares */}
+              {/* países e mares */}
               <g fontFamily="'IBM Plex Mono', monospace" fontSize="8.5" letterSpacing="1.8" fill="rgba(30,42,56,0.32)" fontWeight={600} textAnchor="middle">
-                <text x="380" y="140" fontSize="10">البحر المتوسط · MEDITERRÂNEO</text>
-                <text x="100" y="470" fontSize="9">المحيط الأطلسي</text>
-                <text x="470" y="370" fontSize="8" transform="rotate(-64 470 370)">البحر الأحمر</text>
-                <text x="600" y="300" fontSize="9">الخليج العربي</text>
-                <text x="560" y="440" fontSize="9">الرُّبْع الخالي</text>
-                <text x="330" y="380" fontSize="8" transform="rotate(-80 330 380)">النِّيل</text>
-                <text x="800" y="470" fontSize="9">بحر العرب</text>
-                <text x="880" y="220" fontSize="9">إيران</text>
+                <text x="430" y="120" fontSize="10">البحر المتوسط · MEDITERRÂNEO</text>
+                <text x="90" y="460" fontSize="9">المغرب</text>
+                <text x="185" y="345" fontSize="8">الجزائر</text>
+                <text x="245" y="282" fontSize="7">تونس</text>
+                <text x="290" y="330" fontSize="8">ليبيا</text>
+                <text x="370" y="320" fontSize="8">مصر</text>
+                <text x="418" y="298" fontSize="6">فلسطين</text>
+                <text x="443" y="278" fontSize="6">لبنان</text>
+                <text x="500" y="210" fontSize="8">سوريا</text>
+                <text x="630" y="250" fontSize="9">العراق</text>
+                <text x="70" y="500" fontSize="9">المحيط الأطلسي</text>
+                <text x="465" y="380" fontSize="8" transform="rotate(-64 465 380)">البحر الأحمر</text>
+                <text x="790" y="250" fontSize="9">الخليج العربي</text>
+                <text x="400" y="500" fontSize="10">الصَّحْراء الكُبْرى</text>
+                <text x="362" y="400" fontSize="7" transform="rotate(-80 362 400)">النِّيل</text>
+                <text x="622" y="340" fontSize="7" transform="rotate(-78 622 340)">دِجْلَة والفُرات</text>
               </g>
 
               {/* coordenadas */}
               <g fontFamily="'IBM Plex Mono', monospace" fill="rgba(30,42,56,0.55)">
                 <text x="30" y="598" fontSize="10" fontWeight={600}>
-                  30°02′N · 31°14′E
+                  33°19′N · 44°22′E
                 </text>
                 <text x="30" y="612" fontSize="8" letterSpacing="2.4" fill="rgba(30,42,56,0.4)">
                   العالَم العربي — مِنَ المُحيطِ إِلى الخَليج
