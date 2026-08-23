@@ -12,6 +12,9 @@ const LANG_NAME: Record<string, string> = {
   en: "Inglês",
   zh: "Mandarim",
   ja: "Japonês",
+  ru: "Russo",
+  fa: "Farsi",
+  ar: "Árabe",
 };
 
 export type AppView = "plan" | "map" | "verbs" | "cards" | "cast" | "passport" | "offline";

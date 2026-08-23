@@ -1,18 +1,23 @@
-# RUMO — 90 dias de Francês, Italiano, Alemão, Espanhol & Inglês (nível A1)
+# RUMO — 90 dias · 10 idiomas (nível A1)
 
 Aplicativo de aprendizado de idiomas que roda **100% no navegador e offline**, sem backend.
 Cada idioma é uma rota de **90 dias / 13 semanas** por paradas reais:
 
-- **Francês** — França, Suíça, Bélgica, Luxemburgo e Mônaco
-- **Italiano** — Itália e Suíça
-- **Alemão** — Alemanha, Suíça, Áustria e Liechtenstein
-- **Espanhol** — Espanha e Portugal (de Barcelona ao Cabo de São Vicente)
-- **Inglês** — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda
+- **Francês** 🇫🇷 — França, Suíça, Bélgica, Luxemburgo e Mônaco
+- **Italiano** 🇮🇹 — Itália e Suíça
+- **Alemão** 🇩🇪 — Alemanha, Suíça, Áustria e Liechtenstein
+- **Espanhol** 🇪🇸 — Espanha e Portugal (de Barcelona ao Cabo de São Vicente)
+- **Inglês** 🇬🇧 — Reino Unido (Inglaterra, Escócia, Gales, Irlanda do Norte) e Irlanda
+- **Mandarim** 🇨🇳 — China, Coreia do Norte e Vietnã
+- **Japonês** 🇯🇵 — Japão e Estados Unidos
+- **Russo** 🇷🇺 — Rússia, Bielorrússia e Cazaquistão
+- **Farsi** 🇮🇷 — Irã, Afeganistão, Tajiquistão e Uzbequistão
+- **Árabe** 🇸🇦 — Egito, Jordânia, Líbano, EAU, Omã, Marrocos, Tunísia e Catar
 
 Com vocabulário, diálogos com áudio, quizzes, conjugador de verbos, carimbos de
-passaporte, diploma final, um **Cahier de copie** (caderno de cópia à mão, em
-francês e italiano) e uma central de **cartões de memória** de todos os idiomas
-com exportação para o **Anki**.
+passaporte, diploma final, um **caderno de cópia à mão em todos os 10 idiomas**
+(com pinyin, romaji e transliteração quando aplicável) e uma central de
+**cartões de memória** de todos os idiomas com exportação para o **Anki**.
 
 > **Cada idioma tem seus próprios personagens** — seis companheiros de viagem distintos
 > (nome, cidade, profissão, personalidade e avatar), criados para a cultura de cada rota e
@@ -162,12 +167,11 @@ e um medidor de precisão.
   ancorando esse léxico A1 ao longo da rota.
 - **Recompensa:** concluir a cópia do dia dá **+15 XP** (uma vez por dia, salvo
   em `progress.copies`).
-- **Por idioma:** disponível para **francês** (`src/data/dictees-fr.ts`),
-  **italiano** (`src/data/dictees-it.ts`, com temas de automobilismo, Vaticano e
-  locais históricos), **alemão** (`src/data/dictees-de.ts`, com temas de futebol,
-  automobilismo e história alemã) e **espanhol** (`src/data/dictees-es.ts`, com
-  temas de futebol, astronomia e história ibérica). Os demais idiomas exibem o
-  caderno assim que seus corpora forem adicionados.
+- **Por idioma:** os 10 idiomas têm corpus próprio, cada um escrito **no seu
+  idioma** (`src/data/dictees-XX.ts`). Mandarim e japonês exibem **pinyin / romaji**
+  acima de cada frase; farsi e árabe usam **escrita da direita para a esquerda (RTL)**
+  com transliteração. A interface do caderno (título, dica, botão, placeholders)
+  também é localizada para o idioma ativo.
 - **Rótulos localizados:** os nomes das seções — *Semaine/Semana/Woche/第…周*,
   *La Grande Révision*, *Compagnons*, *Le récit* — mudam para o idioma ativo.
 
