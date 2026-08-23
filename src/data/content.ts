@@ -79,6 +79,10 @@ import { DICTEES_DE } from "./dictees-de";
 import { DICTEES_ES } from "./dictees-es";
 import { DICTEES_EN } from "./dictees-en";
 import { DICTEES_RU } from "./dictees-ru";
+import { DICTEES_ZH } from "./dictees-zh";
+import { DICTEES_JA } from "./dictees-ja";
+import { DICTEES_FA } from "./dictees-fa";
+import { DICTEES_AR } from "./dictees-ar";
 
 export interface VerbShape {
   inf: string;
@@ -363,27 +367,32 @@ export function resolveSpeaker(raw: string): Character | undefined {
  * Linhas de ditado do dia (Cahier de copie).
  * A quantidade cresce ao longo da semana: 1 frase nos dias 1–2,
  * 2 nos dias 3–4 e todas (3) do dia 5 em diante.
- * Francês, italiano, alemão, inglês e russo têm corpus próprio; os demais retornam [].
+ * Todos os idiomas têm corpus próprio no seu idioma.
  */
+const DICTEES_BY_LANG: Record<string, Record<string, DicteeLine[]>> = {
+  fr: DICTEES_FR,
+  it: DICTEES_IT,
+  de: DICTEES_DE,
+  es: DICTEES_ES,
+  en: DICTEES_EN,
+  ru: DICTEES_RU,
+  zh: DICTEES_ZH,
+  ja: DICTEES_JA,
+  fa: DICTEES_FA,
+  ar: DICTEES_AR,
+};
+
 export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
-  const source =
-    _lang === "it"
-      ? DICTEES_IT
-      : _lang === "de"
-        ? DICTEES_DE
-        : _lang === "es"
-          ? DICTEES_ES
-          : _lang === "en"
-            ? DICTEES_EN
-            : _lang === "ru"
-              ? DICTEES_RU
-              : _lang === "fr"
-                ? DICTEES_FR
-                : null;
+  const source = DICTEES_BY_LANG[_lang] ?? null;
   const all = source ? source[weekId] ?? [] : [];
   if (!all.length) return [];
   const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
   return all.slice(0, count);
+}
+
+/** Escrita da direita para a esquerda? (árabe e farsi) */
+export function isRtl(): boolean {
+  return _lang === "ar" || _lang === "fa";
 }
 
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -415,19 +424,32 @@ export interface UiStrings {
   didYouKnow: string;
   dayLabel: string; // "Jour" / "Tag" / "第"
   daySuffix: string; // "" ou "天" / "日"
+  /* Cahier de copie */
+  cahierTitle: string;
+  cahierHint: string;
+  linesWord: string;
+  accuracy: string;
+  validate: string;
+  copied: string;
+  placeholder: string;
+  donePlaceholder: string;
+  translation: string;
+  hideTranslation: string;
+  difficulty: string;
+  toastPerfect: string;
 }
 
 const UI: Record<string, UiStrings> = {
-  fr: { weekPrefix: "Semaine ", weekSuffix: "", grandeRevision: "La Grande Révision", grandeRevisionShort: "Grande révision", companions: "Compagnons", companionsTitle: "Les compagnons de voyage", recit: "Le récit", didYouKnow: "Le saviez-vous ?", dayLabel: "Jour", daySuffix: "" },
-  it: { weekPrefix: "Settimana ", weekSuffix: "", grandeRevision: "La Grande Revisione", grandeRevisionShort: "Grande revisione", companions: "Compagni", companionsTitle: "I compagni di viaggio", recit: "Il racconto", didYouKnow: "Lo sapevi?", dayLabel: "Giorno", daySuffix: "" },
-  de: { weekPrefix: "Woche ", weekSuffix: "", grandeRevision: "Die Große Wiederholung", grandeRevisionShort: "Große Wiederholung", companions: "Gefährten", companionsTitle: "Die Reisegefährten", recit: "Die Geschichte", didYouKnow: "Wusstest du das?", dayLabel: "Tag", daySuffix: "" },
-  es: { weekPrefix: "Semana ", weekSuffix: "", grandeRevision: "La Gran Revisión", grandeRevisionShort: "Gran revisión", companions: "Compañeros", companionsTitle: "Los compañeros de viaje", recit: "El relato", didYouKnow: "¿Sabías que…?", dayLabel: "Día", daySuffix: "" },
-  en: { weekPrefix: "Week ", weekSuffix: "", grandeRevision: "The Grand Review", grandeRevisionShort: "Grand review", companions: "Companions", companionsTitle: "The travel companions", recit: "The tale", didYouKnow: "Did you know?", dayLabel: "Day", daySuffix: "" },
-  zh: { weekPrefix: "第", weekSuffix: "周", grandeRevision: "大复习", grandeRevisionShort: "大复习", companions: "伙伴们", companionsTitle: "旅途伙伴", recit: "旅途故事", didYouKnow: "你知道吗？", dayLabel: "第", daySuffix: "天" },
-  ja: { weekPrefix: "第", weekSuffix: "週", grandeRevision: "大復習", grandeRevisionShort: "大復習", companions: "仲間たち", companionsTitle: "旅の仲間", recit: "旅の物語", didYouKnow: "知ってた？", dayLabel: "第", daySuffix: "日" },
-  ru: { weekPrefix: "Неделя ", weekSuffix: "", grandeRevision: "Большое повторение", grandeRevisionShort: "Повторение", companions: "Попутчики", companionsTitle: "Попутчики", recit: "История", didYouKnow: "Знаете ли вы?", dayLabel: "День", daySuffix: "" },
-  fa: { weekPrefix: "هفته ", weekSuffix: "", grandeRevision: "مرور بزرگ", grandeRevisionShort: "مرور", companions: "همسفران", companionsTitle: "همسفران", recit: "روایت", didYouKnow: "آیا می‌دانستید؟", dayLabel: "روز", daySuffix: "" },
-  ar: { weekPrefix: "الأسبوع ", weekSuffix: "", grandeRevision: "المراجعة الكبرى", grandeRevisionShort: "المراجعة", companions: "الرفاق", companionsTitle: "رفاق الرحلة", recit: "الحكاية", didYouKnow: "هل تعلم؟", dayLabel: "اليوم", daySuffix: "" },
+  fr: { weekPrefix: "Semaine ", weekSuffix: "", grandeRevision: "La Grande Révision", grandeRevisionShort: "Grande révision", companions: "Compagnons", companionsTitle: "Les compagnons de voyage", recit: "Le récit", didYouKnow: "Le saviez-vous ?", dayLabel: "Jour", daySuffix: "", cahierTitle: "Cahier de copie", cahierHint: "Recopie chaque phrase à la main", linesWord: "ligne(s)", accuracy: "précision", validate: "Valider la copie", copied: "Copiée", placeholder: "Écris ici…", donePlaceholder: "Copie terminée ✓", translation: "Traduction", hideTranslation: "Cacher la traduction", difficulty: "Difficulté", toastPerfect: "Copie parfaite !" },
+  it: { weekPrefix: "Settimana ", weekSuffix: "", grandeRevision: "La Grande Revisione", grandeRevisionShort: "Grande revisione", companions: "Compagni", companionsTitle: "I compagni di viaggio", recit: "Il racconto", didYouKnow: "Lo sapevi?", dayLabel: "Giorno", daySuffix: "", cahierTitle: "Quaderno di copiatura", cahierHint: "Riscrivi ogni frase a mano", linesWord: "riga(e)", accuracy: "precisione", validate: "Convalida la copia", copied: "Copiata", placeholder: "Scrivi qui…", donePlaceholder: "Copia completata ✓", translation: "Traduzione", hideTranslation: "Nascondi traduzione", difficulty: "Difficoltà", toastPerfect: "Copia perfetta !" },
+  de: { weekPrefix: "Woche ", weekSuffix: "", grandeRevision: "Die Große Wiederholung", grandeRevisionShort: "Große Wiederholung", companions: "Gefährten", companionsTitle: "Die Reisegefährten", recit: "Die Geschichte", didYouKnow: "Wusstest du das?", dayLabel: "Tag", daySuffix: "", cahierTitle: "Schreibheft", cahierHint: "Schreibe jeden Satz von Hand ab", linesWord: "Zeile(n)", accuracy: "Genauigkeit", validate: "Kopie prüfen", copied: "Kopiert", placeholder: "Hier schreiben…", donePlaceholder: "Kopie fertig ✓", translation: "Übersetzung", hideTranslation: "Übersetzung ausblenden", difficulty: "Schwierigkeit", toastPerfect: "Perfekte Kopie !" },
+  es: { weekPrefix: "Semana ", weekSuffix: "", grandeRevision: "La Gran Revisión", grandeRevisionShort: "Gran revisión", companions: "Compañeros", companionsTitle: "Los compañeros de viaje", recit: "El relato", didYouKnow: "¿Sabías que…?", dayLabel: "Día", daySuffix: "", cahierTitle: "Cuaderno de copia", cahierHint: "Copia cada frase a mano", linesWord: "línea(s)", accuracy: "precisión", validate: "Validar la copia", copied: "Copiada", placeholder: "Escribe aquí…", donePlaceholder: "Copia terminada ✓", translation: "Traducción", hideTranslation: "Ocultar traducción", difficulty: "Dificultad", toastPerfect: "¡Copia perfecta !" },
+  en: { weekPrefix: "Week ", weekSuffix: "", grandeRevision: "The Grand Review", grandeRevisionShort: "Grand review", companions: "Companions", companionsTitle: "The travel companions", recit: "The tale", didYouKnow: "Did you know?", dayLabel: "Day", daySuffix: "", cahierTitle: "Copybook", cahierHint: "Copy each sentence by hand", linesWord: "line(s)", accuracy: "accuracy", validate: "Validate copy", copied: "Copied", placeholder: "Write here…", donePlaceholder: "Copy done ✓", translation: "Translation", hideTranslation: "Hide translation", difficulty: "Difficulty", toastPerfect: "Perfect copy !" },
+  zh: { weekPrefix: "第", weekSuffix: "周", grandeRevision: "大复习", grandeRevisionShort: "大复习", companions: "伙伴们", companionsTitle: "旅途伙伴", recit: "旅途故事", didYouKnow: "你知道吗？", dayLabel: "第", daySuffix: "天", cahierTitle: "抄写本", cahierHint: "请逐字抄写每个句子", linesWord: "行", accuracy: "准确率", validate: "验证抄写", copied: "已完成", placeholder: "在这里写…", donePlaceholder: "抄写完成 ✓", translation: "翻译", hideTranslation: "隐藏翻译", difficulty: "难度", toastPerfect: "抄写完美！" },
+  ja: { weekPrefix: "第", weekSuffix: "週", grandeRevision: "大復習", grandeRevisionShort: "大復習", companions: "仲間たち", companionsTitle: "旅の仲間", recit: "旅の物語", didYouKnow: "知ってた？", dayLabel: "第", daySuffix: "日", cahierTitle: "書き取り帳", cahierHint: "各文を手で書き写しましょう", linesWord: "行", accuracy: "正解率", validate: "書き取りを確認", copied: "完了", placeholder: "ここに書いて…", donePlaceholder: "書き取り完了 ✓", translation: "翻訳", hideTranslation: "翻訳を隠す", difficulty: "難易度", toastPerfect: "完璧な書き取り！" },
+  ru: { weekPrefix: "Неделя ", weekSuffix: "", grandeRevision: "Большое повторение", grandeRevisionShort: "Повторение", companions: "Попутчики", companionsTitle: "Попутчики", recit: "История", didYouKnow: "Знаете ли вы?", dayLabel: "День", daySuffix: "", cahierTitle: "Тетрадь для письма", cahierHint: "Перепишите каждое предложение от руки", linesWord: "строк(и)", accuracy: "точность", validate: "Проверить", copied: "Готово", placeholder: "Пишите здесь…", donePlaceholder: "Готово ✓", translation: "Перевод", hideTranslation: "Скрыть перевод", difficulty: "Сложность", toastPerfect: "Отличное письмо !" },
+  fa: { weekPrefix: "هفته ", weekSuffix: "", grandeRevision: "مرور بزرگ", grandeRevisionShort: "مرور", companions: "همسفران", companionsTitle: "همسفران", recit: "روایت", didYouKnow: "آیا می‌دانستید؟", dayLabel: "روز", daySuffix: "", cahierTitle: "دفتر رونویسی", cahierHint: "هر جمله را با دست رونویسی کنید", linesWord: "خط", accuracy: "دقت", validate: "بررسی رونویسی", copied: "انجام شد", placeholder: "اینجا بنویسید…", donePlaceholder: "رونویسی تمام شد ✓", translation: "ترجمه", hideTranslation: "پنهان کردن ترجمه", difficulty: "سختی", toastPerfect: "رونویسی عالی !" },
+  ar: { weekPrefix: "الأسبوع ", weekSuffix: "", grandeRevision: "المراجعة الكبرى", grandeRevisionShort: "المراجعة", companions: "الرفاق", companionsTitle: "رفاق الرحلة", recit: "الحكاية", didYouKnow: "هل تعلم؟", dayLabel: "اليوم", daySuffix: "", cahierTitle: "كراسة النسخ", cahierHint: "انسخ كل جملة بخط اليد", linesWord: "أسطر", accuracy: "الدقة", validate: "تحقق من النسخ", copied: "تم", placeholder: "اكتب هنا…", donePlaceholder: "اكتمل النسخ ✓", translation: "الترجمة", hideTranslation: "إخفاء الترجمة", difficulty: "الصعوبة", toastPerfect: "نسخ مثالي !" },
 };
 
 export function uiStrings(): UiStrings {

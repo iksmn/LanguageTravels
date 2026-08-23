@@ -1,12 +1,15 @@
 import { useMemo, useRef, useState } from "react";
 import type { Week } from "../data/curriculum";
-import { dicteeLines, uiStrings, weekTag } from "../data/content";
+import { activeLang, dicteeLines, isRtl, uiStrings, weekTag } from "../data/content";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { getDayInfo } from "../lib/engine";
 import { Icon } from "./Icons";
 import { useToast } from "./Toasts";
 
 const XP_COPIE = 15;
+
+/** Idiomas em que exibimos uma linha de leitura (pinyin / romaji / transliteração). */
+const READING_LANGS = new Set(["zh", "ja", "fa", "ar"]);
 
 /** Faixa de acerto caractere a caractere: verde (certo), vermelho (errado), cinza (ainda vazio). */
 function DiffStrip({ target, value }: { target: string; value: string }) {
@@ -32,6 +35,11 @@ function Star({ filled }: { filled: boolean }) {
 
 export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: UseProgressReturn }) {
   const toast = useToast();
+  const ui = uiStrings();
+  const lang = activeLang();
+  const rtl = isRtl();
+  const showReading = READING_LANGS.has(lang);
+
   const info = getDayInfo(day);
   const dayInWeek = day - (info.week - 1) * 7; // 1..7 (semana final: 1..6)
   const lines = useMemo(() => dicteeLines(week.id, dayInWeek), [week.id, dayInWeek]);
@@ -41,7 +49,7 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
   const [done, setDone] = useState(prog.isCopyDone(day));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  if (!lines.length) return null; // outros idiomas: em breve
+  if (!lines.length) return null;
 
   const targets = lines.map((l) => l.fr.trim());
   const lineDone = targets.map((t, i) => (values[i] ?? "").trim() === t);
@@ -61,7 +69,6 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
       next[i] = v;
       return next;
     });
-    // avança o foco para a próxima linha ao completar
     if (v.trim() === targets[i] && i + 1 < targets.length) {
       window.setTimeout(() => inputRefs.current[i + 1]?.focus(), 60);
     }
@@ -71,14 +78,21 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
     if (!allDone || done) return;
     const gained = prog.completeCopy(day, XP_COPIE);
     setDone(true);
-    if (gained > 0) toast(`Copie parfaite ! +${gained} XP`, "xp");
+    if (gained > 0) toast(`${ui.toastPerfect} +${gained} XP`, "xp");
   };
 
+  // Fontes: scripts CJK/RTL usam a fonte de sistema (a manuscrita cobre o latino).
+  const modelFont =
+    lang === "zh" || lang === "ja"
+      ? "font-sans"
+      : rtl
+        ? "font-sans"
+        : "font-hand";
+  const modelSize = lang === "zh" || lang === "ja" ? "text-[24px]" : "text-[22px]";
+
   return (
-    <section className="mt-6" aria-label="Cahier de copie">
-      {/* caderno */}
+    <section className="mt-6" aria-label={ui.cahierTitle}>
       <div className="cahier-paper relative overflow-hidden rounded-xl border-2 border-ink/25 shadow-print-sm">
-        {/* fita adesiva */}
         <div className="absolute -top-2 left-1/2 z-10 h-5 w-24 -translate-x-1/2 rotate-[-2deg] rounded-sm bg-mustard/60 shadow-sm" aria-hidden />
 
         <header className="flex flex-wrap items-center justify-between gap-2 border-b-2 border-ink/10 bg-card/70 px-4 py-2.5">
@@ -87,17 +101,14 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
               <Icon name="pen" size={16} strokeWidth={2} />
             </span>
             <div className="leading-tight">
-              <p className="font-display text-[15px] font-extrabold tracking-tight">Cahier de copie</p>
+              <p className="font-display text-[15px] font-extrabold tracking-tight">{ui.cahierTitle}</p>
               <p className="font-mono text-[9.5px] font-semibold tracking-[0.16em] text-ink-soft uppercase">
-                {(() => {
-                  const ui = uiStrings();
-                  return `${ui.dayLabel} ${day}${ui.daySuffix} · ${info.week <= 12 ? weekTag(info.week) : ui.grandeRevisionShort}`;
-                })()}
+                {`${ui.dayLabel} ${day}${ui.daySuffix} · ${info.week <= 12 ? weekTag(info.week) : ui.grandeRevisionShort}`}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-0.5" title={`Difficulté ${stars}/5`}>
+            <div className="flex items-center gap-0.5" title={`${ui.difficulty} ${stars}/5`}>
               {Array.from({ length: 5 }, (_, i) => (
                 <Star key={i} filled={i < stars} />
               ))}
@@ -106,21 +117,31 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
               onClick={() => setShowTrans((s) => !s)}
               className="btn-press rounded-md border-2 border-ink/20 bg-card px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wide uppercase shadow-print-sm"
             >
-              {showTrans ? "Ocultar tradução" : "Tradução"}
+              {showTrans ? ui.hideTranslation : ui.translation}
             </button>
           </div>
         </header>
 
         <div className="cahier-margin px-4 py-4 sm:px-6">
           <p className="mb-3 font-mono text-[10px] font-semibold tracking-[0.18em] text-ink-soft uppercase">
-            Recopie chaque phrase à la main · {lines.length} ligne{lines.length > 1 ? "s" : ""} aujourd'hui
+            {ui.cahierHint} · {lines.length} {ui.linesWord}
           </p>
 
-          <div className="flex flex-col gap-5">
+          <div className={`flex flex-col gap-5 ${rtl ? "items-end" : ""}`}>
             {targets.map((t, i) => (
-              <div key={i} className="flex flex-col gap-1.5">
+              <div key={i} className={`flex w-full flex-col gap-1.5 ${rtl ? "items-end text-right" : ""}`}>
+                {/* linha de leitura (pinyin / romaji / transliteração) */}
+                {showReading && lines[i].py && (
+                  <p className="font-mono text-[13px] font-medium tracking-wide text-mustard" dir="ltr">
+                    {lines[i].py}
+                  </p>
+                )}
+
                 {/* modelo (a copiar) */}
-                <p className={`font-hand text-[22px] leading-snug font-medium ${lineDone[i] ? "text-leaf" : "text-cobalt"}`}>
+                <p
+                  className={`${modelFont} ${modelSize} leading-snug font-medium ${lineDone[i] ? "text-leaf" : "text-cobalt"}`}
+                  dir={rtl ? "rtl" : "ltr"}
+                >
                   {lineDone[i] && (
                     <span className="mr-1.5 inline-block align-middle">
                       <Icon name="check" size={16} strokeWidth={3} />
@@ -128,11 +149,15 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
                   )}
                   {t}
                 </p>
-                {showTrans && <p className="text-[12px] text-ink-soft italic">{lines[i].pt}</p>}
+                {showTrans && (
+                  <p className="text-[12px] text-ink-soft italic" dir="ltr">
+                    {lines[i].pt}
+                  </p>
+                )}
 
                 {/* linha de escrita */}
                 <div
-                  className={`rounded-md border-b-2 px-2 pb-1 pt-0.5 transition-colors ${
+                  className={`w-full rounded-md border-b-2 px-2 pb-1 pt-0.5 transition-colors ${
                     lineDone[i] ? "border-leaf bg-leaf/5" : "border-cobalt/50 bg-paper/60 focus-within:border-cobalt"
                   }`}
                 >
@@ -142,10 +167,11 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
                     }}
                     value={values[i] ?? ""}
                     onChange={(e) => setValue(i, e.target.value)}
-                    placeholder={done ? "Cópia concluída ✓" : "Écris ici…"}
+                    placeholder={done ? ui.donePlaceholder : ui.placeholder}
                     disabled={done}
+                    dir={rtl ? "rtl" : "ltr"}
                     className="copy-input text-[21px]"
-                    aria-label={`Copiar a frase ${i + 1}`}
+                    aria-label={`${ui.cahierTitle} — ${i + 1}`}
                     autoComplete="off"
                     autoCorrect="off"
                     autoCapitalize="off"
@@ -157,18 +183,19 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
             ))}
           </div>
 
-          {/* rodapé */}
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t-2 border-dashed border-ink/15 pt-3.5">
             <div className="flex items-center gap-4 font-mono text-[11px] font-semibold text-ink-soft">
               <span>
-                {lineDone.filter(Boolean).length}/{targets.length} lignes
+                {lineDone.filter(Boolean).length}/{targets.length} {ui.linesWord}
               </span>
-              <span className={accuracy >= 80 ? "text-leaf" : "text-ink-soft"}>précision {accuracy}%</span>
+              <span className={accuracy >= 80 ? "text-leaf" : "text-ink-soft"}>
+                {ui.accuracy} {accuracy}%
+              </span>
             </div>
             {done ? (
               <span className="flex items-center gap-1.5 rounded-full border-2 border-leaf/50 bg-leaf/10 px-3 py-1 font-mono text-[11px] font-bold tracking-wide text-leaf uppercase">
                 <Icon name="check" size={13} strokeWidth={2.8} />
-                Copiée · +{XP_COPIE} XP
+                {ui.copied} · +{XP_COPIE} XP
               </span>
             ) : (
               <button
@@ -177,7 +204,7 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
                 className="btn-press flex items-center gap-1.5 rounded-lg border-2 border-ink bg-cobalt px-4 py-2 font-mono text-[11.5px] font-bold tracking-wide text-card uppercase shadow-print-sm disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <Icon name="pen" size={14} strokeWidth={2.2} />
-                Valider la copie
+                {ui.validate}
               </button>
             )}
           </div>

@@ -60,21 +60,8 @@ function Shell() {
   }
 
   // Mantém o resolvedor de conteúdo sincronizado com o idioma ativo.
-  setLang(
-    prog.lang === "it"
-      ? "it"
-      : prog.lang === "de"
-        ? "de"
-        : prog.lang === "es"
-          ? "es"
-          : prog.lang === "en"
-            ? "en"
-            : prog.lang === "zh"
-              ? "zh"
-              : prog.lang === "ja"
-                ? "ja"
-                : "fr",
-  );
+  // prog.lang já é do tipo LangCode (inclui ru/fa/ar) — nenhum fallback para o francês.
+  setLang(prog.lang);
 
   const openDay = (d: number) => {
     if (d < 1 || d > TOTAL_DAYS) return;
@@ -133,7 +120,15 @@ function Shell() {
                         ? BritainIrelandMap
                         : prog.lang === "zh"
                           ? ChinaMap
-                          : GrandTourMap;
+                          : prog.lang === "ja"
+                            ? JapanMap
+                            : prog.lang === "ru"
+                              ? RussiaMap
+                              : prog.lang === "fa"
+                                ? PersiaMap
+                                : prog.lang === "ar"
+                                  ? ArabiaMap
+                                  : GrandTourMap;
               return (
                 <MapComp
                   prog={prog}
