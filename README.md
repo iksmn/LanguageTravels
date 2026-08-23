@@ -164,9 +164,12 @@ e um medidor de precisão.
   em `progress.copies`).
 - **Por idioma:** disponível para **francês** (`src/data/dictees-fr.ts`),
   **italiano** (`src/data/dictees-it.ts`, com temas de automobilismo, Vaticano e
-  locais históricos) e **alemão** (`src/data/dictees-de.ts`, com temas de
-  futebol, automobilismo e história alemã). Os demais idiomas exibem o caderno
-  assim que seus corpora forem adicionados.
+  locais históricos), **alemão** (`src/data/dictees-de.ts`, com temas de futebol,
+  automobilismo e história alemã) e **espanhol** (`src/data/dictees-es.ts`, com
+  temas de futebol, astronomia e história ibérica). Os demais idiomas exibem o
+  caderno assim que seus corpora forem adicionados.
+- **Rótulos localizados:** os nomes das seções — *Semaine/Semana/Woche/第…周*,
+  *La Grande Révision*, *Compagnons*, *Le récit* — mudam para o idioma ativo.
 
 ---
 

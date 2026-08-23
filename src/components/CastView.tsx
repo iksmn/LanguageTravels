@@ -1,5 +1,5 @@
 import { GROUP_PRINCIPLES, type Character } from "../data/cast";
-import { castList, groupQuote, langMeta, weeks } from "../data/content";
+import { castList, groupQuote, langMeta, uiStrings, weeks } from "../data/content";
 import { Avatar } from "./Avatar";
 import { Icon } from "./Icons";
 
@@ -103,7 +103,7 @@ export function CastView({ onOpenWeek }: { onOpenWeek: (week: number) => void })
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.24em] text-mustard uppercase">
               <Icon name="users" size={14} strokeWidth={2.2} />
-              Les compagnons de voyage
+              {uiStrings().companionsTitle}
             </p>
             <h1 className="mt-2 font-display text-[26px] leading-[1.08] font-extrabold tracking-tight sm:text-3xl">
               Seis amigos, uma rota de {langMeta().name.toLowerCase()}, <span className="text-mustard">liberdade para aprender junto</span>

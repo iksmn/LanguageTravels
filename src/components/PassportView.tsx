@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { weeks } from "../data/content";
+import { weeks, weekTag } from "../data/content";
 import { TOTAL_DAYS, levelTitle } from "../lib/engine";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { Icon } from "./Icons";
@@ -143,7 +143,7 @@ export function PassportView({
                   <>
                     <Icon name="lock" size={16} strokeWidth={2} className="text-ink/25" />
                     <p className="mt-1 font-mono text-[9px] font-semibold tracking-[0.16em] text-ink/35 uppercase">
-                      Semaine {String(w.num).padStart(2, "0")}
+                      {weekTag(w.num)}
                     </p>
                     <p className="text-[10px] text-ink/30">{w.city}</p>
                   </>

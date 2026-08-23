@@ -11,7 +11,7 @@ import {
   type GenQ,
 } from "../lib/engine";
 import { canSpeak, speak, stopSpeaking } from "../lib/speech";
-import { speechLang, resolveSpeaker, castMap, localizeNames } from "../data/content";
+import { speechLang, resolveSpeaker, castMap, localizeNames, uiStrings, weekTag } from "../data/content";
 import { Icon, type IconName } from "./Icons";
 import { useToast } from "./Toasts";
 import { Avatar } from "./Avatar";
@@ -66,7 +66,7 @@ function Stamp({ week }: { week: Week }) {
       <div className="text-center leading-tight">
         <Icon name={week.icon} size={26} strokeWidth={2} className="mx-auto" />
         <p className="mt-1 font-display text-[15px] font-extrabold tracking-wide uppercase">{week.city}</p>
-        <p className="font-mono text-[9.5px] font-semibold tracking-[0.22em]">SEMAINE {String(week.num).padStart(2, "0")}</p>
+        <p className="font-mono text-[9.5px] font-semibold tracking-[0.22em]">{weekTag(week.num).toUpperCase()}</p>
         <p className="mt-0.5 font-mono text-[8.5px] tracking-[0.14em]">A1 · RUMO</p>
       </div>
     </div>
@@ -302,7 +302,7 @@ function CultureSession({ week }: { week: Week }) {
         <div className="relative">
           <p className="flex items-center gap-2 font-mono text-[10px] font-bold tracking-[0.24em] text-mustard uppercase">
             <Icon name="sparkle" size={14} strokeWidth={2.2} />
-            Le saviez-vous ?
+            {uiStrings().didYouKnow}
           </p>
           <p className="mt-2.5 font-display text-[19px] leading-snug font-bold">{week.culture}</p>
           <p className="mt-2 font-mono text-[10.5px] tracking-[0.16em] text-paper/60 uppercase">
@@ -670,7 +670,7 @@ export function SessionModal({
                   </div>
                   <div className="min-w-0">
                     <p className="font-mono text-[9px] font-bold tracking-[0.2em] uppercase" style={{ color: week.color }}>
-                      Le récit · {week.themes.map((t) => t.fr).join(" · ")}
+                      {uiStrings().recit} · {week.themes.map((t) => t.fr).join(" · ")}
                     </p>
                     <p className="mt-1 text-[13px] leading-relaxed text-ink-soft italic">{localizeNames(week.story)}</p>
                   </div>

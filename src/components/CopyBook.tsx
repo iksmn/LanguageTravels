@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import type { Week } from "../data/curriculum";
-import { dicteeLines } from "../data/content";
+import { dicteeLines, uiStrings, weekTag } from "../data/content";
 import type { UseProgressReturn } from "../hooks/useProgress";
 import { getDayInfo } from "../lib/engine";
 import { Icon } from "./Icons";
@@ -89,7 +89,10 @@ export function CopyBook({ week, day, prog }: { week: Week; day: number; prog: U
             <div className="leading-tight">
               <p className="font-display text-[15px] font-extrabold tracking-tight">Cahier de copie</p>
               <p className="font-mono text-[9.5px] font-semibold tracking-[0.16em] text-ink-soft uppercase">
-                Jour {day} · {info.week <= 12 ? `Semaine ${String(info.week).padStart(2, "0")}` : "Grande révision"}
+                {(() => {
+                  const ui = uiStrings();
+                  return `${ui.dayLabel} ${day}${ui.daySuffix} · ${info.week <= 12 ? weekTag(info.week) : ui.grandeRevisionShort}`;
+                })()}
               </p>
             </div>
           </div>

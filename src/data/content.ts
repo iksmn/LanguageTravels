@@ -67,6 +67,7 @@ import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
 import { DICTEES_FR, type DicteeLine } from "./dictees-fr";
 import { DICTEES_IT } from "./dictees-it";
 import { DICTEES_DE } from "./dictees-de";
+import { DICTEES_ES } from "./dictees-es";
 
 export interface VerbShape {
   inf: string;
@@ -307,7 +308,15 @@ export function resolveSpeaker(raw: string): Character | undefined {
  */
 export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
   const source =
-    _lang === "it" ? DICTEES_IT : _lang === "de" ? DICTEES_DE : _lang === "fr" ? DICTEES_FR : null;
+    _lang === "it"
+      ? DICTEES_IT
+      : _lang === "de"
+        ? DICTEES_DE
+        : _lang === "es"
+          ? DICTEES_ES
+          : _lang === "fr"
+            ? DICTEES_FR
+            : null;
   const all = source ? source[weekId] ?? [] : [];
   if (!all.length) return [];
   const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
@@ -327,4 +336,40 @@ export function localizeNames(text: string): string {
     out = out.replace(new RegExp(`\\b${escapeRegExp(frName)}\\b`, "g"), localFirst);
   }
   return out;
+}
+
+/* ----------------- rótulos de interface por idioma ----------------- */
+
+export interface UiStrings {
+  /** "Semaine 01" / "第01周" — prefixo + número + sufixo */
+  weekPrefix: string;
+  weekSuffix: string;
+  grandeRevision: string;
+  grandeRevisionShort: string;
+  companions: string;
+  companionsTitle: string;
+  recit: string;
+  didYouKnow: string;
+  dayLabel: string; // "Jour" / "Tag" / "第"
+  daySuffix: string; // "" ou "天" / "日"
+}
+
+const UI: Record<string, UiStrings> = {
+  fr: { weekPrefix: "Semaine ", weekSuffix: "", grandeRevision: "La Grande Révision", grandeRevisionShort: "Grande révision", companions: "Compagnons", companionsTitle: "Les compagnons de voyage", recit: "Le récit", didYouKnow: "Le saviez-vous ?", dayLabel: "Jour", daySuffix: "" },
+  it: { weekPrefix: "Settimana ", weekSuffix: "", grandeRevision: "La Grande Revisione", grandeRevisionShort: "Grande revisione", companions: "Compagni", companionsTitle: "I compagni di viaggio", recit: "Il racconto", didYouKnow: "Lo sapevi?", dayLabel: "Giorno", daySuffix: "" },
+  de: { weekPrefix: "Woche ", weekSuffix: "", grandeRevision: "Die Große Wiederholung", grandeRevisionShort: "Große Wiederholung", companions: "Gefährten", companionsTitle: "Die Reisegefährten", recit: "Die Geschichte", didYouKnow: "Wusstest du das?", dayLabel: "Tag", daySuffix: "" },
+  es: { weekPrefix: "Semana ", weekSuffix: "", grandeRevision: "La Gran Revisión", grandeRevisionShort: "Gran revisión", companions: "Compañeros", companionsTitle: "Los compañeros de viaje", recit: "El relato", didYouKnow: "¿Sabías que…?", dayLabel: "Día", daySuffix: "" },
+  en: { weekPrefix: "Week ", weekSuffix: "", grandeRevision: "The Grand Review", grandeRevisionShort: "Grand review", companions: "Companions", companionsTitle: "The travel companions", recit: "The tale", didYouKnow: "Did you know?", dayLabel: "Day", daySuffix: "" },
+  zh: { weekPrefix: "第", weekSuffix: "周", grandeRevision: "大复习", grandeRevisionShort: "大复习", companions: "伙伴们", companionsTitle: "旅途伙伴", recit: "旅途故事", didYouKnow: "你知道吗？", dayLabel: "第", daySuffix: "天" },
+  ja: { weekPrefix: "第", weekSuffix: "週", grandeRevision: "大復習", grandeRevisionShort: "大復習", companions: "仲間たち", companionsTitle: "旅の仲間", recit: "旅の物語", didYouKnow: "知ってた？", dayLabel: "第", daySuffix: "日" },
+};
+
+export function uiStrings(): UiStrings {
+  return UI[_lang] ?? UI.fr;
+}
+
+/** Etiqueta da semana: "Semaine 01", "第01周", "Woche 01"… */
+export function weekTag(n: number): string {
+  const ui = uiStrings();
+  return `${ui.weekPrefix}${String(n).padStart(2, "0")}${ui.weekSuffix}`;
 }
