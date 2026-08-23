@@ -64,10 +64,21 @@ import { CAST_ZH, GROUP_QUOTE_ZH } from "./cast-zh";
 import { WEEKS_JA, WEEK_VERBS_JA } from "./curriculum-ja";
 import { VERBS_JA, conjugateJA, withPronounJA, JA_FORMS, JA_GROUP_LABEL, JA_GROUP_COLOR } from "./verbs-ja";
 import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
+import { WEEKS_RU, WEEK_VERBS_RU } from "./curriculum-ru";
+import { VERBS_RU, conjugateRU, withPronounRU, RU_PRONOUNS, RU_GROUP_LABEL, RU_GROUP_COLOR } from "./verbs-ru";
+import { CAST_RU, GROUP_QUOTE_RU } from "./cast-ru";
+import { WEEKS_FA, WEEK_VERBS_FA } from "./curriculum-fa";
+import { VERBS_FA, conjugateFA, withPronounFA, FA_PRONOUNS, FA_GROUP_LABEL, FA_GROUP_COLOR } from "./verbs-fa";
+import { CAST_FA, GROUP_QUOTE_FA } from "./cast-fa";
+import { WEEKS_AR, WEEK_VERBS_AR } from "./curriculum-ar";
+import { VERBS_AR, conjugateAR, withPronounAR, AR_PRONOUNS, AR_GROUP_LABEL, AR_GROUP_COLOR } from "./verbs-ar";
+import { CAST_AR, GROUP_QUOTE_AR } from "./cast-ar";
 import { DICTEES_FR, type DicteeLine } from "./dictees-fr";
 import { DICTEES_IT } from "./dictees-it";
 import { DICTEES_DE } from "./dictees-de";
 import { DICTEES_ES } from "./dictees-es";
+import { DICTEES_EN } from "./dictees-en";
+import { DICTEES_RU } from "./dictees-ru";
 
 export interface VerbShape {
   inf: string;
@@ -98,6 +109,9 @@ export function weeks(): Week[] {
     case "en": return WEEKS_EN;
     case "zh": return WEEKS_ZH;
     case "ja": return WEEKS_JA;
+    case "ru": return WEEKS_RU;
+    case "fa": return WEEKS_FA;
+    case "ar": return WEEKS_AR;
     default: return WEEKS;
   }
 }
@@ -109,6 +123,9 @@ export function weekVerbs(): Record<string, string[]> {
     case "en": return WEEK_VERBS_EN;
     case "zh": return WEEK_VERBS_ZH;
     case "ja": return WEEK_VERBS_JA;
+    case "ru": return WEEK_VERBS_RU;
+    case "fa": return WEEK_VERBS_FA;
+    case "ar": return WEEK_VERBS_AR;
     default: return WEEK_VERBS;
   }
 }
@@ -123,6 +140,9 @@ export function verbList(): VerbShape[] {
     case "en": return VERBS_EN as VerbShape[];
     case "zh": return VERBS_ZH as VerbShape[];
     case "ja": return VERBS_JA as VerbShape[];
+    case "ru": return VERBS_RU as VerbShape[];
+    case "fa": return VERBS_FA as VerbShape[];
+    case "ar": return VERBS_AR as VerbShape[];
     default: return VERB_LIST as VerbShape[];
   }
 }
@@ -134,6 +154,9 @@ export function conjugateLang(inf: string): string[] | null {
     case "en": return conjugateEN(inf);
     case "zh": return null; // mandarim não conjuga
     case "ja": return conjugateJA(inf);
+    case "ru": return conjugateRU(inf);
+    case "fa": return conjugateFA(inf);
+    case "ar": return conjugateAR(inf);
     default: return conjugateFR(inf);
   }
 }
@@ -145,6 +168,9 @@ export function withPronounLang(person: number, form: string): string {
     case "en": return withPronounEN(person, form);
     case "zh": return form;
     case "ja": return withPronounJA(person, form);
+    case "ru": return withPronounRU(person, form);
+    case "fa": return withPronounFA(person, form);
+    case "ar": return withPronounAR(person, form);
     default: return withPronounFR(person, form);
   }
 }
@@ -156,6 +182,9 @@ export function pronouns(): string[] {
     case "en": return EN_PRONOUNS;
     case "zh": return ["我 wǒ", "你 nǐ", "他/她 tā", "我们", "你们", "他们"];
     case "ja": return JA_FORMS;
+    case "ru": return RU_PRONOUNS;
+    case "fa": return FA_PRONOUNS;
+    case "ar": return AR_PRONOUNS;
     default: return PRONOUNS;
   }
 }
@@ -167,6 +196,9 @@ export function groupLabel(g: 1 | 2 | 3): string {
     case "en": return EN_GROUP_LABEL[g];
     case "zh": return g === 1 ? "Ação 动作" : g === 2 ? "Estado 状态" : "Modal 能愿";
     case "ja": return JA_GROUP_LABEL[g];
+    case "ru": return RU_GROUP_LABEL[g];
+    case "fa": return FA_GROUP_LABEL[g];
+    case "ar": return AR_GROUP_LABEL[g];
     default: return GROUP_LABEL[g];
   }
 }
@@ -178,6 +210,9 @@ export function groupColor(g: 1 | 2 | 3): string {
     case "en": return EN_GROUP_COLOR[g];
     case "zh": return g === 1 ? "#0e8f8b" : g === 2 ? "#e8930c" : "#d7263d";
     case "ja": return JA_GROUP_COLOR[g];
+    case "ru": return RU_GROUP_COLOR[g];
+    case "fa": return FA_GROUP_COLOR[g];
+    case "ar": return AR_GROUP_COLOR[g];
     default: return GROUP_COLOR[g];
   }
 }
@@ -196,6 +231,15 @@ export function conjugatorUrl(inf: string): string {
       const v = VERBS_JA.find((x) => x.inf === inf);
       return `https://conjugator.reverso.net/conjugation-japanese-verb-${encodeURIComponent(v?.py ?? inf).replace(/\s+/g, "-")}.html`;
     }
+    case "ru": return `https://conjugator.reverso.net/conjugation-russian-verb-${encodeURIComponent(inf)}.html`;
+    case "ar": {
+      const v = VERBS_AR.find((x) => x.inf === inf);
+      return `https://conjugator.reverso.net/conjugation-arabic-verb-${encodeURIComponent(v?.py ?? inf)}.html`;
+    }
+    case "fa": {
+      const v = VERBS_FA.find((x) => x.inf === inf);
+      return `https://en.wiktionary.org/wiki/${encodeURIComponent(v?.py ?? inf)}`;
+    }
     default: return reversoUrlFR(inf);
   }
 }
@@ -207,6 +251,9 @@ export function conjugatorSourceUrl(): string {
     case "en": return "https://conjugator.reverso.net/index-english-1-250.html";
     case "zh": return "https://www.mdbg.net/chinese/dictionary";
     case "ja": return "https://conjugator.reverso.net/index-japanese-1-250.html";
+    case "ru": return "https://conjugator.reverso.net/index-russian-1-250.html";
+    case "ar": return "https://conjugator.reverso.net/index-arabic-1-250.html";
+    case "fa": return "https://en.wiktionary.org/wiki/Category:Persian_verbs";
     default: return VERB_SOURCE_URL;
   }
 }
@@ -221,6 +268,9 @@ export function speechLang(): string {
     case "en": return "en-GB";
     case "zh": return "zh-CN";
     case "ja": return "ja-JP";
+    case "ru": return "ru-RU";
+    case "fa": return "fa-IR";
+    case "ar": return "ar-SA";
     default: return "fr-FR";
   }
 }
@@ -236,6 +286,9 @@ export function langMeta(): { name: string; native: string; flag: string; greeti
     en: { name: "Inglês", native: "English", flag: "gb", greeting: "Hello!" },
     zh: { name: "Mandarim", native: "中文", flag: "cn", greeting: "你好！" },
     ja: { name: "Japonês", native: "日本語", flag: "jp", greeting: "こんにちは！" },
+    ru: { name: "Russo", native: "Русский", flag: "ru", greeting: "Привет!" },
+    fa: { name: "Farsi", native: "فارسی", flag: "ir", greeting: "سلام!" },
+    ar: { name: "Árabe", native: "العربية", flag: "sa", greeting: "مرحبًا!" },
   };
   return map[_lang] ?? map.fr;
 }
@@ -260,6 +313,9 @@ export function castList(): Character[] {
     case "en": return CAST_EN;
     case "zh": return CAST_ZH;
     case "ja": return CAST_JA;
+    case "ru": return CAST_RU;
+    case "fa": return CAST_FA;
+    case "ar": return CAST_AR;
     default: return CHARACTERS;
   }
 }
@@ -276,6 +332,9 @@ export function groupQuote(): { fr: string; pt: string } {
     case "en": return GROUP_QUOTE_EN;
     case "zh": return GROUP_QUOTE_ZH;
     case "ja": return GROUP_QUOTE_JA;
+    case "ru": return GROUP_QUOTE_RU;
+    case "fa": return GROUP_QUOTE_FA;
+    case "ar": return GROUP_QUOTE_AR;
     default: return GROUP_QUOTE;
   }
 }
@@ -304,7 +363,7 @@ export function resolveSpeaker(raw: string): Character | undefined {
  * Linhas de ditado do dia (Cahier de copie).
  * A quantidade cresce ao longo da semana: 1 frase nos dias 1–2,
  * 2 nos dias 3–4 e todas (3) do dia 5 em diante.
- * Francês, italiano e alemão têm corpus próprio; os demais retornam [].
+ * Francês, italiano, alemão, inglês e russo têm corpus próprio; os demais retornam [].
  */
 export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
   const source =
@@ -314,9 +373,13 @@ export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
         ? DICTEES_DE
         : _lang === "es"
           ? DICTEES_ES
-          : _lang === "fr"
-            ? DICTEES_FR
-            : null;
+          : _lang === "en"
+            ? DICTEES_EN
+            : _lang === "ru"
+              ? DICTEES_RU
+              : _lang === "fr"
+                ? DICTEES_FR
+                : null;
   const all = source ? source[weekId] ?? [] : [];
   if (!all.length) return [];
   const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
@@ -362,6 +425,9 @@ const UI: Record<string, UiStrings> = {
   en: { weekPrefix: "Week ", weekSuffix: "", grandeRevision: "The Grand Review", grandeRevisionShort: "Grand review", companions: "Companions", companionsTitle: "The travel companions", recit: "The tale", didYouKnow: "Did you know?", dayLabel: "Day", daySuffix: "" },
   zh: { weekPrefix: "第", weekSuffix: "周", grandeRevision: "大复习", grandeRevisionShort: "大复习", companions: "伙伴们", companionsTitle: "旅途伙伴", recit: "旅途故事", didYouKnow: "你知道吗？", dayLabel: "第", daySuffix: "天" },
   ja: { weekPrefix: "第", weekSuffix: "週", grandeRevision: "大復習", grandeRevisionShort: "大復習", companions: "仲間たち", companionsTitle: "旅の仲間", recit: "旅の物語", didYouKnow: "知ってた？", dayLabel: "第", daySuffix: "日" },
+  ru: { weekPrefix: "Неделя ", weekSuffix: "", grandeRevision: "Большое повторение", grandeRevisionShort: "Повторение", companions: "Попутчики", companionsTitle: "Попутчики", recit: "История", didYouKnow: "Знаете ли вы?", dayLabel: "День", daySuffix: "" },
+  fa: { weekPrefix: "هفته ", weekSuffix: "", grandeRevision: "مرور بزرگ", grandeRevisionShort: "مرور", companions: "همسفران", companionsTitle: "همسفران", recit: "روایت", didYouKnow: "آیا می‌دانستید؟", dayLabel: "روز", daySuffix: "" },
+  ar: { weekPrefix: "الأسبوع ", weekSuffix: "", grandeRevision: "المراجعة الكبرى", grandeRevisionShort: "المراجعة", companions: "الرفاق", companionsTitle: "رفاق الرحلة", recit: "الحكاية", didYouKnow: "هل تعلم؟", dayLabel: "اليوم", daySuffix: "" },
 };
 
 export function uiStrings(): UiStrings {

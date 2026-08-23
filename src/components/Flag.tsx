@@ -92,6 +92,34 @@ export function Flag({ code, size = 22 }: { code: string; size?: number }) {
         </>
       );
       break;
+    case "ru":
+      inner = (
+        <>
+          <rect width="24" height="5.4" fill="#fffdf4" />
+          <rect y="5.4" width="24" height="5.3" fill="#24457c" />
+          <rect y="10.7" width="24" height="5.3" fill="#d7263d" />
+        </>
+      );
+      break;
+    case "ir":
+      inner = (
+        <>
+          <rect width="24" height="5.4" fill="#3f9142" />
+          <rect y="5.4" width="24" height="5.3" fill="#fffdf4" />
+          <rect y="10.7" width="24" height="5.3" fill="#d7263d" />
+          <path d="M12 6.4 c-1.2 1 -1.2 2.2 0 3.2 c1.2 -1 1.2 -2.2 0 -3.2 Z" fill="#d7263d" />
+        </>
+      );
+      break;
+    case "sa":
+      inner = (
+        <>
+          <rect width="24" height="16" fill="#3f9142" />
+          <rect x="4" y="5" width="16" height="2.4" rx="1.2" fill="#fffdf4" />
+          <rect x="9" y="10" width="7" height="1.6" rx="0.8" fill="#fffdf4" />
+        </>
+      );
+      break;
     default:
       inner = <rect width="24" height="16" fill="#e4dcc6" />;
   }
