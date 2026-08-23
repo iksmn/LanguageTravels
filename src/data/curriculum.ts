@@ -58,6 +58,9 @@ export const LANGUAGES = [
   { code: "en", name: "Inglês", native: "English", greeting: "Hello!", flag: "gb", available: true },
   { code: "ja", name: "Japonês", native: "日本語", greeting: "こんにちは！", flag: "jp", available: true },
   { code: "zh", name: "Mandarim", native: "中文", greeting: "你好！", flag: "cn", available: true },
+  { code: "ru", name: "Russo", native: "Русский", greeting: "Привет!", flag: "ru", available: true },
+  { code: "fa", name: "Farsi", native: "فارسی", greeting: "سلام!", flag: "ir", available: true },
+  { code: "ar", name: "Árabe", native: "العربية", greeting: "مرحبًا!", flag: "sa", available: true },
 ] as const;
 
 export type LangCode = (typeof LANGUAGES)[number]["code"];
