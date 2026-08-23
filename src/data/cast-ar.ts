@@ -37,7 +37,7 @@ export const CAST_AR: Character[] = [
     age: 30,
     profFr: "مهندس ذكاء اصطناعي",
     profPt: "Engenheiro de IA",
-    city: "دبي",
+    city: "بغداد",
     traits: [
       { fr: "عَمَليّ", pt: "Pragmático" },
       { fr: "سَريع", pt: "Rápido" },
@@ -46,7 +46,7 @@ export const CAST_AR: Character[] = [
     interests: [
       { fr: "تعلّم الآلة", pt: "Machine learning" },
       { fr: "الخوارزميات", pt: "Algoritmos (al-Khwarizmi!)" },
-      { fr: "الغوص", pt: "Mergulho" },
+      { fr: "بيت الحكمة", pt: "A Casa da Sabedoria" },
     ],
     complices: ["كريم", "حسن"],
     weeks: [],
