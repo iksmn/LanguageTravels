@@ -74,6 +74,8 @@ export interface UseProgressReturn {
   restoreStore: (json: string) => boolean; // restaura backup; false se inválido
   isCopyDone: (day: number) => boolean; // cópia do "Cahier" já feita?
   completeCopy: (day: number, xp: number) => number; // conclui a cópia e soma XP
+  clearDay: (day: number) => boolean; // reabre um dia para refazer do zero
+  resetAll: () => void; // zera o progresso de todos os idiomas
   level: number;
 }
 
@@ -93,7 +95,12 @@ export function useProgress(): UseProgressReturn {
   })();
 
   const isDayDone = useCallback((d: number) => Boolean(progress.days[d]), [progress]);
-  const unlockedDay = useCallback((d: number) => d <= currentDay, [currentDay]);
+  // Um dia está acessível se já foi concluído ou se a rota já chegou até ele
+  // (assim, refazer um dia antigo não tranca os dias posteriores já feitos).
+  const unlockedDay = useCallback(
+    (d: number) => d <= currentDay || Boolean(progress.days[d]),
+    [currentDay, progress],
+  );
 
   const weekStamps: number[] = [];
   for (let w = 1; w <= 13; w++) {
@@ -167,6 +174,42 @@ export function useProgress(): UseProgressReturn {
     [progress],
   );
 
+  /**
+   * Reabre um dia para refazer do zero: apaga o registro da sessão e da cópia,
+   * devolvendo o dia ao estado "pendente" (XP cheio ao concluir novamente).
+   * Retorna true se havia algo para apagar.
+   */
+  const clearDay = useCallback(
+    (day: number): boolean => {
+      if (!lang) return false;
+      let changed = false;
+      setStore((prev) => {
+        const p = { ...freshLang(), ...prev.langs[lang] };
+        if (!p.days[day] && !(p.copies ?? {})[day]) return prev;
+        changed = true;
+        const days = { ...p.days };
+        delete days[day];
+        const copies = { ...p.copies };
+        delete copies[day];
+        return {
+          ...prev,
+          langs: { ...prev.langs, [lang]: { ...p, days, copies } },
+        };
+      });
+      return changed;
+    },
+    [lang],
+  );
+
+  /** Zera o progresso de TODOS os idiomas (o idioma ativo continua selecionado). */
+  const resetAll = useCallback(() => {
+    setStore((prev) => {
+      const langs: Record<string, LangProgress> = {};
+      for (const code of Object.keys(prev.langs)) langs[code] = freshLang();
+      return { ...prev, langs };
+    });
+  }, []);
+
   /** Registra a conclusão da cópia do dia e soma o XP de bônus (uma vez por dia). */
   const completeCopy = useCallback(
     (day: number, xp: number): number => {
@@ -232,6 +275,8 @@ export function useProgress(): UseProgressReturn {
     saveVerbScore,
     isCopyDone,
     completeCopy,
+    clearDay,
+    resetAll,
     exportStore,
     restoreStore,
     level: levelFromXp(progress.xp),
