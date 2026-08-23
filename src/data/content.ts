@@ -66,6 +66,7 @@ import { VERBS_JA, conjugateJA, withPronounJA, JA_FORMS, JA_GROUP_LABEL, JA_GROU
 import { CAST_JA, GROUP_QUOTE_JA } from "./cast-ja";
 import { DICTEES_FR, type DicteeLine } from "./dictees-fr";
 import { DICTEES_IT } from "./dictees-it";
+import { DICTEES_DE } from "./dictees-de";
 
 export interface VerbShape {
   inf: string;
@@ -302,10 +303,11 @@ export function resolveSpeaker(raw: string): Character | undefined {
  * Linhas de ditado do dia (Cahier de copie).
  * A quantidade cresce ao longo da semana: 1 frase nos dias 1–2,
  * 2 nos dias 3–4 e todas (3) do dia 5 em diante.
- * Por enquanto só o francês tem corpus próprio; os demais retornam [].
+ * Francês, italiano e alemão têm corpus próprio; os demais retornam [].
  */
 export function dicteeLines(weekId: string, dayInWeek: number): DicteeLine[] {
-  const source = _lang === "it" ? DICTEES_IT : _lang === "fr" ? DICTEES_FR : null;
+  const source =
+    _lang === "it" ? DICTEES_IT : _lang === "de" ? DICTEES_DE : _lang === "fr" ? DICTEES_FR : null;
   const all = source ? source[weekId] ?? [] : [];
   if (!all.length) return [];
   const count = dayInWeek <= 2 ? 1 : dayInWeek <= 4 ? 2 : all.length;
