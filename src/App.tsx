@@ -17,7 +17,7 @@ import { CastView } from "./components/CastView";
 import { VerbsView } from "./components/VerbsView";
 import { SessionModal } from "./components/SessionModal";
 import { getDayInfo, TOTAL_DAYS } from "./lib/engine";
-import { setLang } from "./data/content";
+import { setLang, langMeta } from "./data/content";
 
 function Ambient() {
   return (
@@ -157,7 +157,11 @@ function Shell() {
               prog={prog}
               onReset={() => {
                 prog.resetActive();
-                toast("Progresso do francês apagado. Bonne nouvelle route!", "info");
+                toast(`Progresso de ${langMeta().name.toLowerCase()} apagado. Boa nova rota!`, "info");
+              }}
+              onResetAll={() => {
+                prog.resetAll();
+                toast("Progresso de todos os idiomas apagado. Boa nova jornada!", "info");
               }}
             />
           )}
@@ -165,9 +169,10 @@ function Shell() {
 
         <footer className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-2 border-t-2 border-ink/10 px-4 py-5 font-mono text-[11px] text-ink/45 sm:px-6">
           <p>
-            <span className="font-semibold text-ink">RUMO</span> · 90 dias · nível A1 — Francês ativo; Alemão, Espanhol, Inglês e Italiano a caminho.
+            <span className="font-semibold text-ink">RUMO</span> · 90 dias · nível A1 — {langMeta().greeting} Rota de{" "}
+            {langMeta().name.toLowerCase()} ativa.
           </p>
-          <p className="tracking-[0.14em] uppercase">46°36′N · 2°27′E — France</p>
+          <p className="tracking-[0.14em] uppercase">A2 em breve · {langMeta().native}</p>
         </footer>
       </div>
 

@@ -127,12 +127,23 @@ location.reload()
 
 ---
 
-## 7. Zerar o progresso
+## 7. Refazer uma lição & zerar o progresso
 
-- **Pelo app:** aba *Passaporte* → *Zerar progresso* (pede confirmação em dois cliques).
-  Apaga apenas o idioma ativo.
-- **Pelo console:** `localStorage.removeItem("rumo:store:v2")` apaga **todos** os idiomas.
-  Recarregue a página em seguida.
+### Refazer uma lição do zero
+Dias já concluídos abrem em **modo revisão** (selo verde *Revisão*), valendo um bônus
+menor de XP. Para refazer valendo **XP cheio**:
+
+- Abra o dia concluído e clique em **"Refazer do zero"** (no topo da lição ou na tela
+  de resultado). O registro do dia (sessão + cópia) é apagado, as questões são
+  sorteadas de novo e a lição recomeça do início.
+
+### Zerar o progresso
+Na aba *Passaporte* há duas opções, ambas com confirmação em dois cliques:
+
+- **Zerar idioma** — apaga XP, carimbos, sequência e cópias **apenas do idioma ativo**.
+- **Zerar curso inteiro** — apaga o progresso de **todos os idiomas** de uma vez.
+
+Pelo console: `localStorage.removeItem("rumo:store:v2")` apaga tudo; recarregue a página.
 
 ---
 

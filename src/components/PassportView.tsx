@@ -13,8 +13,17 @@ function formatDate(iso: string) {
   }
 }
 
-export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onReset: () => void }) {
+export function PassportView({
+  prog,
+  onReset,
+  onResetAll,
+}: {
+  prog: UseProgressReturn;
+  onReset: () => void;
+  onResetAll: () => void;
+}) {
   const [confirming, setConfirming] = useState(false);
+  const [confirmingAll, setConfirmingAll] = useState(false);
   const toast = useToast();
   const fileRef = useRef<HTMLInputElement>(null);
   const done = Math.min(prog.currentDay - 1, TOTAL_DAYS);
@@ -224,34 +233,72 @@ export function PassportView({ prog, onReset }: { prog: UseProgressReturn; onRes
         <p className="text-[12px] text-ink-soft">
           Progresso salvo localmente neste navegador. Zerar apaga XP, carimbos e sequência.
         </p>
-        {confirming ? (
-          <div className="flex shrink-0 items-center gap-2">
-            <span className="font-mono text-[11px] font-semibold text-bus">Apagar tudo?</span>
+
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+          {confirming ? (
+            <>
+              <span className="font-mono text-[11px] font-semibold text-bus">Apagar este idioma?</span>
+              <button
+                onClick={() => {
+                  onReset();
+                  setConfirming(false);
+                }}
+                className="btn-press rounded-md border-2 border-ink bg-bus px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide text-card uppercase shadow-print-sm"
+              >
+                Sim, apagar
+              </button>
+              <button
+                onClick={() => setConfirming(false)}
+                className="btn-press rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold uppercase"
+              >
+                Não
+              </button>
+            </>
+          ) : (
             <button
               onClick={() => {
-                onReset();
+                setConfirming(true);
+                setConfirmingAll(false);
+              }}
+              className="btn-press flex items-center gap-1.5 rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-ink-soft uppercase shadow-print-sm hover:border-bus hover:text-bus"
+            >
+              <Icon name="reset" size={13} strokeWidth={2.2} />
+              Zerar idioma
+            </button>
+          )}
+
+          {confirmingAll ? (
+            <>
+              <span className="font-mono text-[11px] font-semibold text-bus">Apagar TODOS os idiomas?</span>
+              <button
+                onClick={() => {
+                  onResetAll();
+                  setConfirmingAll(false);
+                }}
+                className="btn-press rounded-md border-2 border-ink bg-ink px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide text-card uppercase shadow-print-sm"
+              >
+                Sim, apagar tudo
+              </button>
+              <button
+                onClick={() => setConfirmingAll(false)}
+                className="btn-press rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold uppercase"
+              >
+                Não
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => {
+                setConfirmingAll(true);
                 setConfirming(false);
               }}
-              className="btn-press rounded-md border-2 border-ink bg-bus px-3 py-1.5 font-mono text-[11px] font-bold tracking-wide text-card uppercase shadow-print-sm"
+              className="btn-press flex items-center gap-1.5 rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-ink-soft uppercase shadow-print-sm hover:border-ink hover:text-ink"
             >
-              Sim, apagar
+              <Icon name="harddrive" size={13} strokeWidth={2.2} />
+              Zerar curso inteiro
             </button>
-            <button
-              onClick={() => setConfirming(false)}
-              className="btn-press rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold uppercase"
-            >
-              Não
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={() => setConfirming(true)}
-            className="btn-press flex shrink-0 items-center gap-1.5 rounded-md border-2 border-ink/20 bg-card px-3 py-1.5 font-mono text-[11px] font-semibold tracking-wide text-ink-soft uppercase shadow-print-sm hover:border-bus hover:text-bus"
-          >
-            <Icon name="reset" size={13} strokeWidth={2.2} />
-            Zerar progresso
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </section>
   );

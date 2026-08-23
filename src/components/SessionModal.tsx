@@ -13,6 +13,7 @@ import {
 import { canSpeak, speak, stopSpeaking } from "../lib/speech";
 import { speechLang, resolveSpeaker, castMap, localizeNames } from "../data/content";
 import { Icon, type IconName } from "./Icons";
+import { useToast } from "./Toasts";
 import { Avatar } from "./Avatar";
 import { CopyBook } from "./CopyBook";
 import type { UseProgressReturn } from "../hooks/useProgress";
@@ -546,7 +547,8 @@ export function SessionModal({
   const icon = SESSION_ICONS[info.type] as IconName;
   const week = info.weekData;
 
-  const [phase, setPhase] = useState<"session" | "result">(dayDone ? "result" : "session");
+  // Concluído ou não, o dia sempre abre na sessão (em modo revisão, se já feito).
+  const [phase, setPhase] = useState<"session" | "result">("session");
   const [result, setResult] = useState<Result | null>(null);
   const [attempt, setAttempt] = useState(0);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -591,6 +593,18 @@ export function SessionModal({
     setPhase("result");
   };
 
+  /** Reabre o dia do zero: apaga o registro e reinicia a sessão com novas questões. */
+  const handleRedo = () => {
+    prog.clearDay(day);
+    setResult(null);
+    setPhase("session");
+    setAttempt((a) => a + 1);
+    bodyRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    toast(`Dia ${day} reaberto — refaça para ganhar o XP cheio.`, "info");
+  };
+
+  const toast = useToast();
+
   const isExam = info.type === "exam";
   const stamp = info.type === "quiz" && week;
   const bodyColor = week?.color ?? meta.color;
@@ -619,6 +633,16 @@ export function SessionModal({
               Revisão
             </span>
           )}
+          {dayDone && phase === "session" && (
+            <button
+              onClick={handleRedo}
+              title="Apaga o registro deste dia e refaz a lição do zero, valendo XP cheio"
+              className="btn-press flex shrink-0 items-center gap-1.5 rounded-md border-2 border-bus/60 bg-card px-2.5 py-1.5 font-mono text-[10px] font-bold tracking-wide text-bus uppercase shadow-print-sm transition-colors hover:bg-bus hover:text-card"
+            >
+              <Icon name="reset" size={13} strokeWidth={2.4} />
+              Refazer do zero
+            </button>
+          )}
           <button
             onClick={onClose}
             className="grid h-8 w-8 shrink-0 place-items-center rounded-md border-2 border-ink/15 text-ink-soft transition-colors hover:border-bus hover:text-bus"
@@ -631,7 +655,7 @@ export function SessionModal({
         {/* corpo */}
         <div ref={bodyRef} className="slim-scroll flex-1 overflow-y-auto px-4 py-5 sm:px-6">
           {phase === "session" ? (
-            <>
+            <div key={`redo-${attempt}`} className="flex flex-col">
               {week && (
                 <div className="fade-up mb-4 flex items-start gap-3 rounded-lg border-2 border-ink/12 bg-card px-3.5 py-3">
                   <div className="flex shrink-0 -space-x-2 pt-1">
@@ -707,7 +731,7 @@ export function SessionModal({
               )}
               {/* Caderno de cópia — presente em todas as lições */}
               {week && <CopyBook week={week} day={day} prog={prog} />}
-            </>
+            </div>
           ) : (
             /* resultado */
             result && (
@@ -783,6 +807,14 @@ export function SessionModal({
                       </button>
                     </>
                   )}
+                  <button
+                    onClick={handleRedo}
+                    title="Apaga o registro deste dia para refazer a lição do zero e ganhar XP cheio"
+                    className="btn-press flex items-center gap-2 rounded-lg border-2 border-bus/60 bg-card px-4 py-2.5 font-mono text-[12px] font-semibold tracking-wide text-bus uppercase shadow-print-sm transition-colors hover:bg-bus hover:text-card"
+                  >
+                    <Icon name="reset" size={14} strokeWidth={2.4} />
+                    Refazer do zero
+                  </button>
                 </div>
               </div>
             )
