@@ -173,7 +173,7 @@ function escCsv(s: string): string {
 export function buildAnkiExport(cards: FlashCard[]): string {
   const rows = cards.map((c) => {
     const meta = langMetaMap[c.lang];
-    const hasReading = Boolean(c.reading && (c.lang === "zh" || c.lang === "ja"));
+    const hasReading = Boolean(c.reading && ["zh", "ja", "fa", "ar"].includes(c.lang));
     const front = hasReading
       ? `${c.word}<br><span style="font-size:14px">${c.reading}</span>`
       : c.word;
